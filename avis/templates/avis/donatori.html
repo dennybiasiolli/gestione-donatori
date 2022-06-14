@@ -1,0 +1,251 @@
+{% extends 'avis/base.html' %}
+
+{% block content %}
+
+<form type="get" action="." style="margin: 0;">
+    <table class="styled-table">
+        <tbody>
+            <tr>
+                <td>
+                    <label>Ricerca</label>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="ricerca" placeholder="Ricerca generica..." value="{{ ricerca }}" />
+                </td>
+                <td colspan="6">
+                </td>
+            </tr>
+            {% if sezioni.count > 1 %}
+            <tr>
+                <td>
+                    <label>Sezione</label>
+                </td>
+                <td>
+                    <select class="form-select" name="sezione_id">
+                        <option value="">Tutte</option>
+                        {% for sezione in sezioni %}
+                        <option value="{{ sezione.id }}"{% if sezione.id == sezione_id %} selected{% endif %}>{{ sezione.descrizione }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td colspan="6">
+                </td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td>
+                    <label>Stato donatore</label>
+                </td>
+                <td>
+                    <select class="form-select" name="stato_donatore_id">
+                        <option value="">Qualsiasi</option>
+                        {% for stato_donatore in stati_donatore %}
+                        <option value="{{ stato_donatore.id }}"{% if stato_donatore.id == stato_donatore_id %} selected{% endif %}>{{ stato_donatore.descrizione }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <label>Sesso</label>
+                </td>
+                <td>
+                    <select class="form-select" name="sesso_id">
+                        <option value="">-</option>
+                        {% for sesso in sessi %}
+                        <option value="{{ sesso.id }}"{% if sesso.id == sesso_id %} selected{% endif %}>{{ sesso.codice }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td colspan="4">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Data iscrizione dal</label>
+                </td>
+                <td>
+                    <input type="date" class="form-control" name="data_iscrizione_dal" value="{{ data_iscrizione_dal }}" />
+                </td>
+                <td>
+                    <label>al</label>
+                </td>
+                <td>
+                    <input type="date" class="form-control" name="data_iscrizione_al" value="{{ data_iscrizione_al }}" />
+                </td>
+                <td colspan="4">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Data nascita dal</label>
+                </td>
+                <td>
+                    <input type="date" class="form-control" name="data_nascita_dal" value="{{ data_nascita_dal }}" />
+                </td>
+                <td>
+                    <label>al</label>
+                </td>
+                <td>
+                    <input type="date" class="form-control" name="data_nascita_al" value="{{ data_nascita_al }}" />
+                </td>
+                <td colspan="4">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Gruppo sanguigno</label>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="gruppo_sanguigno" value="{{ gruppo_sanguigno }}" />
+                </td>
+                <td>
+                    <label>Rh</label>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="rh" value="{{ rh }}" />
+                </td>
+                <td>
+                    <label>Fenotipo</label>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="fenotipo" value="{{ fenotipo }}" />
+                </td>
+                <td>
+                    <label>Kell</label>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="kell" value="{{ kell }}" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Donazioni tra il</label>
+                </td>
+                <td>
+                    <input type="date" class="form-control" name="data_donazione_dal" value="{{ data_donazione_dal }}" />
+                </td>
+                <td>
+                    <label>e il</label>
+                </td>
+                <td>
+                    <input type="date" class="form-control" name="data_donazione_al" value="{{ data_donazione_al }}" />
+                </td>
+                <td colspan="4">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Comune</label>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="comune" value="{{ comune }}" />
+                </td>
+                <td>
+                    <label>Prov.</label>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="provincia" value="{{ provincia }}" />
+                </td>
+                <td>
+                    <label>CAP</label>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="cap" value="{{ cap }}" />
+                </td>
+                <td>
+                    <label>oppure diverso da</label>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="cap_diverso" value="{{ cap_diverso }}" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="submit" class="btn btn-primary">Ricerca</button>
+                </td>
+                <td colspan="7">
+                    <label>
+                        Visualizza le ultime
+                        <input type="number" class="form-control" name="show_n_donazioni" value="{{ show_n_donazioni }}" min="0" max="12" />
+                        donazioni
+                    </label>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+
+<p style="page-break-after:always;">
+    {{ donatori.count }} donatori
+</p>
+
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>N. Tessera</th>
+            <th>Donazioni</th>
+            <th>Cognome</th>
+            <th>Nome</th>
+            <th>Sesso</th>
+            <th>Gr.</th>
+            <th>Contatti</th>
+            <th>Indirizzo</th>
+            {% if show_n_donazioni > 0 %}
+            <th>Ultime {{ show_n_donazioni }} donazioni</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for donatore in donatori %}
+        <tr>
+            <td>
+                <a href="/avis/donatori/{{ donatore.pk }}">
+                    {{ donatore.num_tessera }}
+                </a>
+            </td>
+            <td align="right">{{ donatore.tot_donazioni }}
+                <!-- ({{ donatore.donazioni_pregresse }} + {{ donatore.num_donazioni }})-->
+            </td>
+            <td>{{ donatore.cognome }}</td>
+            <td>{{ donatore.nome }}</td>
+            <td>{{ donatore.sesso.codice }}</td>
+            <td>
+                {{ donatore.gruppo_sanguigno }}{{ donatore.rh }}
+            </td>
+            <td>
+                {% if donatore.email %}
+                &#9993; {{ donatore.email }}<br>
+                {% endif %}
+                {% if donatore.telefono %}
+                &#9742; {{ donatore.telefono }}<br>
+                {% endif %}
+                {% if donatore.cellulare %}
+                &#128241; {{ donatore.cellulare }}<br>
+                {% endif %}
+            </td>
+            <td>
+                {% if donatore.indirizzo %}
+                {{ donatore.indirizzo }}<br>
+                {% endif %}
+                {% if donatore.frazione %}
+                {{ donatore.frazione }}<br>
+                {% endif %}
+                {% if donatore.cap or donatore.comune or donatore.provincia %}
+                {% if donatore.cap %}{{ donatore.cap }} {% endif %}
+                {{ donatore.comune }}
+                {% if donatore.provincia %} ({{ donatore.provincia }}){% endif %}
+                <br>
+                {% endif %}
+            </td>
+            {% if show_n_donazioni > 0 %}
+            <td>
+                {% for donazione in donatore.donazioni.all|slice:show_n_donazioni %}
+                {{ donazione.data_donazione | date:'d/m/y' }}
+                {% endfor %}
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

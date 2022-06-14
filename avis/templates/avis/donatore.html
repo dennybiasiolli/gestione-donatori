@@ -1,0 +1,93 @@
+{% extends 'avis/base.html' %}
+
+{% block content %}
+
+<h1>{{ donatore.cognome }} {{ donatore.nome }}</h1>
+
+<h3>
+    Num. tessera: {{ donatore.num_tessera }}
+    {% if donatore.data_iscrizione and donatore.data_iscrizione.year > 1900 %}
+    (iscritt{% if donatore.sesso.codice == 'M' %}o{% else %}a{% endif %} dal {{ donatore.data_iscrizione | date:'d/m/Y' }})
+    
+    {% endif %}
+    <!-- {% if donatore.data_rilascio_tessera and donatore.data_rilascio_tessera.year > 1900 %}
+    (rilasciata il {{ donatore.data_rilascio_tessera | date:'d/m/Y' }})
+    {% endif %} -->
+    <br>
+    Tot. donazioni: {{ tot_donazioni }}
+    {% if donatore.donazioni_pregresse > 0 %}
+    ({{ donatore.donazioni_pregresse }} pregresse + {{ num_donazioni }} attuali)
+    {% endif %}
+    <br>
+    Benemerenze: {{ donatore.num_benemerenze }}
+</h3>
+
+<h4>Informazioni</h4>
+Gruppo sanguigno {{ donatore.gruppo_sanguigno }} Rh {{ donatore.rh }}
+{% if donatore.fenotipo %} - Fenotipo: {{ donatore.fenotipo }}{% endif %}
+{% if donatore.kell %} - Kell: {{ donatore.kell }}{% endif %}
+<br>
+Sesso: {{ donatore.sesso.codice }}
+{% if donatore.data_nascita %}
+<br>
+Data nascita: {{ donatore.data_nascita | date:'d/m/Y' }}
+{% endif %}
+{% if donatore.codice_fiscale %}
+<br>
+Cod. Fiscale: {{ donatore.codice_fiscale }}
+{% endif %}
+
+
+<h4>Contatti</h4>
+{% if donatore.email %}
+&#9993; {{ donatore.email }}<br>
+{% endif %}
+{% if donatore.telefono %}
+&#9742; {{ donatore.telefono }}<br>
+{% endif %}
+{% if donatore.cellulare %}
+&#128241; {{ donatore.cellulare }}<br>
+{% endif %}
+{% if donatore.telefono_lavoro %}
+Tel. lavoro: {{ donatore.telefono_lavoro }}<br>
+{% endif %}
+{% if donatore.fax %}
+Fax: {{ donatore.fax }}<br>
+{% endif %}
+
+<h4>Indirizzo</h4>
+{% if donatore.indirizzo %}
+{{ donatore.indirizzo }}<br>
+{% endif %}
+{% if donatore.frazione %}
+{{ donatore.frazione }}<br>
+{% endif %}
+{% if donatore.cap or donatore.comune or donatore.provincia %}
+{% if donatore.cap %}{{ donatore.cap }} {% endif %}
+{{ donatore.comune }}
+{% if donatore.provincia %} ({{ donatore.provincia }}){% endif %}
+<br>
+{% endif %}
+
+<h4>
+</h4>
+
+
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Tipo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for donazione in donazioni %}
+        <tr>
+            <td>{{ donazione.data_donazione }}</td>
+            <td>{{ donazione.get_tipo_donazione_display }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

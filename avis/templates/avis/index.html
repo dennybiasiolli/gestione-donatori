@@ -4,10 +4,13 @@
 
 <ul>
     <li>
-        <a href="/avis/">Home</a>
+        <a href="{% url 'index' %}">Home</a>
     </li>
     <li>
-        <a href="/avis/donatori/">Donatori</a>
+        <a href="{% url 'logout' %}?next={% url 'index' %}">Logout</a>
+    </li>
+    <li>
+        <a href="{% url 'donatori' %}">Donatori</a>
     </li>
 </ul>
 

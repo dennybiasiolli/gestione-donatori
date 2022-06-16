@@ -198,7 +198,7 @@
         {% for donatore in donatori %}
         <tr>
             <td>
-                <a href="/avis/donatori/{{ donatore.pk }}">
+                <a href="{% url 'donatore' pk=donatore.pk %}">
                     {{ donatore.num_tessera }}
                 </a>
             </td>

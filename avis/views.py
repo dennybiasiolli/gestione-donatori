@@ -8,7 +8,7 @@ from .models import Donatore, Donazione, Sesso, Sezione, StatoDonatore
 
 
 def avis_user_check(user):
-    return user.is_staff and user.groups.filter(name='avis_users').exists()
+    return user.is_staff
 
 
 @user_passes_test(avis_user_check)

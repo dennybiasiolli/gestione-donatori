@@ -1,70 +1,102 @@
 # Gestione Donatori
 
 
-## Setup progetto
+## Project setup
 
-- Clona il progetto in locale
+- Clone the repository and enter in its directory
 
-    `git clone git@github.com:dennybiasiolli/gestione-donatori.git`
+    ```
+    git clone git@github.com:dennybiasiolli/gestione-donatori.git
+    cd gestione-donatori
+    ```
 
-- Entra nella directory del progetto
+- Create a virtual environment for this project (Python 3.10.x suggested)
 
-    `cd gestione-donatori`
+    ```
+    mkdir -p $HOME/.virtualenvs/gestione-donatori
+    python -m venv $HOME/.virtualenvs/gestione-donatori
+    ```
 
-- Crea un ambiente virtuale per questa installazione (Python 3.10.x consigliato)
+- Enable the virtual environment (each time you work on the project)
 
-    `python -m venv venv`
+    `source $HOME/.virtualenvs/gestione-donatori/bin/activate`
 
-- Attiva l'ambiente virtuale (da ripetere ogni volta che si lavora sul repository)
-
-    `source venv/bin/activate`
-
-- Installa le dipendenze richieste per il progetto
+- Install required dependencies
 
     ```
     pip install --upgrade pip
     pip install -r requirements_dev.txt
     ```
 
-- Crea/aggiorna il database applicando le migrazioni necessarie
+- Create/update database with migrations
 
-    Nota: in sviluppo viene utilizzato un DB SQLite e creato se non esiste,
-    per PostgreSQL il database deve già essere presente, anche se vuoto.
+    A SQLite database for debugging is created if not existent,
+    PostgreSQL databases must be created before launching this command
 
     `python manage.py migrate`
 
-- Creazione utente amministratore
+- Create an admin
 
     `python manage.py createsuperuser`
 
-    e seguire le indicazioni
+    and follow instructions on the command line
 
-- (opzionale) Importazione dati da vecchia istanza gestionale
+- (optional) Import old data
 
-    `python manage.py avis_import_dotnet_data -d $DIRECTORY_DATI`
+    `python manage.py avis_import_dotnet_data -d $DATA_DIRECTORY`
 
-    `$DIRECTORY_DATI` deve essere la cartella in cui sono presenti i file JSON
-    esportati dal vecchio gestionale
+    `$DATA_DIRECTORY` is the folder containing all JSON files from the old software
 
-- Avviare localmente il server di sviluppo
+- Start a local instance of django
 
     `python manage.py runserver`
 
-- Accedere all'interfaccia di amministrazione
+- Open admin page
 
-    Aprire da browser `http://localhost:8000/admin/` e accedere con le credenziali
-    di amministratore create all'inizio
+    Open `http://localhost:8000/admin/` from a browser and login with admin credentials
 
 
-## Allineamento progetto alle ultime modifiche
+## Sync project
 
-- Aggiornare il branch `main` (assicurandosi di non avere modifiche in corso)
+- Update `main` branch (check for unstaged changes)
 
     ```
     git checkout main
     git pull
     ```
 
-- Aggiornare il database locale all'ultima versione
+- Enable the virtual environment (see instructions above in the setup section)
+
+- Update database
 
     `python manage.py migrate`
+
+## Enabling Git Hooks (optional)
+
+You can create your own git hooks in the `.git/hooks/` directory, or you can use pre-defined hooks with
+
+```sh
+# use hooks from `.githooks` directory
+git config --local core.hooksPath .githooks/
+
+# use a single hook
+ln -sf ../../.githooks/pre-commit .git/hooks/pre-commit
+ln -sf ../../.githooks/pre-push .git/hooks/pre-push
+```
+
+This will add a pre-commit hook checking for `make style` before each commit,
+and a pre-push hook checking for `make test` before each push.
+
+You can skip hooks when committing/pushing with `--no-verify`
+according to [git commit man page)](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt--n).
+
+
+## Test / style with makefile
+
+- `make test` for testing the whole codebase
+
+- `make test-coverage` for testing the whole codebase and providing a coverage report
+
+- `make style-check` check the code style for the entire codebase
+
+- `make style-fix` tries to fix common errors in the codebase

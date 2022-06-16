@@ -1,5 +1,7 @@
 # Gestione Donatori
 
+![Django CI](https://github.com/dennybiasiolli/api-dennybiasiolli-com/actions/workflows/django.yml/badge.svg)
+
 
 ## Project setup
 

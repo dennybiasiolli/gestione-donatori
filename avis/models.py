@@ -125,6 +125,7 @@ class Donazione(models.Model):
         null=True,
         choices=TipoDonazione.choices,
         default=TipoDonazione.__empty__,
+        blank=True,
     )
     data_donazione = models.DateField(default=date.today)
 

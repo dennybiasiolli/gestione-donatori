@@ -5,7 +5,18 @@
 <div class="card">
     <div class="card-body">
         <h2 class="card-title">
-            {{ donatore.cognome }} {{ donatore.nome }}
+            <div class="row">
+                <div class="col-sm-9">
+                    <h2 class="card-title">
+                        {{ donatore.cognome }} {{ donatore.nome }}
+                    </h2>
+                </div>
+                <div class="col-sm-3 text-end d-print-none">
+                    <a class="btn btn-outline-secondary" href="{% url 'admin:avis_donatore_change' donatore.id %}" target="_blank">
+                        Modifica
+                    </a>
+                </div>
+            </div>
         </h2>
         <div class="card-subtitle mb-2 text-muted">
             Num. tessera: {{ donatore.num_tessera }},
@@ -107,11 +118,20 @@
         <p class="card-text">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">
-                        Donazioni
-                    </h5>
+                    <p class="card-title">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <h5>Donazioni</h5>
+                            </div>
+                            <div class="col-sm-3 text-end d-print-none">
+                                <a class="btn btn-outline-secondary btn-sm" href="{% url 'admin:avis_donatore_change' donatore.id %}" target="_blank">
+                                    Aggiungi
+                                </a>
+                            </div>
+                        </div>
+                    </p>
                     <p class="card-text">
-                        <table class="table table-sm">
+                        <table class="table table-sm mb-0">
                             <thead class="table-light">
                                 <tr>
                                     <th scope="col">Data</th>

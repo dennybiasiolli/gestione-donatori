@@ -2,224 +2,212 @@
 
 {% block content %}
 
-<form type="get" action="." style="margin: 0;">
-    <table class="styled-table">
-        <tbody>
-            <tr>
-                <td>
-                    <label>Ricerca</label>
-                </td>
-                <td>
-                    <input type="text" class="form-control" name="ricerca" placeholder="Ricerca generica..." value="{{ ricerca }}" />
-                </td>
-                <td colspan="6">
-                </td>
-            </tr>
-            {% if sezioni.count > 1 %}
-            <tr>
-                <td>
-                    <label>Sezione</label>
-                </td>
-                <td>
-                    <select class="form-select" name="sezione_id">
-                        <option value="">Tutte</option>
-                        {% for sezione in sezioni %}
-                        <option value="{{ sezione.id }}"{% if sezione.id == sezione_id %} selected{% endif %}>{{ sezione.descrizione }}</option>
-                        {% endfor %}
-                    </select>
-                </td>
-                <td colspan="6">
-                </td>
-            </tr>
-            {% endif %}
-            <tr>
-                <td>
-                    <label>Stato donatore</label>
-                </td>
-                <td>
-                    <select class="form-select" name="stato_donatore_id">
-                        <option value="">Qualsiasi</option>
-                        {% for stato_donatore in stati_donatore %}
-                        <option value="{{ stato_donatore.id }}"{% if stato_donatore.id == stato_donatore_id %} selected{% endif %}>{{ stato_donatore.descrizione }}</option>
-                        {% endfor %}
-                    </select>
-                </td>
-                <td>
-                    <label>Sesso</label>
-                </td>
-                <td>
-                    <select class="form-select" name="sesso_id">
-                        <option value="">-</option>
-                        {% for sesso in sessi %}
-                        <option value="{{ sesso.id }}"{% if sesso.id == sesso_id %} selected{% endif %}>{{ sesso.codice }}</option>
-                        {% endfor %}
-                    </select>
-                </td>
-                <td colspan="4">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>Data iscrizione dal</label>
-                </td>
-                <td>
-                    <input type="date" class="form-control" name="data_iscrizione_dal" value="{{ data_iscrizione_dal }}" />
-                </td>
-                <td>
-                    <label>al</label>
-                </td>
-                <td>
-                    <input type="date" class="form-control" name="data_iscrizione_al" value="{{ data_iscrizione_al }}" />
-                </td>
-                <td colspan="4">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>Data nascita dal</label>
-                </td>
-                <td>
-                    <input type="date" class="form-control" name="data_nascita_dal" value="{{ data_nascita_dal }}" />
-                </td>
-                <td>
-                    <label>al</label>
-                </td>
-                <td>
-                    <input type="date" class="form-control" name="data_nascita_al" value="{{ data_nascita_al }}" />
-                </td>
-                <td colspan="4">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>Gruppo sanguigno</label>
-                </td>
-                <td>
-                    <input type="text" class="form-control" name="gruppo_sanguigno" value="{{ gruppo_sanguigno }}" />
-                </td>
-                <td>
-                    <label>Rh</label>
-                </td>
-                <td>
-                    <input type="text" class="form-control" name="rh" value="{{ rh }}" />
-                </td>
-                <td>
-                    <label>Fenotipo</label>
-                </td>
-                <td>
-                    <input type="text" class="form-control" name="fenotipo" value="{{ fenotipo }}" />
-                </td>
-                <td>
-                    <label>Kell</label>
-                </td>
-                <td>
-                    <input type="text" class="form-control" name="kell" value="{{ kell }}" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>Donazioni tra il</label>
-                </td>
-                <td>
-                    <input type="date" class="form-control" name="data_donazione_dal" value="{{ data_donazione_dal }}" />
-                </td>
-                <td>
-                    <label>e il</label>
-                </td>
-                <td>
-                    <input type="date" class="form-control" name="data_donazione_al" value="{{ data_donazione_al }}" />
-                </td>
-                <td colspan="4">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>Comune</label>
-                </td>
-                <td>
-                    <input type="text" class="form-control" name="comune" value="{{ comune }}" />
-                </td>
-                <td>
-                    <label>Prov.</label>
-                </td>
-                <td>
-                    <input type="text" class="form-control" name="provincia" value="{{ provincia }}" />
-                </td>
-                <td>
-                    <label>CAP</label>
-                </td>
-                <td>
-                    <input type="text" class="form-control" name="cap" value="{{ cap }}" />
-                </td>
-                <td>
-                    <label>oppure diverso da</label>
-                </td>
-                <td>
-                    <input type="text" class="form-control" name="cap_diverso" value="{{ cap_diverso }}" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button type="submit" class="btn btn-primary">Ricerca</button>
-                </td>
-                <td colspan="7">
-                    <label>
-                        Visualizza le ultime
-                        <input type="number" class="form-control" name="show_n_donazioni" value="{{ show_n_donazioni }}" min="0" max="12" />
-                        donazioni
-                    </label>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<form type="get" action="/donatori" class="d-print-none" style="margin: 0;">
+    <div class="m-1 row">
+        <label class="col-sm-2 col-form-label">Ricerca</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="ricerca" placeholder="Ricerca generica..." value="{{ ricerca }}" />
+        </div>
+    </div>
+    {% if sezioni.count > 1 %}
+    <div class="m-1 row">
+        <label class="col-sm-2 col-form-label">Sezione</label>
+        <div class="col-sm-10">
+            <select class="form-select" name="sezione_id">
+                <option value="">Tutte</option>
+                {% for sezione in sezioni %}
+                <option value="{{ sezione.id }}"{% if sezione.id == sezione_id %} selected{% endif %}>{{ sezione.descrizione }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    {% endif %}
+    <div class="m-1 row">
+        <label class="col-sm-2 col-form-label">Stato donatore</label>
+        <div class="col-sm-4">
+            <select class="form-select" name="stato_donatore_id">
+                <option value="">Qualsiasi</option>
+                {% for stato_donatore in stati_donatore %}
+                <option value="{{ stato_donatore.id }}"{% if stato_donatore.id == stato_donatore_id %} selected{% endif %}>{{ stato_donatore.descrizione }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <label class="col-sm-2 col-form-label">Sesso</label>
+        <div class="col-sm-4">
+            <select class="form-select" name="sesso_id">
+                <option value="">-</option>
+                {% for sesso in sessi %}
+                <option value="{{ sesso.id }}"{% if sesso.id == sesso_id %} selected{% endif %}>{{ sesso.codice }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Ricerca avanzata
+            </button>
+          </h2>
+          <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+            <div class="accordion-body p-0">
+                <div class="m-1 row">
+                    <label class="col-sm-2 col-form-label">Data iscrizione dal</label>
+                    <div class="col-sm-4">
+                        <input type="date" class="form-control" name="data_iscrizione_dal" value="{{ data_iscrizione_dal }}" />
+                    </div>
+
+                    <label class="col-sm-2 col-form-label">al</label>
+                    <div class="col-sm-4">
+                        <input type="date" class="form-control" name="data_iscrizione_al" value="{{ data_iscrizione_al }}" />
+                    </div>
+                </div>
+
+                <div class="m-1 row">
+                    <label class="col-sm-2 col-form-label">Data nascita dal</label>
+                    <div class="col-sm-4">
+                        <input type="date" class="form-control" name="data_nascita_dal" value="{{ data_nascita_dal }}" />
+                    </div>
+
+                    <label class="col-sm-2 col-form-label">al</label>
+                    <div class="col-sm-4">
+                        <input type="date" class="form-control" name="data_nascita_al" value="{{ data_nascita_al }}" />
+                    </div>
+                </div>
+
+                <div class="m-1 row">
+                    <label class="col-sm-2 col-form-label">Gruppo sanguigno</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" name="gruppo_sanguigno" value="{{ gruppo_sanguigno }}" />
+                    </div>
+                    <label class="col-sm-1 col-form-label">Rh</label>
+                    <div class="col-sm-1">
+                        <input type="text" class="form-control" name="rh" value="{{ rh }}" />
+                    </div>
+
+                    <label class="col-sm-2 col-form-label">Fenotipo</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" name="fenotipo" value="{{ fenotipo }}" />
+                    </div>
+                    <label class="col-sm-1 col-form-label">Kell</label>
+                    <div class="col-sm-1">
+                        <input type="text" class="form-control" name="kell" value="{{ kell }}" />
+                    </div>
+                </div>
+
+                <div class="m-1 row">
+                    <label class="col-sm-2 col-form-label">Donazioni tra il</label>
+                    <div class="col-sm-4">
+                        <input type="date" class="form-control" name="data_donazione_dal" value="{{ data_donazione_dal }}" />
+                    </div>
+
+                    <label class="col-sm-2 col-form-label">e il</label>
+                    <div class="col-sm-4">
+                        <input type="date" class="form-control" name="data_donazione_al" value="{{ data_donazione_al }}" />
+                    </div>
+                </div>
+
+                <div class="m-1 row">
+                    <label class="col-sm-2 col-form-label">Comune</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="comune" value="{{ comune }}" />
+                    </div>
+                    <label class="col-sm-1 col-form-label">Prov.</label>
+                    <div class="col-sm-1">
+                        <input type="text" class="form-control" name="provincia" value="{{ provincia }}" />
+                    </div>
+                    <label class="col-sm-1 col-form-label">CAP</label>
+                    <div class="col-sm-1">
+                        <input type="text" class="form-control" name="cap" value="{{ cap }}" />
+                    </div>
+                    <label class="col-sm-1 col-form-label">non CAP</label>
+                    <div class="col-sm-1">
+                        <input type="text" class="form-control" name="cap_diverso" value="{{ cap_diverso }}" />
+                    </div>
+                </div>
+
+                <div class="m-1 row">
+                    <label class="col-sm-2 col-form-label">Comune</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="comune" value="{{ comune }}" />
+                    </div>
+                    <label class="col-sm-1 col-form-label">Prov.</label>
+                    <div class="col-sm-1">
+                        <input type="text" class="form-control" name="provincia" value="{{ provincia }}" />
+                    </div>
+                    <label class="col-sm-1 col-form-label">CAP</label>
+                    <div class="col-sm-1">
+                        <input type="text" class="form-control" name="cap" value="{{ cap }}" />
+                    </div>
+                    <label class="col-sm-1 col-form-label">non CAP</label>
+                    <div class="col-sm-1">
+                        <input type="text" class="form-control" name="cap_diverso" value="{{ cap_diverso }}" />
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="m-1 row">
+        <label class="col-sm-2 col-form-label">Visualizza le ultime</label>
+        <div class="col-sm-2">
+            <input type="number" class="form-control form-control-inline" name="show_n_donazioni" value="{{ show_n_donazioni }}" min="0" max="12" />
+        </div>
+        <label class="col-sm-2 col-form-label">donazioni</label>
+    </div>
+
+    <div class="m-1 row">
+        <div class="col-sm-12">
+            <button type="submit" class="btn btn-primary">Ricerca</button>
+            {{ donatori.count }} donatori trovati
+        </div>
+    </div>
 </form>
 
-<p style="page-break-after:always;">
-    {{ donatori.count }} donatori
-</p>
-
-<table class="styled-table">
-    <thead>
+<table class="table">
+    <thead class="table-light">
         <tr>
-            <th>N. Tessera</th>
-            <th>Donazioni</th>
-            <th>Cognome</th>
-            <th>Nome</th>
-            <th>Sesso</th>
-            <th>Gr.</th>
-            <th>Contatti</th>
-            <th>Indirizzo</th>
-            {% if show_n_donazioni > 0 %}
-            <th>Ultime {{ show_n_donazioni }} donazioni</th>
-            {% endif %}
+            <th scope="col">N. Tessera</th>
+            <th scope="col">Donazioni</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Sesso</th>
+            <th scope="col">Gr.</th>
+            <th scope="col">Contatti</th>
+            <th scope="col">Indirizzo</th>
+            <!-- {% if show_n_donazioni > 0 %}
+            <th scope="col">Ultime {{ show_n_donazioni }} donazioni</th>
+            {% endif %} -->
         </tr>
     </thead>
     <tbody>
         {% for donatore in donatori %}
-        <tr>
-            <td>
+        <tr style="page-break-inside:avoid; page-break-after:avoid;">
+            <th scope="row">
                 <a href="{% url 'donatore' pk=donatore.pk %}">
                     {{ donatore.num_tessera }}
                 </a>
-            </td>
-            <td align="right">{{ donatore.tot_donazioni }}
+            </th>
+            <td>
+                {{ donatore.tot_donazioni }}
                 <!-- ({{ donatore.donazioni_pregresse }} + {{ donatore.num_donazioni }})-->
             </td>
-            <td>{{ donatore.cognome }}</td>
-            <td>{{ donatore.nome }}</td>
+            <td>{{ donatore.cognome }} {{ donatore.nome }}</td>
             <td>{{ donatore.sesso.codice }}</td>
             <td>
                 {{ donatore.gruppo_sanguigno }}{{ donatore.rh }}
             </td>
             <td>
                 {% if donatore.email %}
-                &#9993; {{ donatore.email }}<br>
+                {{ donatore.email }}<br>
                 {% endif %}
                 {% if donatore.telefono %}
-                &#9742; {{ donatore.telefono }}<br>
+                {{ donatore.telefono }}<br>
                 {% endif %}
                 {% if donatore.cellulare %}
-                &#128241; {{ donatore.cellulare }}<br>
+                {{ donatore.cellulare }}<br>
                 {% endif %}
             </td>
             <td>
@@ -236,14 +224,28 @@
                 <br>
                 {% endif %}
             </td>
-            {% if show_n_donazioni > 0 %}
+            <!-- {% if show_n_donazioni > 0 %}
             <td>
                 {% for donazione in donatore.donazioni.all|slice:show_n_donazioni %}
-                {{ donazione.data_donazione | date:'d/m/y' }}
+                <span class="badge text-bg-light">
+                    {{ donazione.data_donazione | date:'d/m/y' }}
+                </span>
                 {% endfor %}
             </td>
-            {% endif %}
+            {% endif %} -->
         </tr>
+        {% if show_n_donazioni > 0 %}
+        <tr style="page-break-inside:avoid; page-break-before:avoid;">
+            <td colspan="100%">
+                Ultime {{ show_n_donazioni }} donazioni:
+                {% for donazione in donatore.donazioni.all|slice:show_n_donazioni %}
+                <span class="badge text-bg-light">
+                    {{ donazione.data_donazione | date:'d/m/y' }}
+                </span>
+                {% endfor %}
+            </td>
+        </tr>
+        {% endif %}
         {% endfor %}
     </tbody>
 </table>

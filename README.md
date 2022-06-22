@@ -102,3 +102,17 @@ according to [git commit man page)](https://git-scm.com/docs/git-commit#Document
 - `make style-check` check the code style for the entire codebase
 
 - `make style-fix` tries to fix common errors in the codebase
+
+
+## Environment variables
+
+- `SECRET_KEY`
+- `DEBUG`: set to `True`, `true` or `1` to enable debug
+- `ALLOWED_HOSTS`
+- `DB_ENGINE`
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+- `DB_HOST`
+- `DB_PORT`
+- `ADMIN_BASE_URL`: base url for admin mode, defaults to `admin`

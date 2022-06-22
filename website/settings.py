@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,15 +21,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = (
-    'django-insecure-vp&g2e&v2s5*ddig_i4so)hv$hz&_cm_ev2j!2^++j5k$qdhy9'
+SECRET_KEY = os.getenv(
+    'SECRET_KEY',
+    'django-insecure-vp&g2e&v2s5*ddig_i4so)hv$hz&_cm_ev2j!2^++j5k$qdhy9',
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv(
+    'DEBUG',
+    'True',
+) in ('True', 'true', '1')
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    h
+    for h in os.getenv(
+        'ALLOWED_HOSTS',
+        '',
+    ).split(',')
+    if h != ''
+]
 
 # Application definition
 
@@ -79,8 +90,12 @@ WSGI_APPLICATION = 'website.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.getenv('DB_NAME', BASE_DIR / 'db.sqlite3'),
+        'USER': os.getenv('DB_USER', None),
+        'PASSWORD': os.getenv('DB_PASSWORD', None),
+        'HOST': os.getenv('DB_HOST', None),
+        'PORT': os.getenv('DB_PORT', None),
     }
 }
 
@@ -126,3 +141,8 @@ STATIC_ROOT = BASE_DIR / 'static'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# custom settings
+
+ADMIN_BASE_URL = os.getenv('ADMIN_BASE_URL', 'admin')

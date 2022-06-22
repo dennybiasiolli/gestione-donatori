@@ -1,8 +1,16 @@
+from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
-from . import views
+from . import forms, views
 
 urlpatterns = [
+    path(
+        'accounts/login/',
+        auth_views.LoginView.as_view(
+            authentication_form=forms.BootstrapAuthenticationForm,
+        ),
+        name='login',
+    ),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', views.index, name='index'),
     path('donatori/', views.donatori, name='donatori'),

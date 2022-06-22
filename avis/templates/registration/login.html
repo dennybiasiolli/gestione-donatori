@@ -3,37 +3,59 @@
 {% block content %}
 
 {% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
+<div class="alert alert-warning" role="alert">
+    Nome utente e password non corrispondono. Riprova nuovamente.
+</div>
 {% endif %}
 
 {% if next %}
-    {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-    {% else %}
-    <p>Please login to see this page.</p>
-    {% endif %}
-{% endif %}
-
-<form method="post" action="{% url 'login' %}">
-{% csrf_token %}
-<table>
-<tr>
-    <td>{{ form.username.label_tag }}</td>
-    <td>{{ form.username }}</td>
-</tr>
-<tr>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-</tr>
-</table>
-
-<input type="submit" value="login">
-{% if next %}
-<input type="hidden" name="next" value="{{ next }}">
+{% if user.is_authenticated %}
+<div class="alert alert-warning" role="alert">
+    Il tuo utente non ha accesso a questa pagina.
+    Per procedere, accedi con un utente abilitato.
+</div>
 {% else %}
-<input type="hidden" name="next" value="{% url 'index' %}">
+<div class="alert alert-info" role="alert">
+    Accedi per poter vedere questa pagina.
+</div>
 {% endif %}
-</form>
+{% endif %}
+
+<div class="container text-center">
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="row my-2">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+                <div class="form-floating">
+                    {{ form.username }}
+                    {{ form.username.label_tag }}
+                </div>
+            </div>
+            <div class="col-sm-3"></div>
+        </div>
+        <div class="row my-2">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+                <div class="form-floating">
+                    {{ form.password }}
+                    {{ form.password.label_tag }}
+                </div>
+            </div>
+            <div class="col-sm-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <input type="submit" value="Accedi">
+            </div>
+        </div>
+
+        {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {% else %}
+        <input type="hidden" name="next" value="{% url 'index' %}">
+        {% endif %}
+    </form>
+</div>
 
 {% endblock %}

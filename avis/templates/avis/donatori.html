@@ -6,7 +6,7 @@
     <div class="m-1 row">
         <label class="col-sm-2 col-form-label">Ricerca</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" name="ricerca" placeholder="Ricerca generica..." value="{{ ricerca }}" />
+            <input type="text" class="form-control" name="ricerca" placeholder="Ricerca generica..." value="{{ ricerca }}" autofocus />
         </div>
     </div>
     {% if sezioni.count > 1 %}
@@ -47,11 +47,11 @@
     <div class="accordion" id="accordionExample">
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingTwo">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-              Ricerca avanzata
+            <button class="accordion-button{% if not show_advanced %} collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Ricerca avanzata {{ show_advanced }}
             </button>
           </h2>
-          <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+          <div id="collapseTwo" class="accordion-collapse{% if not show_advanced %} collapse{% endif %}" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
             <div class="accordion-body p-0">
                 <div class="m-1 row">
                     <label class="col-sm-2 col-form-label">Data iscrizione dal</label>
@@ -106,25 +106,6 @@
                     <label class="col-sm-2 col-form-label">e il</label>
                     <div class="col-sm-4">
                         <input type="date" class="form-control" name="data_donazione_al" value="{{ data_donazione_al }}" />
-                    </div>
-                </div>
-
-                <div class="m-1 row">
-                    <label class="col-sm-2 col-form-label">Comune</label>
-                    <div class="col-sm-4">
-                        <input type="text" class="form-control" name="comune" value="{{ comune }}" />
-                    </div>
-                    <label class="col-sm-1 col-form-label">Prov.</label>
-                    <div class="col-sm-1">
-                        <input type="text" class="form-control" name="provincia" value="{{ provincia }}" />
-                    </div>
-                    <label class="col-sm-1 col-form-label">CAP</label>
-                    <div class="col-sm-1">
-                        <input type="text" class="form-control" name="cap" value="{{ cap }}" />
-                    </div>
-                    <label class="col-sm-1 col-form-label">non CAP</label>
-                    <div class="col-sm-1">
-                        <input type="text" class="form-control" name="cap_diverso" value="{{ cap_diverso }}" />
                     </div>
                 </div>
 
@@ -239,7 +220,7 @@
             <td colspan="100%">
                 Ultime {{ show_n_donazioni }} donazioni:
                 {% for donazione in donatore.donazioni.all|slice:show_n_donazioni %}
-                <span class="badge text-bg-light">
+                <span class="badge {% if donazione.tipo_donazione == 1 %}text-bg-danger{% elif donazione.tipo_donazione == 2 %}text-bg-warning{% else %}text-bg-light{% endif %}">
                     {{ donazione.data_donazione | date:'d/m/y' }}
                 </span>
                 {% endfor %}

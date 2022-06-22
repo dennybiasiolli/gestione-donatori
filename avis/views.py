@@ -168,6 +168,22 @@ def donatori(request):
             'comune': comune or '',
             'provincia': provincia or '',
             'show_n_donazioni': show_n_donazioni or 0,
+            'show_advanced': bool(
+                data_iscrizione_dal
+                or data_iscrizione_al
+                or data_nascita_dal
+                or data_nascita_al
+                or gruppo_sanguigno
+                or rh
+                or fenotipo
+                or kell
+                or data_donazione_dal
+                or data_donazione_al
+                or comune
+                or provincia
+                or cap
+                or cap_diverso
+            ),
         },
     )
 

@@ -143,26 +143,26 @@ def donatori(request):
             'sesso_id': sesso_id or '',
             'data_nascita_dal': data_nascita_dal.isoformat()
             if data_nascita_dal
-            else None,
+            else '',
             'data_nascita_al': data_nascita_al.isoformat()
             if data_nascita_al
-            else None,
+            else '',
             'data_iscrizione_dal': data_iscrizione_dal.isoformat()
             if data_iscrizione_dal
-            else None,
+            else '',
             'data_iscrizione_al': data_iscrizione_al.isoformat()
             if data_iscrizione_al
-            else None,
+            else '',
             'gruppo_sanguigno': gruppo_sanguigno or '',
             'rh': rh or '',
             'fenotipo': fenotipo or '',
             'kell': kell or '',
             'data_donazione_dal': data_donazione_dal.isoformat()
             if data_donazione_dal
-            else None,
+            else '',
             'data_donazione_al': data_donazione_al.isoformat()
             if data_donazione_al
-            else None,
+            else '',
             'cap': cap or '',
             'cap_diverso': cap_diverso or '',
             'comune': comune or '',

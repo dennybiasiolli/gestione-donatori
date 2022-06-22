@@ -142,7 +142,7 @@ class Command(BaseCommand):
                 elif tipo_donazione == 'Piastrine':
                     tipo_donazione = Donazione.TipoDonazione.PIASTRINE
                 elif tipo_donazione is None:
-                    tipo_donazione = Donazione.TipoDonazione.__empty__
+                    tipo_donazione = None
                 else:
                     print(tipo_donazione)
                     raise tipo_donazione
@@ -164,5 +164,6 @@ class Command(BaseCommand):
                         ),
                         # err,
                     )
+                    raise
 
         self.stdout.write('Importazione donatori completata con successo')

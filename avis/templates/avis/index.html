@@ -2,16 +2,4 @@
 
 {% block content %}
 
-<ul>
-    <li>
-        <a href="{% url 'index' %}">Home</a>
-    </li>
-    <li>
-        <a href="{% url 'logout' %}?next={% url 'index' %}">Logout</a>
-    </li>
-    <li>
-        <a href="{% url 'donatori' %}">Donatori</a>
-    </li>
-</ul>
-
 {% endblock %}

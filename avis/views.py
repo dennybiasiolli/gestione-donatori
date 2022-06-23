@@ -2,9 +2,9 @@ import datetime
 
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count, F, Prefetch, Q
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView
+from django.views.generic import DetailView, ListView
 
 from .models import Donatore, Donazione, Sesso, Sezione, StatoDonatore
 
@@ -227,19 +227,18 @@ class DonatoreListView(ListView):
         return qs
 
 
-@user_passes_test(avis_user_check)
-def donatore(request, pk):
-    donatore = get_object_or_404(Donatore, pk=pk)
-    num_donazioni = donatore.donazioni.count()
-    tot_donazioni = num_donazioni + donatore.donazioni_pregresse
-    donazioni = donatore.donazioni.all().order_by('-data_donazione')
-    return render(
-        request,
-        'avis/donatore.html',
-        {
-            'donatore': donatore,
-            'num_donazioni': num_donazioni,
-            'tot_donazioni': tot_donazioni,
-            'donazioni': donazioni,
-        },
-    )
+@method_decorator(user_passes_test(avis_user_check), name='dispatch')
+class DonatoreDetailView(DetailView):
+    model = Donatore
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.select_related(
+            'sesso', 'sezione', 'stato_donatore'
+        ).prefetch_related(
+            Prefetch(
+                'donazioni',
+                queryset=Donazione.objects.order_by('-data_donazione'),
+            ),
+        )
+        return qs

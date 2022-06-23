@@ -28,9 +28,9 @@
             {% endif %} -->
         </div>
         <h6 class="card-text">
-            {{ tot_donazioni }} donazioni
+            {{ donatore.donazioni.all.count|add:donatore.donazioni_pregresse }} donazioni
             {% if donatore.donazioni_pregresse > 0 %}
-            ({{ num_donazioni }} attuali + {{ donatore.donazioni_pregresse }} pregresse)
+            ({{ donatore.donazioni.all.count }} attuali + {{ donatore.donazioni_pregresse }} pregresse)
             {% endif %}
             {% if donatore.num_benemerenze > 0 %}
             , {{ donatore.num_benemerenze }} benemerenz{% if donatore.num_benemerenze == 1 %}a{% else %}e{% endif %} ricevut{% if donatore.num_benemerenze == 1 %}a{% else %}e{% endif %}
@@ -38,7 +38,7 @@
         </h6>
         <p class="card-text">
             <div class="row">
-                <div class="col-sm-6 my-2">
+                <div class="col-6 col-md-4 my-2 px-2">
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">
@@ -60,7 +60,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 my-2">
+                <div class="col-6 col-md-4 my-2 px-2">
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">
@@ -86,9 +86,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6 my-2">
+                <div class="col-6 col-md-4 my-2 px-2">
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">
@@ -114,7 +112,7 @@
                 </div>
             </div>
         </p>
-        {% if donazioni.count > 0 %}
+        {% if donatore.donazioni.all.count > 0 %}
         <p class="card-text">
             <div class="card">
                 <div class="card-body">
@@ -139,10 +137,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for donazione in donazioni %}
+                                {% for donazione in donatore.donazioni.all %}
                                 <tr>
                                     <td>{{ donazione.data_donazione }}</td>
-                                    <td>{{ donazione.get_tipo_donazione_display }}</td>
+                                    <td>
+                                        <span class="badge rounded-pill {% if donazione.tipo_donazione == 1 %}text-bg-danger{% elif donazione.tipo_donazione == 2 %}text-bg-warning{% else %}text-bg-light{% endif %} d-print-none">
+                                            &nbsp;
+                                        </span>                        
+                                        {{ donazione.get_tipo_donazione_display }}
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

@@ -13,6 +13,10 @@ urlpatterns = [
     ),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', views.index, name='index'),
-    path('donatori/', views.donatori, name='donatori'),
-    path('donatori/<int:pk>/', views.donatore, name='donatore'),
+    path('donatori/', views.DonatoreListView.as_view(), name='donatori'),
+    path(
+        'donatori/<int:pk>/',
+        views.DonatoreDetailView.as_view(),
+        name='donatore',
+    ),
 ]

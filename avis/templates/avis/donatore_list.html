@@ -138,12 +138,17 @@
             <input type="number" class="form-control form-control-inline" name="show_n_donazioni" value="{{ show_n_donazioni }}" min="0" max="12" />
         </div>
         <label class="col-sm-2 col-form-label">donazioni</label>
+        <label class="col-sm-2 col-form-label">Visualizza</label>
+        <div class="col-sm-2">
+            <input type="number" class="form-control form-control-inline" name="paginate_by" value="{{ paginate_by }}" min="1" />
+        </div>
+        <label class="col-sm-2 col-form-label">risultati per pagina</label>
     </div>
 
     <div class="m-1 row">
         <div class="col-sm-12">
             <button type="submit" class="btn btn-primary">Ricerca</button>
-            {{ donatori.count }} donatori trovati
+            {{ page_obj.paginator.count }} donatori trovati
         </div>
     </div>
 </form>
@@ -164,7 +169,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for donatore in donatori %}
+        {% for donatore in page_obj %}
         <tr style="page-break-inside:avoid; page-break-after:avoid;">
             <th scope="row">
                 <a href="{% url 'donatore' pk=donatore.pk %}">
@@ -201,7 +206,7 @@
                 {% if donatore.cap or donatore.comune or donatore.provincia %}
                 {% if donatore.cap %}{{ donatore.cap }} {% endif %}
                 {{ donatore.comune }}
-                {% if donatore.provincia %} ({{ donatore.provincia }}){% endif %}
+                {% if donatore.provincia.strip %} ({{ donatore.provincia }}){% endif %}
                 <br>
                 {% endif %}
             </td>
@@ -230,5 +235,59 @@
         {% endfor %}
     </tbody>
 </table>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                    &laquo;
+                </a>
+            </li>
+        {% else %}
+            <li class="disabled page-item">
+                <span class="page-link">
+                    &laquo;
+                </span>
+            </li>
+        {% endif %}
+        {% for i in page_range %}
+            {% if page_obj.number == i %}
+                <li class="active page-item">
+                    <span class="page-link">
+                        {{ i }}
+                    </span>
+                </li>
+            {% else %}
+                {% if i == page_obj.paginator.ELLIPSIS %}
+                    <li class="page-item">
+                        <span class="page-link">
+                            {{ i }}
+                        </span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ i }}&{{ querystring }}">
+                            {{ i }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ querystring }}">
+                    &raquo;
+                </a>
+            </li>
+        {% else %}
+            <li class="disabled page-item"><span class="page-link">&raquo;</span></li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% for i in page_range %}
+    {{ i }}
+{% endfor %}
 
 {% endblock %}

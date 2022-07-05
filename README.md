@@ -129,6 +129,10 @@ according to [git commit man page)](https://git-scm.com/docs/git-commit#Document
 
     `heroku pg:backups:schedule --at '02:00 Europe/Rome' --app gestione-donatori`
 
+- Display schedule
+
+    `heroku pg:backups:schedules --app gestione-donatori`
+
 - Download last backup
 
     `heroku pg:backups:download --app gestione-donatori`

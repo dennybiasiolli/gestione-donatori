@@ -27,3 +27,14 @@ nav img.logo {
     height: 5%;
     padding-left: 50px;
 }
+
+/* personalizzazione stampa etichette */
+.etichette-riga {
+    /**
+     * inserire eventuali margini sx e dx,
+     * top e bottom non funzionano al cambio di pagina
+     **/
+}
+.etichetta {
+    height: 35mm;
+}

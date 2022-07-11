@@ -1,0 +1,19 @@
+<div>
+    {{ donatore.cognome }} {{ donatore.nome }}
+
+    <p class="card-text">
+        {% if donatore.indirizzo %}
+        {{ donatore.indirizzo }}
+        {% endif %}
+        {% if donatore.frazione %}
+         - Fraz. {{ donatore.frazione }}
+        {% endif %}
+        <br>
+        {% if donatore.cap or donatore.comune or donatore.provincia %}
+        {% if donatore.cap %}{{ donatore.cap }} {% endif %}
+        {{ donatore.comune }}
+        {% if donatore.provincia %} ({{ donatore.provincia }}){% endif %}
+        {% endif %}
+    </p>
+
+</div>

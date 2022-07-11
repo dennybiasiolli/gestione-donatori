@@ -26,9 +26,10 @@ class DonatoreListView(ListView):
     extra_context = {}
 
     def get_template_names(self):
-        match self.request.GET.get('stampa'):
-            case 'benemerenze':
-                return ['avis/donatore_list_benemerenze.html']
+        stampa = self.request.GET.get('stampa')
+        match stampa:
+            case 'benemerenze' | 'etichette':
+                return [f'avis/donatore_list_{stampa}.html']
             case _:
                 return super().get_template_names()
 

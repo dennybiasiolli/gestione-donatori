@@ -27,11 +27,10 @@ class DonatoreListView(ListView):
 
     def get_template_names(self):
         stampa = self.request.GET.get('stampa')
-        match stampa:
-            case 'benemerenze' | 'etichette':
-                return [f'avis/donatore_list_{stampa}.html']
-            case _:
-                return super().get_template_names()
+        if stampa in ('benemerenze', 'etichette'):
+            return [f'avis/donatore_list_{stampa}.html']
+        else:
+            return super().get_template_names()
 
     def get_paginate_by(self, queryset):
         stampa = self.request.GET.get('stampa')

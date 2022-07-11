@@ -25,7 +25,17 @@ class DonatoreListView(ListView):
 
     extra_context = {}
 
+    def get_template_names(self):
+        match self.request.GET.get('stampa'):
+            case 'benemerenze':
+                return ['avis/donatore_list_benemerenze.html']
+            case _:
+                return super().get_template_names()
+
     def get_paginate_by(self, queryset):
+        stampa = self.request.GET.get('stampa')
+        if stampa:
+            return 0
         default_paginate_by = super().get_paginate_by(queryset)
         paginate_by = self.request.GET.get('paginate_by', '')
         return paginate_by if paginate_by.isdigit() else default_paginate_by
@@ -58,6 +68,7 @@ class DonatoreListView(ListView):
     def get_queryset(self):
         qs = super().get_queryset()
 
+        donatore_id = self.request.GET.get('donatore_id', None)
         ricerca = self.request.GET.get('ricerca', None)
         sezione_id = self.request.GET.get('sezione_id', None)
         if sezione_id:
@@ -120,6 +131,8 @@ class DonatoreListView(ListView):
             .order_by('cognome', 'nome')
         )
 
+        if donatore_id:
+            qs = qs.filter(id=donatore_id)
         if ricerca:
             qs = qs.filter(
                 Q(num_tessera__icontains=ricerca)
@@ -168,9 +181,11 @@ class DonatoreListView(ListView):
 
         page = self.request.GET.get('page', 1)
         paginate_by = self.get_paginate_by(qs)
-        page_range = self.get_paginator(qs, paginate_by).get_elided_page_range(
-            number=page
-        )
+        page_range = None
+        if paginate_by:
+            page_range = self.get_paginator(
+                qs, paginate_by
+            ).get_elided_page_range(number=page)
 
         self.extra_context = {
             'ricerca': ricerca or '',

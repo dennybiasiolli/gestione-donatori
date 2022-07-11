@@ -6,3 +6,24 @@ nav img.logo {
     height: 34px;
     width: auto;
 }
+
+/* personalizzazione stampa benemerenza */
+.benemerenza {
+    width: 8.3in;  /* A4 format */
+    height: 11.7in;  /* A4 format */
+    page-break-after: always;
+}
+.benemerenza .riga-comune-avis {
+    height: 50%;
+    /* height: 4.2in; */
+}
+.benemerenza .riga-donatore {
+    height: 40%;
+}
+.benemerenza .riga-pres-segr {
+    height: 5%;
+}
+.benemerenza .riga-luogo-data {
+    height: 5%;
+    padding-left: 50px;
+}

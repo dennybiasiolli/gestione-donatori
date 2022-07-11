@@ -12,6 +12,9 @@
                     </h2>
                 </div>
                 <div class="col-sm-3 text-end d-print-none">
+                    <a class="btn btn-outline-secondary" href="{% url 'donatori' %}?stampa=benemerenze&donatore_id={{ donatore.id }}" target="_blank">
+                        Benemerenza
+                    </a>
                     <a class="btn btn-outline-secondary" href="{% url 'admin:avis_donatore_change' donatore.id %}" target="_blank">
                         Modifica
                     </a>

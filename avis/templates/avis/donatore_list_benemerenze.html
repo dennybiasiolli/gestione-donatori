@@ -1,0 +1,18 @@
+{% extends 'avis/base.html' %}
+
+{% block nav %}
+{% endblock %}
+
+{% block content %}
+
+{% for donatore in object_list %}
+{% include "avis/includes/donatore_benemerenza.html" %}
+{% endfor %}
+
+<script>
+    window.onload = () => {
+        window.print();
+    };
+</script>
+
+{% endblock %}

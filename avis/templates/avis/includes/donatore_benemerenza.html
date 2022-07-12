@@ -1,8 +1,7 @@
 <div class="container-fluid benemerenza">
     <div class="row align-items-center riga-comune-avis">
         <div class="col text-center">
-            <!-- AVIS Comunale di -->
-            <h1>Comune AVIS</h1>
+            <h1>{{ donatore.sezione.comune | title }}</h1>
         </div>
     </div>
 
@@ -14,23 +13,28 @@
 
     <div class="row align-items-center riga-pres-segr">
         <div class="col text-center">
-            <!-- Segretario -->
-            <strong>Segretario</strong>
+            <strong>{{ donatore.sezione.segretario | title }}</strong>
         </div>
 
         <div class="col text-center">
-            <!-- Presidente -->
-            <strong>Presidente</strong>
+            <strong>{{ donatore.sezione.presidente | title }}</strong>
         </div>
     </div>
 
     <div class="row align-items-center riga-luogo-data">
         <div class="col">
-            <!-- Comune di -->
-            Comune,
+            {% if donatore.sezione.luogo_stampa_benemerenze %}
+            {{ donatore.sezione.luogo_stampa_benemerenze | title }},
+            {% else %}
+            {{ donatore.sezione.comune | title }},
+            {% endif %}
 
             <!-- Data -->
-            Data
+            {% if donatore.sezione.data_stampa_benemerenze %}
+            {{ donatore.sezione.data_stampa_benemerenze | date:"DATE_FORMAT" }}
+            {% else %}
+            {% now "DATE_FORMAT" %}
+            {% endif %}
         </div>
     </div>
 </div>

@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count, F, Prefetch, Q
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_GET
 from django.views.generic import DetailView, ListView
 
 from .models import Donatore, Donazione, Sesso, Sezione, StatoDonatore
@@ -13,6 +14,7 @@ def avis_user_check(user):
     return user.is_staff
 
 
+@require_GET
 @user_passes_test(avis_user_check)
 def index(request):
     return render(request, 'avis/index.html')

@@ -1,0 +1,22 @@
+{% extends 'avis/base.html' %}
+
+{% block nav %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row etichette-riga">
+    {% for donatore in object_list %}
+    <div class="col-4 etichetta">
+        {% include "avis/includes/donatore_etichetta.html" %}
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    window.onload = () => {
+        window.print();
+    };
+</script>
+
+{% endblock %}

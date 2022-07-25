@@ -1,0 +1,40 @@
+<div class="container-fluid benemerenza">
+    <div class="row align-items-center riga-comune-avis">
+        <div class="col text-center">
+            <h1>{{ donatore.sezione.comune | title }}</h1>
+        </div>
+    </div>
+
+    <div class="row align-items-center riga-donatore">
+        <div class="col text-center">
+            <h1>{{ donatore.cognome }} {{ donatore.nome }}</h1>
+        </div>
+    </div>
+
+    <div class="row align-items-center riga-pres-segr">
+        <div class="col text-center">
+            <strong>{{ donatore.sezione.segretario | title }}</strong>
+        </div>
+
+        <div class="col text-center">
+            <strong>{{ donatore.sezione.presidente | title }}</strong>
+        </div>
+    </div>
+
+    <div class="row align-items-center riga-luogo-data">
+        <div class="col">
+            {% if donatore.sezione.luogo_stampa_benemerenze %}
+            {{ donatore.sezione.luogo_stampa_benemerenze | title }},
+            {% else %}
+            {{ donatore.sezione.comune | title }},
+            {% endif %}
+
+            <!-- Data -->
+            {% if donatore.sezione.data_stampa_benemerenze %}
+            {{ donatore.sezione.data_stampa_benemerenze | date:"DATE_FORMAT" }}
+            {% else %}
+            {% now "DATE_FORMAT" %}
+            {% endif %}
+        </div>
+    </div>
+</div>

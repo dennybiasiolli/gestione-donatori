@@ -146,9 +146,17 @@
     </div>
 
     <div class="m-1 row">
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <button type="submit" class="btn btn-primary">Ricerca</button>
             {{ page_obj.paginator.count }} donatori trovati
+        </div>
+        <div class="col-sm-6 text-end d-print-none">
+            <a class="btn btn-outline-secondary" href="?stampa=benemerenze&{{ querystring }}" target="_blank">
+                Benemerenze
+            </a>
+            <a class="btn btn-outline-secondary" href="?stampa=etichette&{{ querystring }}" target="_blank">
+                Etichette
+            </a>
         </div>
     </div>
 </form>
@@ -156,7 +164,7 @@
 <table class="table">
     <thead class="table-light">
         <tr>
-            <th scope="col">N. Tessera</th>
+            <th scope="col">N.Tessera</th>
             <th scope="col">Donazioni</th>
             <th scope="col">Nome</th>
             <th scope="col">Sesso</th>
@@ -285,9 +293,5 @@
         {% endif %}
     </ul>
 </nav>
-
-{% for i in page_range %}
-    {{ i }}
-{% endfor %}
 
 {% endblock %}

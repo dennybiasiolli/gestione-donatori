@@ -18,6 +18,18 @@ class Sezione(models.Model):
     email = models.CharField(max_length=100)
     presidente = models.CharField(max_length=100)
     segretario = models.CharField(max_length=100)
+    luogo_stampa_benemerenze = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text='Luogo da usare per la stampa delle benemerenze,'
+        ' se non specificato, verrà usato il comune della sezione.',
+    )
+    data_stampa_benemerenze = models.DateField(
+        null=True,
+        blank=True,
+        help_text='Data da usare per la stampa delle benemerenze,'
+        ' se non specificata, verrà usata la data corrente.',
+    )
 
     class Meta:
         verbose_name_plural = 'Sezioni'

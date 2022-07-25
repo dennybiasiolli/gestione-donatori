@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count, F, Prefetch, Q
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_GET
 from django.views.generic import DetailView, ListView
 
 from .models import Donatore, Donazione, Sesso, Sezione, StatoDonatore
@@ -13,6 +14,7 @@ def avis_user_check(user):
     return user.is_staff
 
 
+@require_GET
 @user_passes_test(avis_user_check)
 def index(request):
     return render(request, 'avis/index.html')
@@ -25,7 +27,17 @@ class DonatoreListView(ListView):
 
     extra_context = {}
 
+    def get_template_names(self):
+        stampa = self.request.GET.get('stampa')
+        if stampa in ('benemerenze', 'etichette'):
+            return [f'avis/donatore_list_{stampa}.html']
+        else:
+            return super().get_template_names()
+
     def get_paginate_by(self, queryset):
+        stampa = self.request.GET.get('stampa')
+        if stampa:
+            return 0
         default_paginate_by = super().get_paginate_by(queryset)
         paginate_by = self.request.GET.get('paginate_by', '')
         return paginate_by if paginate_by.isdigit() else default_paginate_by
@@ -58,6 +70,7 @@ class DonatoreListView(ListView):
     def get_queryset(self):
         qs = super().get_queryset()
 
+        donatore_id = self.request.GET.get('donatore_id', None)
         ricerca = self.request.GET.get('ricerca', None)
         sezione_id = self.request.GET.get('sezione_id', None)
         if sezione_id:
@@ -120,6 +133,8 @@ class DonatoreListView(ListView):
             .order_by('cognome', 'nome')
         )
 
+        if donatore_id:
+            qs = qs.filter(id=donatore_id)
         if ricerca:
             qs = qs.filter(
                 Q(num_tessera__icontains=ricerca)
@@ -168,9 +183,11 @@ class DonatoreListView(ListView):
 
         page = self.request.GET.get('page', 1)
         paginate_by = self.get_paginate_by(qs)
-        page_range = self.get_paginator(qs, paginate_by).get_elided_page_range(
-            number=page
-        )
+        page_range = None
+        if paginate_by:
+            page_range = self.get_paginator(
+                qs, paginate_by
+            ).get_elided_page_range(number=page)
 
         self.extra_context = {
             'ricerca': ricerca or '',

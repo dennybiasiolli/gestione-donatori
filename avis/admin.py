@@ -54,11 +54,8 @@ class StatoDonatoreAdmin(admin.ModelAdmin):
         return super().has_delete_permission(request, obj)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if not request.user.is_superuser:
-            if db_field.name == 'sezione':
-                kwargs['queryset'] = Sezione.objects.filter(
-                    utente=request.user
-                )
+        if not request.user.is_superuser and db_field.name == 'sezione':
+            kwargs['queryset'] = Sezione.objects.filter(utente=request.user)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def get_form(self, request, obj=None, **kwargs):
@@ -113,11 +110,8 @@ class DonatoreAdmin(VersionAdmin):
         return qs
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if not request.user.is_superuser:
-            if db_field.name == 'sezione':
-                kwargs['queryset'] = Sezione.objects.filter(
-                    utente=request.user
-                )
+        if not request.user.is_superuser and db_field.name == 'sezione':
+            kwargs['queryset'] = Sezione.objects.filter(utente=request.user)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def get_form(self, request, obj=None, **kwargs):

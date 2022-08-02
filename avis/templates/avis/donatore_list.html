@@ -2,6 +2,47 @@
 
 {% block content %}
 
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Stampa etichette</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="m-1 row">
+                        <label class="col-auto col-form-label">Etichette già stampate</label>
+                        <div class="col">
+                            <input id="skipEtichette" type="number" min="0" max="11" class="form-control" value="0"
+                                autofocus />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                <button type="button" class="btn btn-primary"
+                    onclick="handlePrint('?stampa=etichette&{{ querystring }}', '_blank')">
+                    Stampa Etichette
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const handlePrint = (baseUrl, target) => {
+        const skipEtichetteEl = document.getElementById('skipEtichette');
+        const skipEtichette = parseInt(skipEtichetteEl.value);
+        window.open(`${baseUrl}&skip_etichette=${skipEtichette}`, target);
+        const myModalEl = document.getElementById('myModal');
+        const modal = bootstrap.Modal.getInstance(myModalEl);
+        modal.hide();
+    }
+</script>
+<!-- End Modal -->
+
 <form type="get" action="/donatori" class="d-print-none" style="margin: 0;">
     <div class="m-1 row">
         <label class="col-sm-2 col-form-label">Ricerca</label>
@@ -154,7 +195,10 @@
             <a class="btn btn-outline-secondary" href="?stampa=benemerenze&{{ querystring }}" target="_blank">
                 Benemerenze
             </a>
-            <a class="btn btn-outline-secondary" href="?stampa=etichette&{{ querystring }}" target="_blank">
+            <a class="btn btn-outline-secondary" href="?stampa=etichette&{{ querystring }}" target="_blank"
+                data-bs-toggle="modal"
+                data-bs-target="#myModal"
+            >
                 Etichette
             </a>
         </div>

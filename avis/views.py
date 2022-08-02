@@ -54,6 +54,9 @@ class DonatoreListView(ListView):
 
         get_copy = self.request.GET.copy()
         querystring = get_copy.pop('page', True) and get_copy.urlencode()
+        skip_etichette = self.request.GET.get('skip_etichette', '0')
+        if skip_etichette:
+            skip_etichette = int(skip_etichette)
 
         context.update(
             {
@@ -62,6 +65,7 @@ class DonatoreListView(ListView):
                 'sezioni': sezioni,
                 'stati_donatore': stati_donatore,
                 'querystring': querystring,
+                'skip_etichette_list': range(skip_etichette),
             }
         )
 

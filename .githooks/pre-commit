@@ -1,3 +1,9 @@
 #!/bin/sh
 
-make style-check
+files=`git diff --cached --name-status --diff-filter=ACMR -- '***.py' | awk '/^[ACMR]/ {print $2}'`
+echo "$files" | xargs pylint --load-plugins pylint_django --django-settings-module=website.settings_test --errors-only --recursive=y
+echo "$files" | xargs autoflake --check --remove-unused-variables --remove-all-unused-imports --ignore-init-module-imports --recursive
+echo "$files" | xargs isort --check-only --profile black --line-length=79
+echo "$files" | xargs black --check --diff --line-length=79 --skip-string-normalization
+echo "$files" | xargs autopep8 --diff --exit-code --aggressive --recursive
+echo "$files" | xargs flake8 --max-line-length=79 --max-doc-length=72 --extend-ignore=E203

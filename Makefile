@@ -1,5 +1,4 @@
 style-fix:
-	autoflake --in-place --remove-unused-variables --remove-all-unused-imports --ignore-init-module-imports --recursive .
 	isort --profile black --line-length=79 .
 	black --line-length=79 --skip-string-normalization .
 	autopep8 --in-place --aggressive --recursive .
@@ -7,7 +6,6 @@ style-fix:
 
 style-check:
 	pylint --load-plugins pylint_django --django-settings-module=website.settings_test --errors-only --recursive=y .
-	autoflake --check --remove-unused-variables --remove-all-unused-imports --ignore-init-module-imports --recursive .
 	isort --check-only --profile black --line-length=79 .
 	black --check --diff --line-length=79 --skip-string-normalization .
 	autopep8 --diff --exit-code --aggressive --recursive .

@@ -38,8 +38,7 @@ class StatoDonatoreAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         if not request.user.is_superuser:
             qs = qs.filter(
-                Q(sezione__utente__isnull=True)
-                | Q(sezione__utente=request.user)
+                Q(sezione__utente__isnull=True) | Q(sezione__utente=request.user)
             )
         return qs
 
@@ -62,9 +61,9 @@ class StatoDonatoreAdmin(admin.ModelAdmin):
         form = super().get_form(request, obj, **kwargs)
         if not request.user.is_superuser:
             form.base_fields['sezione'].required = True
-            form.base_fields['sezione'].initial = form.base_fields[
-                'sezione'
-            ].queryset[0]
+            form.base_fields['sezione'].initial = form.base_fields['sezione'].queryset[
+                0
+            ]
         return form
 
 
@@ -117,7 +116,7 @@ class DonatoreAdmin(VersionAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
         if not request.user.is_superuser:
-            form.base_fields['sezione'].initial = form.base_fields[
-                'sezione'
-            ].queryset[0]
+            form.base_fields['sezione'].initial = form.base_fields['sezione'].queryset[
+                0
+            ]
         return form

@@ -86,9 +86,7 @@ def reverse_func(apps, schema_editor):
 
     Sesso.objects.using(db_alias).filter(codice='M').delete()
     Sesso.objects.using(db_alias).filter(codice='F').delete()
-    StatoDonatore.objects.using(db_alias).filter(
-        sezione=None, codice='Attivo'
-    ).delete()
+    StatoDonatore.objects.using(db_alias).filter(sezione=None, codice='Attivo').delete()
     StatoDonatore.objects.using(db_alias).filter(
         sezione=None, codice='Inattivo'
     ).delete()

@@ -35,9 +35,7 @@ class Command(BaseCommand):
         # import sezioni
         sezioni = self._read_json(os.path.join(options['dir'], 'sezioni.json'))
 
-        sezione = Sezione.objects.filter(
-            descrizione=sezioni[0]['Descrizione']
-        ).first()
+        sezione = Sezione.objects.filter(descrizione=sezioni[0]['Descrizione']).first()
         if sezione is None:
             sezione = Sezione.objects.create(
                 utente=user,
@@ -54,9 +52,7 @@ class Command(BaseCommand):
             )
 
         # import stati donatori
-        stati = self._read_json(
-            os.path.join(options['dir'], 'statiDonatori.json')
-        )
+        stati = self._read_json(os.path.join(options['dir'], 'statiDonatori.json'))
         for stato in stati:
             stato_donatore = StatoDonatore.objects.filter(
                 # utente=user,
@@ -75,9 +71,7 @@ class Command(BaseCommand):
         ).values('id', 'codice')
 
         # import donatori
-        donatori = self._read_json(
-            os.path.join(options['dir'], 'donatori.json')
-        )
+        donatori = self._read_json(os.path.join(options['dir'], 'donatori.json'))
         sesso_m = Sesso.objects.filter(codice='M').first()
         sesso_f = Sesso.objects.filter(codice='F').first()
         for d in donatori:
@@ -103,12 +97,8 @@ class Command(BaseCommand):
                         d['DataRilascioTessera']
                     ),
                     codice_fiscale='',
-                    data_nascita=self._date_from_string_or_none(
-                        d['DataNascita']
-                    ),
-                    data_iscrizione=self._date_from_string_or_none(
-                        d['DataIscrizione']
-                    ),
+                    data_nascita=self._date_from_string_or_none(d['DataNascita']),
+                    data_iscrizione=self._date_from_string_or_none(d['DataIscrizione']),
                     gruppo_sanguigno=d['GruppoSanguigno'],
                     rh=d['Rh'],
                     fenotipo=d['Fenotipo'],
@@ -129,9 +119,7 @@ class Command(BaseCommand):
                 )
 
             # import donazioni
-            donazioni = sorted(
-                d['donazioni'], key=lambda k: k['DataDonazione']
-            )
+            donazioni = sorted(d['donazioni'], key=lambda k: k['DataDonazione'])
             for donazione in donazioni:
                 tipo_donazione = donazione.get('TipoDonazione', {}) or {}
                 tipo_donazione = tipo_donazione.get('Descrizione', None)
@@ -159,9 +147,7 @@ class Command(BaseCommand):
                         donatore,
                         '\n',
                         '\t',
-                        self._date_from_string_or_none(
-                            donazione['DataDonazione']
-                        ),
+                        self._date_from_string_or_none(donazione['DataDonazione']),
                         # err,
                     )
                     raise

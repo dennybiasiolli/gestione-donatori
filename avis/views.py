@@ -48,8 +48,7 @@ class DonatoreListView(ListView):
         sessi = Sesso.objects.all()
         sezioni = Sezione.objects.filter(utente=self.request.user)
         stati_donatore = StatoDonatore.objects.filter(
-            Q(sezione__utente__isnull=True)
-            | Q(sezione__utente=self.request.user)
+            Q(sezione__utente__isnull=True) | Q(sezione__utente=self.request.user)
         )
 
         get_copy = self.request.GET.copy()
@@ -83,9 +82,7 @@ class DonatoreListView(ListView):
         if stato_donatore_id:
             stato_donatore_id = int(stato_donatore_id)
         if 'stato_donatore_id' not in self.request.GET:
-            stato_donatore_id = (
-                StatoDonatore.objects.filter(codice='Attivo').first().pk
-            )
+            stato_donatore_id = StatoDonatore.objects.filter(codice='Attivo').first().pk
         sesso_id = self.request.GET.get('sesso_id', None)
         if sesso_id:
             sesso_id = int(sesso_id)
@@ -97,23 +94,17 @@ class DonatoreListView(ListView):
             data_nascita_al = datetime.date.fromisoformat(data_nascita_al)
         data_iscrizione_dal = self.request.GET.get('data_iscrizione_dal', '')
         if data_iscrizione_dal:
-            data_iscrizione_dal = datetime.date.fromisoformat(
-                data_iscrizione_dal
-            )
+            data_iscrizione_dal = datetime.date.fromisoformat(data_iscrizione_dal)
         data_iscrizione_al = self.request.GET.get('data_iscrizione_al', '')
         if data_iscrizione_al:
-            data_iscrizione_al = datetime.date.fromisoformat(
-                data_iscrizione_al
-            )
+            data_iscrizione_al = datetime.date.fromisoformat(data_iscrizione_al)
         gruppo_sanguigno = self.request.GET.get('gruppo_sanguigno', None)
         rh = self.request.GET.get('rh', None)
         fenotipo = self.request.GET.get('fenotipo', None)
         kell = self.request.GET.get('kell', None)
         data_donazione_dal = self.request.GET.get('data_donazione_dal', None)
         if data_donazione_dal:
-            data_donazione_dal = datetime.date.fromisoformat(
-                data_donazione_dal
-            )
+            data_donazione_dal = datetime.date.fromisoformat(data_donazione_dal)
         data_donazione_al = self.request.GET.get('data_donazione_al', None)
         if data_donazione_al:
             data_donazione_al = datetime.date.fromisoformat(data_donazione_al)
@@ -189,9 +180,9 @@ class DonatoreListView(ListView):
         paginate_by = self.get_paginate_by(qs)
         page_range = None
         if paginate_by:
-            page_range = self.get_paginator(
-                qs, paginate_by
-            ).get_elided_page_range(number=page)
+            page_range = self.get_paginator(qs, paginate_by).get_elided_page_range(
+                number=page
+            )
 
         self.extra_context = {
             'ricerca': ricerca or '',
@@ -201,9 +192,7 @@ class DonatoreListView(ListView):
             'data_nascita_dal': data_nascita_dal.isoformat()
             if data_nascita_dal
             else '',
-            'data_nascita_al': data_nascita_al.isoformat()
-            if data_nascita_al
-            else '',
+            'data_nascita_al': data_nascita_al.isoformat() if data_nascita_al else '',
             'data_iscrizione_dal': data_iscrizione_dal.isoformat()
             if data_iscrizione_dal
             else '',
@@ -254,9 +243,7 @@ class DonatoreDetailView(DetailView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.select_related(
-            'sesso', 'sezione', 'stato_donatore'
-        ).prefetch_related(
+        qs = qs.select_related('sesso', 'sezione', 'stato_donatore').prefetch_related(
             Prefetch(
                 'donazioni',
                 queryset=Donazione.objects.order_by('-data_donazione'),

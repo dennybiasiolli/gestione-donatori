@@ -115,6 +115,12 @@ class DonatoreListView(ListView):
         show_n_donazioni = self.request.GET.get('show_n_donazioni', None)
         if show_n_donazioni:
             show_n_donazioni = int(show_n_donazioni)
+        order_by_str = self.request.GET.get('order_by', 'cognome,nome')
+        order_by_direction = self.request.GET.get('order_by_direction', '')
+        order_by = list(map(lambda o: order_by_direction + o, order_by_str.split(',')))
+        if 'cognome' not in order_by:
+            order_by.append('cognome')
+            order_by.append('nome')
 
         qs = (
             qs.select_related('sesso', 'sezione', 'stato_donatore')
@@ -125,7 +131,6 @@ class DonatoreListView(ListView):
                 ),
             )
             .filter(sezione__utente=self.request.user)
-            .order_by('cognome', 'nome')
         )
 
         if donatore_id:
@@ -175,6 +180,7 @@ class DonatoreListView(ListView):
             num_donazioni=Count('donazioni'),
             tot_donazioni=Count('donazioni') + F('donazioni_pregresse'),
         )
+        qs = qs.order_by(*order_by)
 
         page = self.request.GET.get('page', 1)
         paginate_by = self.get_paginate_by(qs)
@@ -232,6 +238,8 @@ class DonatoreListView(ListView):
             ),
             'paginate_by': paginate_by,
             'page_range': page_range,
+            'order_by': order_by_str,
+            'order_by_direction': order_by_direction,
         }
 
         return qs

@@ -174,16 +174,35 @@
     </div>
 
     <div class="m-1 row">
-        <label class="col-sm-2 col-form-label">Visualizza le ultime</label>
-        <div class="col-sm-2">
-            <input type="number" class="form-control form-control-inline" name="show_n_donazioni" value="{{ show_n_donazioni }}" min="0" max="12" />
-        </div>
-        <label class="col-sm-2 col-form-label">donazioni</label>
-        <label class="col-sm-2 col-form-label">Visualizza</label>
-        <div class="col-sm-2">
+        <label class="col-md-2 col-form-label">Risultati per pagina</label>
+        <div class="col-md-1">
             <input type="number" class="form-control form-control-inline" name="paginate_by" value="{{ paginate_by }}" min="1" />
         </div>
-        <label class="col-sm-2 col-form-label">risultati per pagina</label>
+        <label class="col-md-1 col-form-label">Ordina per</label>
+        <div class="col-md-2">
+            <select class="form-select" name="order_by">
+                <option value="cognome,nome"{% if order_by == 'cognome,nome' %} selected{% endif %}>Cognome, Nome</option>
+                <option value="gruppo_sanguigno,rh"{% if order_by == 'gruppo_sanguigno,rh' %} selected{% endif %}>Gruppo Sanguigno</option>
+                <option value="comune"{% if order_by == 'comune' %} selected{% endif %}>Comune</option>
+                <option value="sesso"{% if order_by == 'sesso' %} selected{% endif %}>Sesso</option>
+                <option value="num_donazioni"{% if order_by == 'num_donazioni' %} selected{% endif %}>Donazioni registrate</option>
+                <option value="tot_donazioni"{% if order_by == 'tot_donazioni' %} selected{% endif %}>Donazioni totali (incluse pregresse)</option>
+            </select>
+        </div>
+        <div class="col-md-3 col-form-label">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="order_by_direction" value=""{% if order_by_direction == '' %} checked{% endif %}>
+                <label class="form-check-label">Crescente</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="order_by_direction" value="-"{% if order_by_direction == '-' %} checked{% endif %}>
+                <label class="form-check-label">Decrescente</label>
+            </div>
+        </div>
+        <label class="col-md-2 col-form-label">Visualizza ultime donazioni</label>
+        <div class="col-md-1">
+            <input type="number" class="form-control form-control-inline" name="show_n_donazioni" value="{{ show_n_donazioni }}" min="0" max="12" />
+        </div>
     </div>
 
     <div class="m-1 row">
@@ -212,7 +231,11 @@
             <th scope="col">Donazioni</th>
             <th scope="col">Nome</th>
             <th scope="col">Sesso</th>
-            <th scope="col">Gr.</th>
+            <th scope="col">
+                <a href="?order_by=gruppo_sanguigno%2Crh&{{ querystring }}">
+                    Gr.
+                </a>
+            </th>
             <th scope="col">Contatti</th>
             <th scope="col">Indirizzo</th>
             <!-- {% if show_n_donazioni > 0 %}
@@ -292,7 +315,7 @@
     <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ querystring }}">
                     &laquo;
                 </a>
             </li>

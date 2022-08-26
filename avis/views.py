@@ -1,7 +1,7 @@
 import datetime
 
 from django.contrib.auth.decorators import user_passes_test
-from django.db.models import Count, F, Prefetch, Q
+from django.db.models import Count, F, Max, Prefetch, Q
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_GET
@@ -179,6 +179,7 @@ class DonatoreListView(ListView):
         qs = qs.annotate(
             num_donazioni=Count('donazioni'),
             tot_donazioni=Count('donazioni') + F('donazioni_pregresse'),
+            ultima_donazione=Max('donazioni__data_donazione'),
         )
         qs = qs.order_by(*order_by)
 

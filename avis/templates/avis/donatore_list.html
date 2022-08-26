@@ -185,8 +185,9 @@
                 <option value="gruppo_sanguigno,rh"{% if order_by == 'gruppo_sanguigno,rh' %} selected{% endif %}>Gruppo Sanguigno</option>
                 <option value="comune"{% if order_by == 'comune' %} selected{% endif %}>Comune</option>
                 <option value="sesso"{% if order_by == 'sesso' %} selected{% endif %}>Sesso</option>
-                <option value="num_donazioni"{% if order_by == 'num_donazioni' %} selected{% endif %}>Donazioni registrate</option>
-                <option value="tot_donazioni"{% if order_by == 'tot_donazioni' %} selected{% endif %}>Donazioni totali (incluse pregresse)</option>
+                <option value="num_donazioni,tot_donazioni"{% if order_by == 'num_donazioni,tot_donazioni' %} selected{% endif %}>Donazioni registrate</option>
+                <option value="tot_donazioni,num_donazioni"{% if order_by == 'tot_donazioni,num_donazioni' %} selected{% endif %}>Donazioni totali (incluse pregresse)</option>
+                <option value="ultima_donazione"{% if order_by == 'ultima_donazione' %} selected{% endif %}>Data ultima donazione</option>
             </select>
         </div>
         <div class="col-md-3 col-form-label">
@@ -241,6 +242,7 @@
             <!-- {% if show_n_donazioni > 0 %}
             <th scope="col">Ultime {{ show_n_donazioni }} donazioni</th>
             {% endif %} -->
+            <th scope="col">Ultima donazione</th>
         </tr>
     </thead>
     <tbody>
@@ -294,6 +296,11 @@
                 {% endfor %}
             </td>
             {% endif %} -->
+            <td>
+                {% if donatore.ultima_donazione %}
+                {{ donatore.ultima_donazione }}
+                {% endif %}
+            </td>
         </tr>
         {% if show_n_donazioni > 0 %}
         <tr style="page-break-inside:avoid; page-break-before:avoid;">

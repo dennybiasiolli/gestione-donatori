@@ -37,9 +37,7 @@ class StatoDonatoreAdmin(admin.ModelAdmin):
     def get_queryset(self, request: HttpRequest):
         qs = super().get_queryset(request)
         if not request.user.is_superuser:
-            qs = qs.filter(
-                Q(sezione__utente__isnull=True) | Q(sezione__utente=request.user)
-            )
+            qs = qs.filter(Q(sezione__isnull=True) | Q(sezione__utente=request.user))
         return qs
 
     def has_change_permission(self, request: HttpRequest, obj=None) -> bool:
@@ -59,7 +57,7 @@ class StatoDonatoreAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        if not request.user.is_superuser:
+        if not request.user.is_superuser and 'sezione' in form.base_fields:
             form.base_fields['sezione'].required = True
             form.base_fields['sezione'].initial = form.base_fields['sezione'].queryset[
                 0

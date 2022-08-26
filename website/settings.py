@@ -40,6 +40,14 @@ ALLOWED_HOSTS = [
     ).split(',')
     if h != ''
 ]
+CSRF_TRUSTED_ORIGINS = [
+    h
+    for h in os.getenv(
+        'CSRF_TRUSTED_ORIGINS',
+        '',
+    ).split(',')
+    if h != ''
+]
 
 # Application definition
 

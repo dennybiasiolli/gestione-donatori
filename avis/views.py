@@ -22,7 +22,7 @@ def index(request):
 
 @method_decorator(user_passes_test(avis_user_check), name='dispatch')
 class DonatoreListView(ListView):
-    paginate_by = 5
+    paginate_by = 10
     model = Donatore
 
     extra_context = {}

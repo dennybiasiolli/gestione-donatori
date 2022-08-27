@@ -19,4 +19,9 @@ urlpatterns = [
         views.DonatoreDetailView.as_view(),
         name='donatore',
     ),
+    path(
+        'donatori/<int:pk>/nuova-donazione/',
+        views.DonazioneCreateView.as_view(),
+        name='donazione-create',
+    ),
 ]

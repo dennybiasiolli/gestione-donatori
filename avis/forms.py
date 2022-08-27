@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 
+from .models import Donazione
+
 
 class BootstrapAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
@@ -25,3 +27,25 @@ class BootstrapAuthenticationForm(AuthenticationForm):
             },
         ),
     )
+
+
+class DonazioneForm(forms.ModelForm):
+    class Meta:
+        model = Donazione
+        fields = ['donatore', 'data_donazione', 'tipo_donazione']
+        widgets = {
+            'donatore': forms.HiddenInput(),
+            'tipo_donazione': forms.Select(
+                choices=Donazione.TipoDonazione.choices,
+                attrs={
+                    'class': 'form-select-sm',
+                },
+            ),
+            'data_donazione': forms.DateInput(
+                format=('%Y-%m-%d'),
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control-sm',
+                },
+            ),
+        }

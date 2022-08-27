@@ -1,11 +1,16 @@
 import datetime
+from typing import Any, Dict
 
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count, F, Max, Prefetch, Q
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_GET
 from django.views.generic import DetailView, ListView
+from django.views.generic.edit import CreateView
+
+from avis.forms import DonazioneForm
 
 from .models import Donatore, Donazione, Sesso, Sezione, StatoDonatore
 
@@ -259,3 +264,29 @@ class DonatoreDetailView(DetailView):
             ),
         )
         return qs
+
+
+@method_decorator(user_passes_test(avis_user_check), name='dispatch')
+class DonazioneCreateView(CreateView):
+    model = Donazione
+    form_class = DonazioneForm
+
+    def get_success_url(self) -> str:
+        return reverse_lazy('donatore', kwargs={'pk': self.object.donatore.pk})
+
+    def get_initial(self) -> Dict[str, Any]:
+        return {
+            'donatore': self.kwargs['pk'],
+            'tipo_donazione': Donazione.TipoDonazione.SANGUE_INTERO,
+            'data_donazione': datetime.date.today(),
+        }
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context_data = super().get_context_data(**kwargs)
+        donatore = get_object_or_404(Donatore, pk=self.kwargs['pk'])
+        context_data.update(
+            {
+                'donatore': donatore,
+            }
+        )
+        return context_data

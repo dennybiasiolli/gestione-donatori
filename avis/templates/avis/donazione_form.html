@@ -1,0 +1,57 @@
+{% extends 'avis/base.html' %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+        <h2 class="card-title">
+            Nuova donazione per {{ donatore.cognome }} {{ donatore.nome }}
+        </h2>
+        <div class="card-text">
+            <form method="post">
+                {% csrf_token %}
+
+                {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{error}}
+                </div>
+                {% endfor %}
+
+                {# Include the hidden fields #}
+                {% for field in form.hidden_fields %}
+                {{ field }}
+                {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    {{ error|escape }}
+                </div>
+                {% endfor %}
+                {% endfor %}
+
+                {% for field in form.visible_fields %}
+                <div class="m-1 row">
+                    {{ field.label_tag }}
+
+                    {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        {{ error|escape }}
+                    </div>
+                    {% endfor %}
+
+                    {{ field }}
+                </div>
+                {% endfor %}
+
+                <div class="mx-1 my-3">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        Aggiungi donazione
+                    </button>
+                    <a type="submit" class="btn btn-outline-secondary btn-sm" href="{% url 'donatore' donatore.id %}">
+                        Annulla
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -102,6 +102,12 @@ class Donatore(models.Model):
     nome = models.CharField(max_length=255)
     sesso = models.ForeignKey(Sesso, on_delete=models.RESTRICT)
     stato_donatore = models.ForeignKey(StatoDonatore, on_delete=models.RESTRICT)
+    motivo_inattivita = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name='Motivo inattività',
+        help_text='Inserire eventuale motivo di inattività',
+    )
     data_rilascio_tessera = models.DateField(null=True, blank=True)
     codice_fiscale = models.CharField(max_length=255, blank=True)
     data_nascita = models.DateField(null=True, blank=True)

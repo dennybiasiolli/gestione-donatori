@@ -14,7 +14,7 @@
 </div>
 
 <div class="card">
-    <div class="card-body">
+    <div class="card-header">
         <div class="row g-2">
             <div class="col-4 text-center">
                 N. Tessera C.T. {{ donatore.num_tessera_ct }}
@@ -30,7 +30,10 @@
             <div class="col-4 text-center">
                 N. Tessera AVIS {{ donatore.num_tessera_avis }}
             </div>
-
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row g-2">
             <div class="col-6">
                 <div class="card">
                     <div class="card-header">
@@ -88,7 +91,7 @@
             <div class="col-6">
                 <div class="card">
                     <div class="card-header">
-                        Residenza
+                        Indirizzo
                     </div>
                     <div class="card-body">
                         <h6 class="card-text">
@@ -136,17 +139,51 @@
             <div class="col-6">
                 <div class="card">
                     <div class="card-header">
+                        Iscrizione all'AVIS
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-text">
+                            {% if donatore.data_iscrizione and donatore.data_iscrizione.year > 1900 %}
+                            Iscritt{% if donatore.sesso.codice == 'M' %}o{% else %}a{% endif %} dal {{ donatore.data_iscrizione | date:'d/m/Y' }}
+                            {% endif %}
+                            <!-- {% if donatore.data_rilascio_tessera and donatore.data_rilascio_tessera.year > 1900 %}
+                            (tessera rilasciata il {{ donatore.data_rilascio_tessera | date:'d/m/Y' }})
+                            {% endif %} -->
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        Stato donat{% if donatore.sesso.codice == 'M' %}ore{% else %}rice{% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-text">
+                            {{ donatore.stato_donatore.descrizione }}
+                            {% if donatore.motivo_inattivita %}
+                            <br>Motivo inattività: {{ donatore.motivo_inattivita }}
+                            {% else %}
+                            &nbsp;
+                            {% endif %}
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
                         Donazioni
                     </div>
                     <div class="card-body">
-                        <h5 class="card-text">
+                        <h6 class="card-text">
                             Totale donazioni effettuate: {{ donatore.donazioni.all.count|add:donatore.donazioni_pregresse }}
                             {% if donatore.donazioni_pregresse > 0 %}
                             <br>Donazioni inserite: {{ donatore.donazioni.all.count }}
                             <br>Donazioni pregresse: {{ donatore.donazioni_pregresse }}
                             {% endif %}
                             <br>Benemerenze acquisite: {{ donatore.num_benemerenze }}
-                        </h5>
+                        </h6>
                     </div>
                 </div>
             </div>

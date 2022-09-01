@@ -124,6 +124,7 @@ class Donatore(models.Model):
     fermo_per_malattia = models.BooleanField(default=False)
     donazioni_pregresse = models.IntegerField(default=0)
     num_benemerenze = models.IntegerField(default=0)
+    scheda_anamnestica = models.TextField(blank=True)
 
     class Meta:
         verbose_name_plural = 'Donatori'

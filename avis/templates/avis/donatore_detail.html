@@ -176,6 +176,21 @@
                 </div>
             </div>
 
+            {% if donatore.scheda_anamnestica %}
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        Scheda anamnestica
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">
+                            {{ donatore.scheda_anamnestica|linebreaksbr }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
             {% if donatore.donazioni.all.count > 0 %}
             <div class="col-12">
                 <div class="card">

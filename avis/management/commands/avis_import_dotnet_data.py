@@ -77,7 +77,7 @@ class Command(BaseCommand):
         for d in donatori:
             donatore = Donatore.objects.filter(
                 sezione=sezione,
-                num_tessera=d['NumTessera'],
+                num_tessera_avis=d['NumTessera'],
             ).first()
             if donatore is None:
                 sesso = d.get('Sesso', {}) or {}
@@ -85,7 +85,7 @@ class Command(BaseCommand):
                 sesso = sesso_f if sesso == 'F' else sesso_m
                 donatore = Donatore.objects.create(
                     sezione=sezione,
-                    num_tessera=d['NumTessera'],
+                    num_tessera_avis=d['NumTessera'],
                     cognome=d['Cognome'],
                     nome=d['Nome'],
                     sesso=sesso,

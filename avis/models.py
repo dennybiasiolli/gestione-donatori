@@ -82,7 +82,11 @@ class Donatore(models.Model):
     sezione = models.ForeignKey(
         Sezione, related_name='donatori', on_delete=models.RESTRICT
     )
-    num_tessera = models.CharField(max_length=255)
+    num_tessera_avis = models.CharField(
+        max_length=255,
+        help_text='Num. Tessera AVIS, inserito nel programma',
+        verbose_name='N. Tessera AVIS',
+    )
     cognome = models.CharField(max_length=255)
     nome = models.CharField(max_length=255)
     sesso = models.ForeignKey(Sesso, on_delete=models.RESTRICT)
@@ -114,11 +118,11 @@ class Donatore(models.Model):
         verbose_name_plural = 'Donatori'
         unique_together = (
             'sezione',
-            'num_tessera',
+            'num_tessera_avis',
         )
 
     def __str__(self):
-        return '{} - {} {}'.format(self.num_tessera, self.cognome, self.nome)
+        return '{} - {} {}'.format(self.num_tessera_avis, self.cognome, self.nome)
 
 
 class Donazione(models.Model):

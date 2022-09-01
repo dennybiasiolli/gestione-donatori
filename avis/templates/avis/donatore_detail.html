@@ -22,7 +22,7 @@
             </div>
         </h2>
         <div class="card-subtitle mb-2 text-muted">
-            Num. tessera: {{ donatore.num_tessera }},
+            Num. tessera: {{ donatore.num_tessera_avis }},
             {% if donatore.data_iscrizione and donatore.data_iscrizione.year > 1900 %}
             iscritt{% if donatore.sesso.codice == 'M' %}o{% else %}a{% endif %} dal {{ donatore.data_iscrizione | date:'d/m/Y' }}
             {% endif %}

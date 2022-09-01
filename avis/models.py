@@ -1,6 +1,8 @@
 from datetime import date
+from typing import Collection, Optional
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 
 User = get_user_model()
@@ -82,15 +84,28 @@ class Donatore(models.Model):
     sezione = models.ForeignKey(
         Sezione, related_name='donatori', on_delete=models.RESTRICT
     )
-    num_tessera = models.CharField(max_length=255)
+    num_tessera_avis = models.CharField(
+        max_length=255,
+        help_text='Num. Tessera AVIS, inserito nel programma',
+        verbose_name='N. Tessera AVIS',
+    )
+    num_tessera_ct = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=(
+            'Num. Tessera usato per la registrazione'
+            ' e comunicato al Centro Trasfusionale'
+        ),
+        verbose_name='N. Tessera C.T.',
+    )
     cognome = models.CharField(max_length=255)
     nome = models.CharField(max_length=255)
     sesso = models.ForeignKey(Sesso, on_delete=models.RESTRICT)
     stato_donatore = models.ForeignKey(StatoDonatore, on_delete=models.RESTRICT)
-    num_tessera_cartacea = models.CharField(max_length=255, blank=True)
     data_rilascio_tessera = models.DateField(null=True, blank=True)
     codice_fiscale = models.CharField(max_length=255, blank=True)
     data_nascita = models.DateField(null=True, blank=True)
+    luogo_nascita = models.CharField(max_length=255, blank=True)
     data_iscrizione = models.DateField(null=True, blank=True)
     gruppo_sanguigno = models.CharField(max_length=10, blank=True)
     rh = models.CharField(max_length=10, blank=True)
@@ -109,23 +124,44 @@ class Donatore(models.Model):
     fermo_per_malattia = models.BooleanField(default=False)
     donazioni_pregresse = models.IntegerField(default=0)
     num_benemerenze = models.IntegerField(default=0)
+    scheda_anamnestica = models.TextField(blank=True)
 
     class Meta:
         verbose_name_plural = 'Donatori'
         unique_together = (
             'sezione',
-            'num_tessera',
+            'num_tessera_avis',
         )
 
     def __str__(self):
-        return '{} - {} {}'.format(self.num_tessera, self.cognome, self.nome)
+        return '{} - {} {}'.format(self.num_tessera_avis, self.cognome, self.nome)
+
+    def validate_unique(self, exclude: Optional[Collection[str]] = ...) -> None:
+        if (
+            self.num_tessera_ct
+            and Donatore.objects.select_related('stato_donatore')
+            .filter(
+                num_tessera_ct=self.num_tessera_ct,
+                stato_donatore__is_attivo=True,
+            )
+            .exclude(pk=self.pk)
+            .exists()
+        ):
+            raise ValidationError(
+                {
+                    'num_tessera_ct': (
+                        'Questo valore è già utilizzato da un altro donatore attivo'
+                    )
+                }
+            )
+        return super().validate_unique(exclude)
 
 
 class Donazione(models.Model):
     class TipoDonazione(models.IntegerChoices):
         SANGUE_INTERO = 1, 'Sangue intero'
         PLASMA = 2, 'Plasma'
-        PIASTRINE = 3, 'Piastrine'
+        # PIASTRINE = 3, 'Piastrine'
         __empty__ = 'Non specificato'
 
     donatore = models.ForeignKey(

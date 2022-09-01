@@ -74,7 +74,8 @@ class DonazioneInlineAdmin(admin.TabularInline):
 @admin.register(Donatore)
 class DonatoreAdmin(VersionAdmin):
     list_display = (
-        'num_tessera',
+        'num_tessera_avis',
+        'num_tessera_ct',
         'cognome',
         'nome',
         'sesso',
@@ -90,7 +91,7 @@ class DonatoreAdmin(VersionAdmin):
     )
     ordering = ('cognome', 'nome')
     search_fields = (
-        'num_tessera',
+        'num_tessera_avis',
         'cognome',
         'nome',
         'comune',

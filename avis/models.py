@@ -160,7 +160,7 @@ class Donazione(models.Model):
     class TipoDonazione(models.IntegerChoices):
         SANGUE_INTERO = 1, 'Sangue intero'
         PLASMA = 2, 'Plasma'
-        PIASTRINE = 3, 'Piastrine'
+        # PIASTRINE = 3, 'Piastrine'
         __empty__ = 'Non specificato'
 
     donatore = models.ForeignKey(

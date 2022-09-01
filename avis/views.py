@@ -143,6 +143,7 @@ class DonatoreListView(ListView):
         if ricerca:
             qs = qs.filter(
                 Q(num_tessera_avis__icontains=ricerca)
+                | Q(num_tessera_ct__icontains=ricerca)
                 | Q(cognome__icontains=ricerca)
                 | Q(nome__icontains=ricerca)
             )

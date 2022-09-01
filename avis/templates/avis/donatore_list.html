@@ -228,21 +228,20 @@
 <table class="table">
     <thead class="table-light">
         <tr>
-            <th scope="col">N.Tessera</th>
-            <th scope="col">Donazioni</th>
-            <th scope="col">Nome</th>
-            <th scope="col">Sesso</th>
-            <th scope="col">
-                <a href="?order_by=gruppo_sanguigno%2Crh&{{ querystring }}">
-                    Gr.
-                </a>
+            <th scope="col" class="align-middle">
+                N. Tessera AVIS<br>
+                N. Tessera C.T.
             </th>
-            <th scope="col">Contatti</th>
-            <th scope="col">Indirizzo</th>
+            <th scope="col" class="align-middle">Donazioni</th>
+            <th scope="col" class="align-middle">Nome</th>
+            <th scope="col" class="align-middle">Sesso</th>
+            <th scope="col" class="align-middle">Gr.</th>
+            <th scope="col" class="align-middle">Contatti</th>
+            <th scope="col" class="align-middle">Indirizzo</th>
             <!-- {% if show_n_donazioni > 0 %}
-            <th scope="col">Ultime {{ show_n_donazioni }} donazioni</th>
+            <th scope="col" class="align-middle">Ultime {{ show_n_donazioni }} donazioni</th>
             {% endif %} -->
-            <th scope="col">Ultima donazione</th>
+            <th scope="col" class="align-middle">Ultima donazione</th>
         </tr>
     </thead>
     <tbody>
@@ -250,7 +249,8 @@
         <tr style="page-break-inside:avoid; page-break-after:avoid;">
             <th scope="row">
                 <a href="{% url 'donatore' pk=donatore.pk %}">
-                    {{ donatore.num_tessera_avis }}
+                    AVIS: {{ donatore.num_tessera_avis }}<br>
+                    C.T.: {{ donatore.num_tessera_ct }}
                 </a>
             </th>
             <td>

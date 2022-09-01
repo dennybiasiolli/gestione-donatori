@@ -105,6 +105,7 @@ class Donatore(models.Model):
     data_rilascio_tessera = models.DateField(null=True, blank=True)
     codice_fiscale = models.CharField(max_length=255, blank=True)
     data_nascita = models.DateField(null=True, blank=True)
+    luogo_nascita = models.CharField(max_length=255, blank=True)
     data_iscrizione = models.DateField(null=True, blank=True)
     gruppo_sanguigno = models.CharField(max_length=10, blank=True)
     rh = models.CharField(max_length=10, blank=True)

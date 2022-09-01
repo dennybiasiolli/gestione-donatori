@@ -2,127 +2,187 @@
 
 {% block content %}
 
+<div class="row m-2">
+    <div class="col-12 text-end d-print-none">
+        <a class="btn btn-outline-secondary" href="{% url 'donatori' %}?stampa=benemerenze&donatore_id={{ donatore.id }}" target="_blank">
+            Benemerenza
+        </a>
+        <a class="btn btn-outline-secondary" href="{% url 'admin:avis_donatore_change' donatore.id %}" target="_blank">
+            Modifica
+        </a>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-body">
-        <h2 class="card-title">
-            <div class="row">
-                <div class="col-sm-9">
-                    <h2 class="card-title">
-                        {{ donatore.cognome }} {{ donatore.nome }}
-                    </h2>
-                </div>
-                <div class="col-sm-3 text-end d-print-none">
-                    <a class="btn btn-outline-secondary" href="{% url 'donatori' %}?stampa=benemerenze&donatore_id={{ donatore.id }}" target="_blank">
-                        Benemerenza
-                    </a>
-                    <a class="btn btn-outline-secondary" href="{% url 'admin:avis_donatore_change' donatore.id %}" target="_blank">
-                        Modifica
-                    </a>
-                </div>
+        <div class="row g-2">
+            <div class="col-4 text-center">
+                N. Tessera C.T. {{ donatore.num_tessera_ct }}
             </div>
-        </h2>
-        <div class="card-subtitle mb-2 text-muted">
-            Num. tessera: {{ donatore.num_tessera_avis }},
-            {% if donatore.data_iscrizione and donatore.data_iscrizione.year > 1900 %}
-            iscritt{% if donatore.sesso.codice == 'M' %}o{% else %}a{% endif %} dal {{ donatore.data_iscrizione | date:'d/m/Y' }}
-            {% endif %}
-            <!-- {% if donatore.data_rilascio_tessera and donatore.data_rilascio_tessera.year > 1900 %}
-            (tessera rilasciata il {{ donatore.data_rilascio_tessera | date:'d/m/Y' }})
-            {% endif %} -->
-        </div>
-        <h6 class="card-text">
-            {{ donatore.donazioni.all.count|add:donatore.donazioni_pregresse }} donazioni
-            {% if donatore.donazioni_pregresse > 0 %}
-            ({{ donatore.donazioni.all.count }} attuali + {{ donatore.donazioni_pregresse }} pregresse)
-            {% endif %}
-            {% if donatore.num_benemerenze > 0 %}
-            , {{ donatore.num_benemerenze }} benemerenz{% if donatore.num_benemerenze == 1 %}a{% else %}e{% endif %} ricevut{% if donatore.num_benemerenze == 1 %}a{% else %}e{% endif %}
-            {% endif %}
-        </h6>
-        <p class="card-text">
-            <div class="row">
-                <div class="col-6 col-md-4 my-2 px-2">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                Indirizzo
-                            </h5>
-                            <p class="card-text">
-                                {% if donatore.indirizzo %}
-                                {{ donatore.indirizzo }}<br>
-                                {% endif %}
-                                {% if donatore.frazione %}
-                                {{ donatore.frazione }}<br>
-                                {% endif %}
-                                {% if donatore.cap or donatore.comune or donatore.provincia %}
-                                {% if donatore.cap %}{{ donatore.cap }} {% endif %}
-                                {{ donatore.comune }}
-                                {% if donatore.provincia %} ({{ donatore.provincia }}){% endif %}
-                                {% endif %}
-                            </p>
-                        </div>
+            <div class="col-4 text-center">
+                {% if donatore.data_iscrizione and donatore.data_iscrizione.year > 1900 %}
+                Iscritt{% if donatore.sesso.codice == 'M' %}o{% else %}a{% endif %} dal {{ donatore.data_iscrizione | date:'d/m/Y' }}
+                {% endif %}
+                <!-- {% if donatore.data_rilascio_tessera and donatore.data_rilascio_tessera.year > 1900 %}
+                (tessera rilasciata il {{ donatore.data_rilascio_tessera | date:'d/m/Y' }})
+                {% endif %} -->
+            </div>
+            <div class="col-4 text-center">
+                N. Tessera AVIS {{ donatore.num_tessera_avis }}
+            </div>
+
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        Cognome
                     </div>
-                </div>
-                <div class="col-6 col-md-4 my-2 px-2">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                Contatti
-                            </h5>
-                            <p class="card-text">
-                                {% if donatore.email %}
-                                Email: {{ donatore.email }}<br>
-                                {% endif %}
-                                {% if donatore.telefono %}
-                                Tel.: {{ donatore.telefono }}<br>
-                                {% endif %}
-                                {% if donatore.cellulare %}
-                                Cell.: {{ donatore.cellulare }}<br>
-                                {% endif %}
-                                {% if donatore.telefono_lavoro %}
-                                Tel. lavoro: {{ donatore.telefono_lavoro }}<br>
-                                {% endif %}
-                                {% if donatore.fax %}
-                                Fax: {{ donatore.fax }}<br>
-                                {% endif %}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-4 my-2 px-2">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                Informazioni
-                            </h5>
-                            <p class="card-text">
-                                Gruppo sanguigno {{ donatore.gruppo_sanguigno }} Rh {{ donatore.rh }}
-                                {% if donatore.fenotipo %}, fenotipo {{ donatore.fenotipo }}{% endif %}
-                                {% if donatore.kell %}, kell {{ donatore.kell }}{% endif %}
-                                <br>
-                                Sesso: {{ donatore.sesso.codice }}
-                                {% if donatore.data_nascita %}
-                                <br>
-                                Data nascita: {{ donatore.data_nascita | date:'d/m/Y' }}
-                                {% endif %}
-                                {% if donatore.codice_fiscale %}
-                                <br>
-                                Cod. Fiscale: {{ donatore.codice_fiscale }}
-                                {% endif %}
-                            </p>
-                        </div>
+                    <div class="card-body">
+                        <h3 class="card-text">
+                            {{ donatore.cognome }}
+                        </h3>
                     </div>
                 </div>
             </div>
-        </p>
-        {% if donatore.donazioni.all.count > 0 %}
-        <p class="card-text">
-            <div class="card">
-                <div class="card-body">
-                    <p class="card-title">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        Nome
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-text">
+                            {{ donatore.nome }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        Data e luogo di nascita
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-text">
+                            {{ donatore.data_nascita | date:'d/m/Y' }}
+                            {{ donatore.luogo_nascita }}
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        Informazioni
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-text">
+                            Sesso: {{ donatore.sesso.codice }}
+                            {% if donatore.codice_fiscale %}
+                            Cod. Fiscale: {{ donatore.codice_fiscale }}
+                            {% endif %}
+                        </h6>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        Residenza
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-text">
+                            {% if donatore.indirizzo %}
+                            {{ donatore.indirizzo }}<br>
+                            {% endif %}
+                            {% if donatore.frazione %}
+                            {{ donatore.frazione }}<br>
+                            {% endif %}
+                            {% if donatore.cap or donatore.comune or donatore.provincia %}
+                            {% if donatore.cap %}{{ donatore.cap }} {% endif %}
+                            {{ donatore.comune }}
+                            {% if donatore.provincia %} ({{ donatore.provincia }}){% endif %}
+                            {% endif %}
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        Contatti
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-text">
+                            {% if donatore.email %}
+                            Email: {{ donatore.email }}<br>
+                            {% endif %}
+                            {% if donatore.telefono %}
+                            Tel.: {{ donatore.telefono }}<br>
+                            {% endif %}
+                            {% if donatore.cellulare %}
+                            Cell.: {{ donatore.cellulare }}<br>
+                            {% endif %}
+                            {% if donatore.telefono_lavoro %}
+                            Tel. lavoro: {{ donatore.telefono_lavoro }}<br>
+                            {% endif %}
+                            {% if donatore.fax %}
+                            Fax: {{ donatore.fax }}<br>
+                            {% endif %}
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        Donazioni
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-text">
+                            Totale donazioni effettuate: {{ donatore.donazioni.all.count|add:donatore.donazioni_pregresse }}
+                            {% if donatore.donazioni_pregresse > 0 %}
+                            <br>Donazioni inserite: {{ donatore.donazioni.all.count }}
+                            <br>Donazioni pregresse: {{ donatore.donazioni_pregresse }}
+                            {% endif %}
+                            <br>Benemerenze acquisite: {{ donatore.num_benemerenze }}
+                        </h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        Determinazione gruppo sanguigno
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-text">
+                            <div class="row">
+                                <div class="col-12">
+                                    Gruppo: {{ donatore.gruppo_sanguigno }}
+                                    RH {% if donatore.rh == '+' %}POSITIVO{% elif donatore.rh == '-' %}NEGATIVO{% else %}{{ donatore.rh }}{% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    Fenotipo: {{ donatore.fenotipo }}
+                                </div>
+                                <div class="col-6">
+                                    KELL: {{ donatore.kell }}
+                                </div>
+                            </div>
+                        </h6>
+                    </div>
+                </div>
+            </div>
+
+            {% if donatore.donazioni.all.count > 0 %}
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
                         <div class="row">
                             <div class="col-sm-9">
-                                <h5>Donazioni</h5>
+                                Elenco donazioni
                             </div>
                             <div class="col-sm-3 text-end d-print-none">
                                 <a class="btn btn-primary btn-sm" href="{% url 'donazione-create' donatore.id %}">
@@ -130,34 +190,36 @@
                                 </a>
                             </div>
                         </div>
-                    </p>
-                    <p class="card-text">
-                        <table class="table table-sm mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th scope="col">Data</th>
-                                    <th scope="col">Tipo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for donazione in donatore.donazioni.all %}
-                                <tr>
-                                    <td>{{ donazione.data_donazione }}</td>
-                                    <td>
-                                        <span class="badge rounded-pill {% if donazione.tipo_donazione == 1 %}text-bg-danger{% elif donazione.tipo_donazione == 2 %}text-bg-warning{% else %}text-bg-light{% endif %} d-print-none">
-                                            &nbsp;
-                                        </span>                        
-                                        {{ donazione.get_tipo_donazione_display }}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </p>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">
+                            <table class="table table-sm mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">Data</th>
+                                        <th scope="col">Tipo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for donazione in donatore.donazioni.all %}
+                                    <tr>
+                                        <td>{{ donazione.data_donazione }}</td>
+                                        <td>
+                                            <span class="badge rounded-pill {% if donazione.tipo_donazione == 1 %}text-bg-danger{% elif donazione.tipo_donazione == 2 %}text-bg-warning{% else %}text-bg-light{% endif %} d-print-none">
+                                                &nbsp;
+                                            </span>                        
+                                            {{ donazione.get_tipo_donazione_display }}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </p>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
 </div>
 

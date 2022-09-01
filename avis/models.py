@@ -1,6 +1,8 @@
 from datetime import date
+from typing import Collection, Optional
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 
 User = get_user_model()
@@ -131,6 +133,26 @@ class Donatore(models.Model):
 
     def __str__(self):
         return '{} - {} {}'.format(self.num_tessera_avis, self.cognome, self.nome)
+
+    def validate_unique(self, exclude: Optional[Collection[str]] = ...) -> None:
+        if (
+            self.num_tessera_ct
+            and Donatore.objects.select_related('stato_donatore')
+            .filter(
+                num_tessera_ct=self.num_tessera_ct,
+                stato_donatore__is_attivo=True,
+            )
+            .exclude(pk=self.pk)
+            .exists()
+        ):
+            raise ValidationError(
+                {
+                    'num_tessera_ct': (
+                        'Questo valore è già utilizzato da un altro donatore attivo'
+                    )
+                }
+            )
+        return super().validate_unique(exclude)
 
 
 class Donazione(models.Model):

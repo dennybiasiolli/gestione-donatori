@@ -92,7 +92,7 @@ class Command(BaseCommand):
                     stato_donatore_id=stati_donatore.filter(
                         codice=d['StatoDonatore']['Descrizione']
                     ).first()['id'],
-                    num_tessera_cartacea=d['NumTesseraCartacea'] or '',
+                    num_tessera_ct=d['NumTesseraCartacea'] or '',
                     data_rilascio_tessera=self._date_from_string_or_none(
                         d['DataRilascioTessera']
                     ),

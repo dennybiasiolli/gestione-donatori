@@ -75,6 +75,7 @@ class DonazioneInlineAdmin(admin.TabularInline):
 class DonatoreAdmin(VersionAdmin):
     list_display = (
         'num_tessera_avis',
+        'num_tessera_ct',
         'cognome',
         'nome',
         'sesso',

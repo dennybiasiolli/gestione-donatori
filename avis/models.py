@@ -87,11 +87,19 @@ class Donatore(models.Model):
         help_text='Num. Tessera AVIS, inserito nel programma',
         verbose_name='N. Tessera AVIS',
     )
+    num_tessera_ct = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=(
+            'Num. Tessera usato per la registrazione'
+            ' e comunicato al Centro Trasfusionale'
+        ),
+        verbose_name='N. Tessera C.T.',
+    )
     cognome = models.CharField(max_length=255)
     nome = models.CharField(max_length=255)
     sesso = models.ForeignKey(Sesso, on_delete=models.RESTRICT)
     stato_donatore = models.ForeignKey(StatoDonatore, on_delete=models.RESTRICT)
-    num_tessera_cartacea = models.CharField(max_length=255, blank=True)
     data_rilascio_tessera = models.DateField(null=True, blank=True)
     codice_fiscale = models.CharField(max_length=255, blank=True)
     data_nascita = models.DateField(null=True, blank=True)

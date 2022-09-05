@@ -34,7 +34,8 @@ nav img.logo {
      * inserire eventuali margini sx e dx,
      * top e bottom non funzionano al cambio di pagina
      **/
+    margin-left: 2mm;
 }
 .etichetta {
-    height: 35mm;
+    height: 37mm;
 }

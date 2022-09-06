@@ -113,6 +113,12 @@ class DonatoreListView(ListView):
         data_donazione_al = self.request.GET.get('data_donazione_al', None)
         if data_donazione_al:
             data_donazione_al = datetime.date.fromisoformat(data_donazione_al)
+        benemerenze_da = self.request.GET.get('benemerenze_da', None)
+        if benemerenze_da:
+            benemerenze_da = int(benemerenze_da)
+        benemerenze_a = self.request.GET.get('benemerenze_a', None)
+        if benemerenze_a:
+            benemerenze_a = int(benemerenze_a)
         cap = self.request.GET.get('cap', None)
         cap_diverso = self.request.GET.get('cap_diverso', None)
         filter_donatori = self.request.GET.get('filter_donatori', '')
@@ -174,6 +180,10 @@ class DonatoreListView(ListView):
             qs = qs.filter(donazioni__data_donazione__gte=data_donazione_dal)
         if data_donazione_al:
             qs = qs.filter(donazioni__data_donazione__lte=data_donazione_al)
+        if benemerenze_da:
+            qs = qs.filter(num_benemerenze__gte=benemerenze_da)
+        if benemerenze_a:
+            qs = qs.filter(num_benemerenze__lte=benemerenze_a)
         if cap:
             qs = qs.filter(cap__icontains=cap)
         if cap_diverso:
@@ -231,6 +241,8 @@ class DonatoreListView(ListView):
             'data_donazione_al': data_donazione_al.isoformat()
             if data_donazione_al
             else '',
+            'benemerenze_da': benemerenze_da if benemerenze_da else '',
+            'benemerenze_a': benemerenze_a if benemerenze_a else '',
             'cap': cap or '',
             'cap_diverso': cap_diverso or '',
             'filter_donatori': filter_donatori or '',
@@ -248,6 +260,8 @@ class DonatoreListView(ListView):
                 or kell
                 or data_donazione_dal
                 or data_donazione_al
+                or benemerenze_da
+                or benemerenze_a
                 or comune
                 or provincia
                 or cap

@@ -1,0 +1,16 @@
+{% extends 'avis/base.html' %}
+
+{% block nav %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row etichette-riga">
+    {% for donatore in object_list %}
+    {% if donatore.email %}
+    {{ donatore.email }};
+    {% endif %}
+    {% endfor %}
+</div>
+
+{% endblock %}

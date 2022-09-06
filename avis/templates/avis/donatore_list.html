@@ -250,6 +250,9 @@
             {{ page_obj.paginator.count }} donatori trovati
         </div>
         <div class="col-sm-6 text-end d-print-none">
+            <a class="btn btn-outline-secondary" href="?stampa=emails&{{ querystring }}" target="_blank">
+                Elenco email
+            </a>
             <a class="btn btn-outline-secondary" href="?stampa=benemerenze&{{ querystring }}" target="_blank">
                 Benemerenze
             </a>

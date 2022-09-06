@@ -168,6 +168,32 @@
                         <input type="text" class="form-control" name="cap_diverso" value="{{ cap_diverso }}" />
                     </div>
                 </div>
+
+                <div class="m-1 row">
+                    <label class="col-md-2 col-form-label">Visualizza</label>
+                    <div class="col-md-10 col-form-label">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="filter_donatori" value=""{% if filter_donatori == '' %} checked{% endif %}>
+                            <label class="form-check-label">tutti</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="filter_donatori" value="email"{% if filter_donatori == 'email' %} checked{% endif %}>
+                            <label class="form-check-label">con email</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="filter_donatori" value="no_email"{% if filter_donatori == 'no_email' %} checked{% endif %}>
+                            <label class="form-check-label">senza email</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="filter_donatori" value="cell"{% if filter_donatori == 'cell' %} checked{% endif %}>
+                            <label class="form-check-label">con cell.</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="filter_donatori" value="no_cell"{% if filter_donatori == 'no_cell' %} checked{% endif %}>
+                            <label class="form-check-label">senza cell.</label>
+                        </div>
+                    </div>
+                </div>
             </div>
           </div>
         </div>

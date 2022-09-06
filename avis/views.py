@@ -115,6 +115,7 @@ class DonatoreListView(ListView):
             data_donazione_al = datetime.date.fromisoformat(data_donazione_al)
         cap = self.request.GET.get('cap', None)
         cap_diverso = self.request.GET.get('cap_diverso', None)
+        filter_donatori = self.request.GET.get('filter_donatori', '')
         comune = self.request.GET.get('comune', None)
         provincia = self.request.GET.get('provincia', None)
         show_n_donazioni = self.request.GET.get('show_n_donazioni', None)
@@ -177,6 +178,14 @@ class DonatoreListView(ListView):
             qs = qs.filter(cap__icontains=cap)
         if cap_diverso:
             qs = qs.exclude(cap__icontains=cap_diverso)
+        if filter_donatori == 'email':
+            qs = qs.exclude(email='')
+        elif filter_donatori == 'no_email':
+            qs = qs.filter(email='')
+        elif filter_donatori == 'cell':
+            qs = qs.exclude(cellulare='')
+        elif filter_donatori == 'no_cell':
+            qs = qs.filter(cellulare='')
         if comune:
             qs = qs.filter(comune__iexact=comune)
         if provincia:
@@ -224,6 +233,7 @@ class DonatoreListView(ListView):
             else '',
             'cap': cap or '',
             'cap_diverso': cap_diverso or '',
+            'filter_donatori': filter_donatori or '',
             'comune': comune or '',
             'provincia': provincia or '',
             'show_n_donazioni': show_n_donazioni or 0,
@@ -242,6 +252,7 @@ class DonatoreListView(ListView):
                 or provincia
                 or cap
                 or cap_diverso
+                or filter_donatori
             ),
             'paginate_by': paginate_by,
             'page_range': page_range,

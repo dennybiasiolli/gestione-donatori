@@ -20,9 +20,19 @@ urlpatterns = [
         name='donatore',
     ),
     path(
-        'donatori/<int:pk>/stampa/',
+        'donatori/add-stampa/<int:pk>/',
         views.donatore_add_stampa,
         name='donatore-add-stampa',
+    ),
+    path(
+        'donatori/remove-stampa/',
+        views.donatore_remove_stampa,
+        name='donatore-remove-stampa',
+    ),
+    path(
+        'donatori/remove-stampa/<int:pk>/',
+        views.donatore_remove_stampa,
+        name='donatore-remove-stampa',
     ),
     path(
         'donatori/<int:pk>/nuova-donazione/',

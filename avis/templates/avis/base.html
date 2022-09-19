@@ -47,13 +47,13 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           {% if request.user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'donatori' %}active{% endif %}"
+            <a class="nav-link {% if request.resolver_match.url_name == 'donatori' and only_stampa != '1' %}active{% endif %}"
               href="{% url 'donatori' %}">
               Elenco donatori
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'donatori' %}active{% endif %}"
+            <a class="nav-link {% if request.resolver_match.url_name == 'donatori' and only_stampa == '1' %}active{% endif %}"
               href="{% url 'donatori' %}?stato_donatore_id=&only_stampa=1">
               Elenco stampa
             </a>
@@ -91,20 +91,30 @@
     crossorigin="anonymous"></script>
 
   <script>
-    window.onload = () => {
+    window.addEventListener('load', () => {
       const tooltipTriggerList = document.querySelectorAll(
         '[data-bs-toggle="tooltip"]');
       const tooltipList = [...tooltipTriggerList].map(
         tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-    };
+    });
 
-    function handleAddPrint(e, donatoreUrl) {
+    function handleAddRemovePrint(e, type, donatoreUrl) {
       e.preventDefault();
       fetch(donatoreUrl, { method: 'POST' });
       const modalMessage = new bootstrap.Modal('#modalMessage');
       const modalMessageContent = document.getElementById('modalMessageContent');
-      modalMessageContent.innerHTML = `Donatore aggiunto all\'elenco di stampa.<br><br>
-        Trovi tutti i donatori nel menu "Elenco stampa".`;
+      switch (type) {
+        case 'add':
+          modalMessageContent.innerHTML = `Donatore aggiunto all\'elenco di stampa.<br><br>
+            Trovi tutti i donatori nel menu "Elenco stampa".`;
+          break;
+        case 'remove':
+          modalMessageContent.innerHTML = `Donatore rimosso dall\'elenco di stampa.`;
+          break;
+        case 'remove-all':
+          window.location.href = '{% url 'donatori' %}';
+          return;
+      }
       modalMessage.show();
     }
   </script>

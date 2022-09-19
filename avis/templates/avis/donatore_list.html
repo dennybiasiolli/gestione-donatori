@@ -43,6 +43,34 @@
 </script>
 <!-- End Modal -->
 
+<!-- Modal PulisciElencoStampa -->
+<div class="modal fade" id="modalPulisciElencoStampa" tabindex="-1" aria-labelledby="modalPulisciElencoStampaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalPulisciElencoStampaLabel">Sei sicuro di voler pulire l'elenco stampa?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="m-1 row">
+                        <label class="col-auto col-form-label">Tutti i donatori aggiunti all'elenco verranno rimossi.</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-danger"
+                    onclick="handleAddRemovePrint(event, 'remove-all', '{% url 'donatore-remove-stampa' %}')">
+                    Pulisci
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal PulisciElencoStampa -->
+
+
 <form type="get" action="/donatori" class="d-print-none" style="margin: 0;">
     <div class="m-1 row">
         <label class="col-sm-2 col-form-label">Ricerca</label>
@@ -252,13 +280,21 @@
             {{ page_obj.paginator.count }} donatori trovati
         </div>
         <div class="col-sm-6 text-end d-print-none">
+            {% if only_stampa %}
+            <a class="btn btn-outline-secondary" href="#"
+                data-bs-toggle="modal"
+                data-bs-target="#modalPulisciElencoStampa"
+            >
+                Pulisci elenco stampa
+            </a>
+            {% endif %}
             <a class="btn btn-outline-secondary" href="?stampa=emails&{{ querystring }}" target="_blank">
                 Elenco email
             </a>
             <a class="btn btn-outline-secondary" href="?stampa=benemerenze&{{ querystring }}" target="_blank">
                 Benemerenze
             </a>
-            <a class="btn btn-outline-secondary" href="?stampa=etichette&{{ querystring }}" target="_blank"
+            <a class="btn btn-outline-secondary" href="#"
                 data-bs-toggle="modal"
                 data-bs-target="#myModal"
             >
@@ -351,10 +387,17 @@
             </td>
             <td class="text-end">
                 <span class="mx-2">
+                    {% if donatore.stampa_donatore %}
+                    <a href="" data-bs-toggle="tooltip" data-bs-title="Rimuovi da elenco stampa"
+                        onclick="handleAddRemovePrint(event, 'remove', '{% url 'donatore-remove-stampa' pk=donatore.pk %}')">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </a>
+                    {% else %}
                     <a href="" data-bs-toggle="tooltip" data-bs-title="Aggiungi a elenco stampa"
-                        onclick="handleAddPrint(event, '{% url 'donatore-add-stampa' pk=donatore.pk %}')">
+                        onclick="handleAddRemovePrint(event, 'add', '{% url 'donatore-add-stampa' pk=donatore.pk %}')">
                         <i class="bi bi-printer-fill"></i>
                     </a>
+                    {% endif %}
                 </span>
             </td>
         </tr>

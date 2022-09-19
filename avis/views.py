@@ -309,6 +309,20 @@ def donatore_add_stampa(request, pk):
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
+@csrf_exempt
+@require_http_methods(['POST'])
+@user_passes_test(avis_user_check)
+def donatore_remove_stampa(request, pk=None):
+    if pk:
+        donatore = get_object_or_404(Donatore, pk=pk)
+        donatore.stampa_donatore = False
+        donatore.save()
+        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    else:
+        Donatore.objects.filter(stampa_donatore=True).update(stampa_donatore=False)
+        return redirect('donatori')
+
+
 @method_decorator(user_passes_test(avis_user_check), name='dispatch')
 class DonazioneCreateView(CreateView):
     model = Donazione

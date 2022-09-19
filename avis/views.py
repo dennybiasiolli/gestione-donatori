@@ -1,12 +1,15 @@
 import datetime
+import http
 from typing import Any, Dict
 
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count, F, Max, Prefetch, Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.decorators.http import require_GET
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET, require_http_methods
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView
 
@@ -129,6 +132,7 @@ class DonatoreListView(ListView):
             show_n_donazioni = int(show_n_donazioni)
         order_by_str = self.request.GET.get('order_by', 'cognome,nome')
         order_by_direction = self.request.GET.get('order_by_direction', '')
+        only_stampa = self.request.GET.get('only_stampa', '0') == '1'
         order_by = list(map(lambda o: order_by_direction + o, order_by_str.split(',')))
         if 'cognome' not in order_by:
             order_by.append('cognome')
@@ -200,6 +204,8 @@ class DonatoreListView(ListView):
             qs = qs.filter(comune__iexact=comune)
         if provincia:
             qs = qs.filter(provincia__iexact=provincia)
+        if only_stampa:
+            qs = qs.filter(stampa_donatore=True)
 
         qs = qs.annotate(
             num_donazioni=Count('donazioni'),
@@ -272,6 +278,7 @@ class DonatoreListView(ListView):
             'page_range': page_range,
             'order_by': order_by_str,
             'order_by_direction': order_by_direction,
+            'only_stampa': '1' if only_stampa else '',
         }
 
         return qs
@@ -290,6 +297,16 @@ class DonatoreDetailView(DetailView):
             ),
         )
         return qs
+
+
+@csrf_exempt
+@require_http_methods(['POST'])
+@user_passes_test(avis_user_check)
+def donatore_add_stampa(request, pk):
+    donatore = get_object_or_404(Donatore, pk=pk)
+    donatore.stampa_donatore = True
+    donatore.save()
+    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
 @method_decorator(user_passes_test(avis_user_check), name='dispatch')

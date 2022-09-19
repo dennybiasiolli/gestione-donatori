@@ -8,12 +8,31 @@
   <title>AVIS</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
   <link rel="stylesheet" href="{% static 'css/avis.css' %}">
   <link rel="icon" type="image/x-icon" href="{% static 'img/avis-favicon.ico' %}">
 </head>
 
 <body>
+  <!-- Modal Messages -->
+  <div class="modal fade" id="modalMessage" tabindex="-1" aria-labelledby="modalMessageLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalMessageLabel">Informazioni</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <span id="modalMessageContent"></span>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   {% block nav %}
   <nav class="navbar navbar-expand-lg bg-light d-print-none">
     <div class="container-fluid">
@@ -31,6 +50,12 @@
             <a class="nav-link {% if request.resolver_match.url_name == 'donatori' %}active{% endif %}"
               href="{% url 'donatori' %}">
               Elenco donatori
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'donatori' %}active{% endif %}"
+              href="{% url 'donatori' %}?stato_donatore_id=&only_stampa=1">
+              Elenco stampa
             </a>
           </li>
           <li class="nav-item">
@@ -64,6 +89,25 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
     crossorigin="anonymous"></script>
+
+  <script>
+    window.onload = () => {
+      const tooltipTriggerList = document.querySelectorAll(
+        '[data-bs-toggle="tooltip"]');
+      const tooltipList = [...tooltipTriggerList].map(
+        tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    };
+
+    function handleAddPrint(e, donatoreUrl) {
+      e.preventDefault();
+      fetch(donatoreUrl, { method: 'POST' });
+      const modalMessage = new bootstrap.Modal('#modalMessage');
+      const modalMessageContent = document.getElementById('modalMessageContent');
+      modalMessageContent.innerHTML = `Donatore aggiunto all\'elenco di stampa.<br><br>
+        Trovi tutti i donatori nel menu "Elenco stampa".`;
+      modalMessage.show();
+    }
+  </script>
 </body>
 
 </html>

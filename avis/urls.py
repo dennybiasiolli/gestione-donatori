@@ -20,6 +20,11 @@ urlpatterns = [
         name='donatore',
     ),
     path(
+        'donatori/<int:pk>/stampa/',
+        views.donatore_add_stampa,
+        name='donatore-add-stampa',
+    ),
+    path(
         'donatori/<int:pk>/nuova-donazione/',
         views.DonazioneCreateView.as_view(),
         name='donazione-create',

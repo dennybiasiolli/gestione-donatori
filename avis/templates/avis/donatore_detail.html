@@ -4,6 +4,10 @@
 
 <div class="row m-2">
     <div class="col-12 text-end d-print-none">
+        <a class="btn btn-outline-secondary" href="#"
+            onclick="handleAddPrint(event, '{% url 'donatore-add-stampa' pk=donatore.pk %}')">
+            Aggiungi a elenco stampa
+        </a>
         <a class="btn btn-outline-secondary" href="{% url 'donatori' %}?stampa=benemerenze&donatore_id={{ donatore.id }}" target="_blank">
             Benemerenza
         </a>

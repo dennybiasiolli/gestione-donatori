@@ -244,6 +244,8 @@
         </div>
     </div>
 
+    <input type="hidden" name="only_stampa" value="{{ only_stampa }}" />
+
     <div class="m-1 row">
         <div class="col-sm-6">
             <button type="submit" class="btn btn-primary">Ricerca</button>
@@ -283,6 +285,7 @@
             <th scope="col" class="align-middle">Ultime {{ show_n_donazioni }} donazioni</th>
             {% endif %} -->
             <th scope="col" class="align-middle">Ultima donazione</th>
+            <th scope="col" class="align-middle text-end"></th>
         </tr>
     </thead>
     <tbody>
@@ -345,6 +348,14 @@
                 {% if donatore.ultima_donazione %}
                 {{ donatore.ultima_donazione }}
                 {% endif %}
+            </td>
+            <td class="text-end">
+                <span class="mx-2">
+                    <a href="" data-bs-toggle="tooltip" data-bs-title="Aggiungi a elenco stampa"
+                        onclick="handleAddPrint(event, '{% url 'donatore-add-stampa' pk=donatore.pk %}')">
+                        <i class="bi bi-printer-fill"></i>
+                    </a>
+                </span>
             </td>
         </tr>
         {% if show_n_donazioni > 0 %}

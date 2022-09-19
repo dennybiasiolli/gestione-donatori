@@ -131,6 +131,7 @@ class Donatore(models.Model):
     donazioni_pregresse = models.IntegerField(default=0)
     num_benemerenze = models.IntegerField(default=0)
     scheda_anamnestica = models.TextField(blank=True)
+    stampa_donatore = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = 'Donatori'

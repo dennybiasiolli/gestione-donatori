@@ -21,5 +21,6 @@ from django.urls import include, path
 
 urlpatterns = [
     path(f"{settings.ADMIN_BASE_URL}/", admin.site.urls),
+    path("api-auth/", include("rest_framework.urls")),
     path("", include("avis.urls")),
 ]

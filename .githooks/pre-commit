@@ -1,6 +1,5 @@
 #!/bin/sh
 
-export PYTHONPATH=${PWD}
 files=`git diff --cached --name-status --diff-filter=ACMR -- '***.py' | awk '/^[ACMR]/ {print $2}'`
 echo "$files" | xargs pylint --load-plugins pylint_django --django-settings-module=website.settings_test --errors-only --recursive=y && \
 echo "$files" | xargs isort --check-only && \

@@ -4,7 +4,7 @@ style-fix:
 	flake8
 
 style-check:
-	PYTHONPATH=${PWD} pylint --load-plugins pylint_django --django-settings-module=website.settings_test --errors-only --recursive=y .
+	pylint --load-plugins pylint_django --django-settings-module=website.settings_test --errors-only --recursive=y .
 	isort --check-only .
 	black --check --diff .
 	flake8

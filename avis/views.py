@@ -86,11 +86,15 @@ class DonatoreListView(ListView):
         sezione_id = self.request.GET.get('sezione_id', None)
         if sezione_id:
             sezione_id = int(sezione_id)
-        stato_donatore_id = self.request.GET.get('stato_donatore_id', None)
-        if stato_donatore_id:
-            stato_donatore_id = int(stato_donatore_id)
-        if 'stato_donatore_id' not in self.request.GET:
-            stato_donatore_id = StatoDonatore.objects.filter(codice='Attivo').first().pk
+        stato_donatore_ids = self.request.GET.getlist('stato_donatore_ids', None)
+        if stato_donatore_ids:
+            stato_donatore_ids = [
+                int(stato_donatore_id) for stato_donatore_id in stato_donatore_ids
+            ]
+        if 'stato_donatore_ids' not in self.request.GET:
+            stato_donatore_ids = [
+                StatoDonatore.objects.filter(codice='Attivo').first().pk
+            ]
         sesso_id = self.request.GET.get('sesso_id', None)
         if sesso_id:
             sesso_id = int(sesso_id)
@@ -162,8 +166,8 @@ class DonatoreListView(ListView):
             )
         if sezione_id:
             qs = qs.filter(sezione_id=sezione_id)
-        if stato_donatore_id:
-            qs = qs.filter(stato_donatore_id=stato_donatore_id)
+        if stato_donatore_ids:
+            qs = qs.filter(stato_donatore_id__in=stato_donatore_ids)
         if sesso_id:
             qs = qs.filter(sesso_id=sesso_id)
         if data_nascita_dal:
@@ -227,7 +231,7 @@ class DonatoreListView(ListView):
         self.extra_context = {
             'ricerca': ricerca or '',
             'sezione_id': sezione_id or '',
-            'stato_donatore_id': stato_donatore_id or '',
+            'stato_donatore_ids': stato_donatore_ids or [],
             'sesso_id': sesso_id or '',
             'data_nascita_dal': data_nascita_dal.isoformat()
             if data_nascita_dal

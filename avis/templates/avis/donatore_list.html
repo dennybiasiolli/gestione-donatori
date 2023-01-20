@@ -92,18 +92,39 @@
     </div>
     {% endif %}
     <div class="m-1 row">
-        <label class="col-sm-2 col-form-label">Stato donatore</label>
-        <div class="col-sm-4">
-            <select class="form-select" name="stato_donatore_id">
+        <label class="col-sm-2 col-form-label">
+            Stato donatore
+        </label>
+        <div class="col-sm-7">
+            <div class="row">
+                {% for stato_donatore in stati_donatore %}
+                <div class="col-md-auto">
+                    <input class="form-check-input" type="checkbox"
+                        name="stato_donatore_ids"
+                        value="{{ stato_donatore.id }}"
+                        {% if stato_donatore.id in stato_donatore_ids %}checked{% endif %}
+                    >
+                    <label class="form-check-label">
+                        &nbsp;{{ stato_donatore.descrizione }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            <!-- <select class="form-select" name="stato_donatore_id">
                 <option value="">Qualsiasi</option>
                 {% for stato_donatore in stati_donatore %}
                 <option value="{{ stato_donatore.id }}"{% if stato_donatore.id == stato_donatore_id %} selected{% endif %}>{{ stato_donatore.descrizione }}</option>
                 {% endfor %}
-            </select>
+            </select> -->
+            <!-- <select class="form-select" multiple size="3" name="stato_donatore_ids">
+                {% for stato_donatore in stati_donatore %}
+                <option value="{{ stato_donatore.id }}"{% if stato_donatore.id in stato_donatore_ids %} selected{% endif %}>{{ stato_donatore.descrizione }}</option>
+                {% endfor %}
+            </select> -->
         </div>
 
-        <label class="col-sm-2 col-form-label">Sesso</label>
-        <div class="col-sm-4">
+        <label class="col-sm-1 col-form-label">Sesso</label>
+        <div class="col-sm-2">
             <select class="form-select" name="sesso_id">
                 <option value="">-</option>
                 {% for sesso in sessi %}

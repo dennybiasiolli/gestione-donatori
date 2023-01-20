@@ -1,0 +1,66 @@
+<tr style="page-break-inside:avoid; page-break-after:avoid;">
+    <th scope="row">
+        <a href="{% url 'donatore' pk=donatore.pk %}">
+            AVIS: {{ donatore.num_tessera_avis }}<br>
+            C.T.: {{ donatore.num_tessera_ct }}
+        </a>
+    </th>
+    <td>
+        <a href="{% url 'donatore' pk=donatore.pk %}">
+            {{ donatore.cognome }} {{ donatore.nome }}
+        </a>
+    </td>
+    <td>{{ donatore.sesso.codice }}</td>
+    <td>
+        {{ donatore.gruppo_sanguigno }}{{ donatore.rh }}
+    </td>
+    <td>
+        {% if donatore.email %}
+        {{ donatore.email }}<br>
+        {% endif %}
+        {% if donatore.telefono %}
+        {{ donatore.telefono }}<br>
+        {% endif %}
+        {% if donatore.cellulare %}
+        {{ donatore.cellulare }}<br>
+        {% endif %}
+    </td>
+    <td>
+        {% if donatore.indirizzo %}
+        {{ donatore.indirizzo }}<br>
+        {% endif %}
+        {% if donatore.frazione %}
+        {{ donatore.frazione }}<br>
+        {% endif %}
+        {% if donatore.cap or donatore.comune or donatore.provincia %}
+        {% if donatore.cap %}{{ donatore.cap }} {% endif %}
+        {{ donatore.comune }}
+        {% if donatore.provincia.strip %} ({{ donatore.provincia }}){% endif %}
+        <br>
+        {% endif %}
+    </td>
+    <td>
+        {% if donatore.ultima_donazione %}
+        {{ donatore.ultima_donazione | date:'d/m/Y' }}
+        {% endif %}
+    </td>
+    <td>
+        {{ donatore.tot_donazioni }}
+        <!-- ({{ donatore.donazioni_pregresse }} + {{ donatore.num_donazioni }})-->
+    </td>
+    <td>
+        {{ donatore.num_benemerenze }}
+    </td>
+</tr>
+{% if show_n_donazioni > 0 %}
+<tr style="page-break-inside:avoid; page-break-before:avoid;">
+    <td colspan="100%">
+        Ultime {{ show_n_donazioni }} donazioni:
+        {% for donazione in donatore.donazioni.all|slice:show_n_donazioni %}
+        <span class="badge {% if donazione.tipo_donazione == 1 %}text-bg-danger{% elif donazione.tipo_donazione == 2 %}text-bg-warning{% else %}text-bg-light{% endif %}">
+            {{ donazione.data_donazione | date:'d/m/y' }}
+        </span>
+        {% endfor %}
+    </td>
+</tr>
+{% endif %}

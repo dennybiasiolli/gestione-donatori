@@ -37,7 +37,7 @@ class DonatoreListView(ListView):
 
     def get_template_names(self):
         stampa = self.request.GET.get('stampa')
-        if stampa in ('benemerenze', 'emails', 'etichette'):
+        if stampa in ('elenco', 'benemerenze', 'emails', 'etichette'):
             return [f'avis/donatore_list_{stampa}.html']
         else:
             return super().get_template_names()

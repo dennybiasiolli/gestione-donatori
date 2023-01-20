@@ -1,0 +1,38 @@
+{% extends 'avis/base.html' %}
+
+{% block nav %}
+{% endblock %}
+
+{% block content %}
+
+<table class="table">
+    <thead class="table-light">
+        <tr>
+            <th scope="col" class="align-middle">
+                N. Tessera AVIS<br>
+                N. Tessera C.T.
+            </th>
+            <th scope="col" class="align-middle">Nome</th>
+            <th scope="col" class="align-middle">Sesso</th>
+            <th scope="col" class="align-middle">Gr.</th>
+            <th scope="col" class="align-middle">Contatti</th>
+            <th scope="col" class="align-middle">Indirizzo</th>
+            <th scope="col" class="align-middle">Ult. donazione</th>
+            <th scope="col" class="align-middle">Donazioni</th>
+            <th scope="col" class="align-middle">Benem.</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for donatore in object_list %}
+{% include "avis/includes/donatore_riga.html" %}
+{% endfor %}
+    </tbody>
+</table>
+
+<script>
+    window.addEventListener('load', () => {
+        window.print();
+    });
+</script>
+
+{% endblock %}

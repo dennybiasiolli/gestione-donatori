@@ -275,11 +275,11 @@
     <input type="hidden" name="only_stampa" value="{{ only_stampa }}" />
 
     <div class="m-1 row">
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <button type="submit" class="btn btn-primary">Ricerca</button>
             {{ page_obj.paginator.count }} donatori trovati
         </div>
-        <div class="col-sm-6 text-end d-print-none">
+        <div class="col-sm-8 text-end d-print-none">
             {% if only_stampa %}
             <a class="btn btn-outline-secondary" href="#"
                 data-bs-toggle="modal"
@@ -288,6 +288,9 @@
                 Pulisci elenco stampa
             </a>
             {% endif %}
+            <a class="btn btn-outline-secondary" href="?stampa=elenco&{{ querystring }}" target="_blank">
+                Stampa elenco
+            </a>
             <a class="btn btn-outline-secondary" href="?stampa=emails&{{ querystring }}" target="_blank">
                 Elenco email
             </a>
@@ -321,7 +324,7 @@
             <th scope="col" class="align-middle">Ultime {{ show_n_donazioni }} donazioni</th>
             {% endif %} -->
             <th scope="col" class="align-middle">Ultima donazione</th>
-            <th scope="col" class="align-middle text-end"></th>
+            <th scope="col" class="align-middle text-end d-print-none"></th>
         </tr>
     </thead>
     <tbody>
@@ -385,7 +388,7 @@
                 {{ donatore.ultima_donazione }}
                 {% endif %}
             </td>
-            <td class="text-end">
+            <td class="text-end d-print-none">
                 <span class="mx-2">
                     {% if donatore.stampa_donatore %}
                     <a href="" data-bs-toggle="tooltip" data-bs-title="Rimuovi da elenco stampa"

@@ -12,6 +12,14 @@
     cd gestione-donatori
     ```
 
+- Get static libs (bootstrap, etc...)
+
+    Note: ensure `unzip` is installed
+
+    ```
+    make get-static-libs:
+    ```
+
 - Create a virtual environment for this project (Python 3.10.x suggested)
 
     ```
@@ -65,6 +73,14 @@
     ```
     git checkout main
     git pull
+    ```
+
+- Update static libs (bootstrap, etc...)
+
+    Note: ensure `unzip` is installed
+
+    ```
+    make get-static-libs:
     ```
 
 - Enable the virtual environment (see instructions above in the setup section)

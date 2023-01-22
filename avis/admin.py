@@ -100,6 +100,7 @@ class DonatoreAdmin(VersionAdmin):
         'cellulare',
     )
     inlines = [DonazioneInlineAdmin]
+    save_on_top = True
 
     def get_queryset(self, request: HttpRequest):
         qs = super().get_queryset(request).select_related('sesso', 'sezione')

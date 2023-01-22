@@ -6,26 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('avis', '0007_sezione_fields_stampa_benemerenze'),
+        ("avis", "0007_sezione_fields_stampa_benemerenze"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='donatore',
-            old_name='num_tessera',
-            new_name='num_tessera_avis',
+            model_name="donatore",
+            old_name="num_tessera",
+            new_name="num_tessera_avis",
         ),
         migrations.AlterUniqueTogether(
-            name='donatore',
-            unique_together={('sezione', 'num_tessera_avis')},
+            name="donatore",
+            unique_together={("sezione", "num_tessera_avis")},
         ),
         migrations.AlterField(
-            model_name='donatore',
-            name='num_tessera_avis',
+            model_name="donatore",
+            name="num_tessera_avis",
             field=models.CharField(
-                help_text='Num. Tessera AVIS, inserito nel programma',
+                help_text="Num. Tessera AVIS, inserito nel programma",
                 max_length=255,
-                verbose_name='N. Tessera AVIS',
+                verbose_name="N. Tessera AVIS",
             ),
         ),
     ]

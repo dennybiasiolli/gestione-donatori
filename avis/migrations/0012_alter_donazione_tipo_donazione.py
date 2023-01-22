@@ -6,21 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('avis', '0011_removing_piastrine_from_donazioni'),
+        ("avis", "0011_removing_piastrine_from_donazioni"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='donazione',
-            name='tipo_donazione',
+            model_name="donazione",
+            name="tipo_donazione",
             field=models.IntegerField(
                 blank=True,
                 choices=[
-                    (None, 'Non specificato'),
-                    (1, 'Sangue intero'),
-                    (2, 'Plasma'),
+                    (None, "Non specificato"),
+                    (1, "Sangue intero"),
+                    (2, "Plasma"),
                 ],
-                default='Non specificato',
+                default="Non specificato",
                 null=True,
             ),
         ),

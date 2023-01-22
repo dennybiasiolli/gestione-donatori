@@ -9,51 +9,51 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('avis', '0004_donatore'),
+        ("avis", "0004_donatore"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Donazione',
+            name="Donazione",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name='ID',
+                        verbose_name="ID",
                     ),
                 ),
                 (
-                    'tipo_donazione',
+                    "tipo_donazione",
                     models.IntegerField(
                         choices=[
-                            (None, 'Non specificato'),
-                            (1, 'Sangue intero'),
-                            (2, 'Plasma'),
-                            (3, 'Piastrine'),
+                            (None, "Non specificato"),
+                            (1, "Sangue intero"),
+                            (2, "Plasma"),
+                            (3, "Piastrine"),
                         ],
-                        default='Non specificato',
+                        default="Non specificato",
                         null=True,
                     ),
                 ),
                 (
-                    'data_donazione',
+                    "data_donazione",
                     models.DateField(default=datetime.date.today),
                 ),
                 (
-                    'donatore',
+                    "donatore",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name='donazioni',
-                        to='avis.donatore',
+                        related_name="donazioni",
+                        to="avis.donatore",
                     ),
                 ),
             ],
             options={
-                'verbose_name_plural': 'Donazioni',
-                'unique_together': {('donatore', 'data_donazione')},
+                "verbose_name_plural": "Donazioni",
+                "unique_together": {("donatore", "data_donazione")},
             },
         ),
     ]

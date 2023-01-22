@@ -7,23 +7,23 @@ from .models import Donazione
 class BootstrapAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.label_suffix = ''  # Removes ':' as label suffix
+        self.label_suffix = ""  # Removes ':' as label suffix
 
     username = UsernameField(
         widget=forms.TextInput(
             attrs={
-                'class': 'form-control',
-                'autofocus': True,
-                'placeholder': 'Nome utente',
+                "class": "form-control",
+                "autofocus": True,
+                "placeholder": "Nome utente",
             },
         )
     )
     password = forms.CharField(
-        label='Password',
+        label="Password",
         widget=forms.PasswordInput(
             attrs={
-                'class': 'form-control',
-                'placeholder': 'Password',
+                "class": "form-control",
+                "placeholder": "Password",
             },
         ),
     )
@@ -32,20 +32,20 @@ class BootstrapAuthenticationForm(AuthenticationForm):
 class DonazioneForm(forms.ModelForm):
     class Meta:
         model = Donazione
-        fields = ['donatore', 'data_donazione', 'tipo_donazione']
+        fields = ["donatore", "data_donazione", "tipo_donazione"]
         widgets = {
-            'donatore': forms.HiddenInput(),
-            'tipo_donazione': forms.Select(
+            "donatore": forms.HiddenInput(),
+            "tipo_donazione": forms.Select(
                 choices=Donazione.TipoDonazione.choices,
                 attrs={
-                    'class': 'form-select-sm',
+                    "class": "form-select-sm",
                 },
             ),
-            'data_donazione': forms.DateInput(
-                format=('%Y-%m-%d'),
+            "data_donazione": forms.DateInput(
+                format=("%Y-%m-%d"),
                 attrs={
-                    'type': 'date',
-                    'class': 'form-control-sm',
+                    "type": "date",
+                    "class": "form-control-sm",
                 },
             ),
         }

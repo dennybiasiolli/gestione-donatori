@@ -6,22 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('avis', '0005_donazione'),
+        ("avis", "0005_donazione"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='donazione',
-            name='tipo_donazione',
+            model_name="donazione",
+            name="tipo_donazione",
             field=models.IntegerField(
                 blank=True,
                 choices=[
-                    (None, 'Non specificato'),
-                    (1, 'Sangue intero'),
-                    (2, 'Plasma'),
-                    (3, 'Piastrine'),
+                    (None, "Non specificato"),
+                    (1, "Sangue intero"),
+                    (2, "Plasma"),
+                    (3, "Piastrine"),
                 ],
-                default='Non specificato',
+                default="Non specificato",
                 null=True,
             ),
         ),

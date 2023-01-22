@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('avis', '0013_donatore_scheda_anamnestica'),
+        ("avis", "0013_donatore_scheda_anamnestica"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='donatore',
-            name='motivo_inattivita',
+            model_name="donatore",
+            name="motivo_inattivita",
             field=models.CharField(
                 blank=True,
-                help_text='Inserire eventuale motivo di inattività',
+                help_text="Inserire eventuale motivo di inattività",
                 max_length=255,
-                verbose_name='Motivo inattività',
+                verbose_name="Motivo inattività",
             ),
         ),
     ]

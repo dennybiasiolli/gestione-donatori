@@ -11,15 +11,15 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Importa i vecchi dati dotnet nel gestionale'
+    help = "Importa i vecchi dati dotnet nel gestionale"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '-d',
-            '--dir',
+            "-d",
+            "--dir",
             type=str,
             required=True,
-            help='path containing files to import',
+            help="path containing files to import",
         )
 
     def _read_json(self, path):
@@ -33,101 +33,101 @@ class Command(BaseCommand):
         user = User.objects.filter(is_superuser=True).first()
 
         # import sezioni
-        sezioni = self._read_json(os.path.join(options['dir'], 'sezioni.json'))
+        sezioni = self._read_json(os.path.join(options["dir"], "sezioni.json"))
 
-        sezione = Sezione.objects.filter(descrizione=sezioni[0]['Descrizione']).first()
+        sezione = Sezione.objects.filter(descrizione=sezioni[0]["Descrizione"]).first()
         if sezione is None:
             sezione = Sezione.objects.create(
                 utente=user,
-                descrizione=sezioni[0]['Descrizione'],
-                indirizzo=sezioni[0]['Indirizzo'],
-                cap=sezioni[0]['Cap'],
-                comune=sezioni[0]['Comune'],
-                provincia=sezioni[0]['Provincia'],
-                telefono=sezioni[0]['Tel'],
-                fax=sezioni[0]['Fax'],
-                email=sezioni[0]['Email'],
-                presidente=sezioni[0]['Presidente'],
-                segretario=sezioni[0]['Segretario'],
+                descrizione=sezioni[0]["Descrizione"],
+                indirizzo=sezioni[0]["Indirizzo"],
+                cap=sezioni[0]["Cap"],
+                comune=sezioni[0]["Comune"],
+                provincia=sezioni[0]["Provincia"],
+                telefono=sezioni[0]["Tel"],
+                fax=sezioni[0]["Fax"],
+                email=sezioni[0]["Email"],
+                presidente=sezioni[0]["Presidente"],
+                segretario=sezioni[0]["Segretario"],
             )
 
         # import stati donatori
-        stati = self._read_json(os.path.join(options['dir'], 'statiDonatori.json'))
+        stati = self._read_json(os.path.join(options["dir"], "statiDonatori.json"))
         for stato in stati:
             stato_donatore = StatoDonatore.objects.filter(
                 # utente=user,
-                codice=stato['Descrizione'],
+                codice=stato["Descrizione"],
             ).first()
             if stato_donatore is None:
                 stato_donatore = StatoDonatore.objects.create(
                     sezione=sezione,
-                    codice=stato['Descrizione'],
-                    descrizione=stato['DescrizioneEstesa'],
-                    is_attivo=stato['Attivo'],
+                    codice=stato["Descrizione"],
+                    descrizione=stato["DescrizioneEstesa"],
+                    is_attivo=stato["Attivo"],
                 )
 
         stati_donatore = StatoDonatore.objects.filter(
             Q(sezione__isnull=True) | Q(sezione=sezione)
-        ).values('id', 'codice')
+        ).values("id", "codice")
 
         # import donatori
-        donatori = self._read_json(os.path.join(options['dir'], 'donatori.json'))
-        sesso_m = Sesso.objects.filter(codice='M').first()
-        sesso_f = Sesso.objects.filter(codice='F').first()
+        donatori = self._read_json(os.path.join(options["dir"], "donatori.json"))
+        sesso_m = Sesso.objects.filter(codice="M").first()
+        sesso_f = Sesso.objects.filter(codice="F").first()
         for d in donatori:
             donatore = Donatore.objects.filter(
                 sezione=sezione,
-                num_tessera_avis=d['NumTessera'],
+                num_tessera_avis=d["NumTessera"],
             ).first()
             if donatore is None:
-                sesso = d.get('Sesso', {}) or {}
-                sesso = sesso.get('Descrizione', 'F')
-                sesso = sesso_f if sesso == 'F' else sesso_m
+                sesso = d.get("Sesso", {}) or {}
+                sesso = sesso.get("Descrizione", "F")
+                sesso = sesso_f if sesso == "F" else sesso_m
                 donatore = Donatore.objects.create(
                     sezione=sezione,
-                    num_tessera_avis=d['NumTessera'],
-                    cognome=d['Cognome'],
-                    nome=d['Nome'],
+                    num_tessera_avis=d["NumTessera"],
+                    cognome=d["Cognome"],
+                    nome=d["Nome"],
                     sesso=sesso,
                     stato_donatore_id=stati_donatore.filter(
-                        codice=d['StatoDonatore']['Descrizione']
-                    ).first()['id'],
-                    num_tessera_ct=d['NumTesseraCartacea'] or '',
+                        codice=d["StatoDonatore"]["Descrizione"]
+                    ).first()["id"],
+                    num_tessera_ct=d["NumTesseraCartacea"] or "",
                     data_rilascio_tessera=self._date_from_string_or_none(
-                        d['DataRilascioTessera']
+                        d["DataRilascioTessera"]
                     ),
-                    codice_fiscale='',
-                    data_nascita=self._date_from_string_or_none(d['DataNascita']),
-                    data_iscrizione=self._date_from_string_or_none(d['DataIscrizione']),
-                    gruppo_sanguigno=d['GruppoSanguigno'],
-                    rh=d['Rh'],
-                    fenotipo=d['Fenotipo'],
-                    kell=d['Kell'],
-                    indirizzo=d['Indirizzo'],
-                    frazione=d['Frazione'],
-                    cap=d['Cap'],
-                    comune=d['Comune'],
-                    provincia=d['Provincia'],
-                    telefono=d['Telefono'],
-                    telefono_lavoro=d['TelefonoLavoro'],
-                    cellulare=d['Cellulare'],
-                    fax='',
-                    email=d['Email'],
-                    fermo_per_malattia=d['FermoPerMalattia'],
-                    donazioni_pregresse=d['DonazioniPregresse'],
-                    num_benemerenze=d['NumBenemerenze'],
+                    codice_fiscale="",
+                    data_nascita=self._date_from_string_or_none(d["DataNascita"]),
+                    data_iscrizione=self._date_from_string_or_none(d["DataIscrizione"]),
+                    gruppo_sanguigno=d["GruppoSanguigno"],
+                    rh=d["Rh"],
+                    fenotipo=d["Fenotipo"],
+                    kell=d["Kell"],
+                    indirizzo=d["Indirizzo"],
+                    frazione=d["Frazione"],
+                    cap=d["Cap"],
+                    comune=d["Comune"],
+                    provincia=d["Provincia"],
+                    telefono=d["Telefono"],
+                    telefono_lavoro=d["TelefonoLavoro"],
+                    cellulare=d["Cellulare"],
+                    fax="",
+                    email=d["Email"],
+                    fermo_per_malattia=d["FermoPerMalattia"],
+                    donazioni_pregresse=d["DonazioniPregresse"],
+                    num_benemerenze=d["NumBenemerenze"],
                 )
 
             # import donazioni
-            donazioni = sorted(d['donazioni'], key=lambda k: k['DataDonazione'])
+            donazioni = sorted(d["donazioni"], key=lambda k: k["DataDonazione"])
             for donazione in donazioni:
-                tipo_donazione = donazione.get('TipoDonazione', {}) or {}
-                tipo_donazione = tipo_donazione.get('Descrizione', None)
-                if tipo_donazione == 'Sangue intero':
+                tipo_donazione = donazione.get("TipoDonazione", {}) or {}
+                tipo_donazione = tipo_donazione.get("Descrizione", None)
+                if tipo_donazione == "Sangue intero":
                     tipo_donazione = Donazione.TipoDonazione.SANGUE_INTERO
-                elif tipo_donazione == 'Plasma':
+                elif tipo_donazione == "Plasma":
                     tipo_donazione = Donazione.TipoDonazione.PLASMA
-                elif tipo_donazione == 'Piastrine':
+                elif tipo_donazione == "Piastrine":
                     tipo_donazione = Donazione.TipoDonazione.PIASTRINE
                 elif tipo_donazione is None:
                     tipo_donazione = None
@@ -139,17 +139,17 @@ class Command(BaseCommand):
                         donatore=donatore,
                         tipo_donazione=tipo_donazione,
                         data_donazione=self._date_from_string_or_none(
-                            donazione['DataDonazione']
+                            donazione["DataDonazione"]
                         ),
                     )
                 except Exception:
                     print(
                         donatore,
-                        '\n',
-                        '\t',
-                        self._date_from_string_or_none(donazione['DataDonazione']),
+                        "\n",
+                        "\t",
+                        self._date_from_string_or_none(donazione["DataDonazione"]),
                         # err,
                     )
                     raise
 
-        self.stdout.write('Importazione donatori completata con successo')
+        self.stdout.write("Importazione donatori completata con successo")

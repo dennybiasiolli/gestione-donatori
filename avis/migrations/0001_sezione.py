@@ -15,29 +15,29 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Sezione',
+            name="Sezione",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name='ID',
+                        verbose_name="ID",
                     ),
                 ),
-                ('descrizione', models.CharField(max_length=100)),
-                ('indirizzo', models.CharField(max_length=255)),
-                ('cap', models.CharField(max_length=5)),
-                ('comune', models.CharField(max_length=100)),
-                ('provincia', models.CharField(max_length=2)),
-                ('telefono', models.CharField(blank=True, max_length=20)),
-                ('fax', models.CharField(blank=True, max_length=20)),
-                ('email', models.CharField(max_length=100)),
-                ('presidente', models.CharField(max_length=100)),
-                ('segretario', models.CharField(max_length=100)),
+                ("descrizione", models.CharField(max_length=100)),
+                ("indirizzo", models.CharField(max_length=255)),
+                ("cap", models.CharField(max_length=5)),
+                ("comune", models.CharField(max_length=100)),
+                ("provincia", models.CharField(max_length=2)),
+                ("telefono", models.CharField(blank=True, max_length=20)),
+                ("fax", models.CharField(blank=True, max_length=20)),
+                ("email", models.CharField(max_length=100)),
+                ("presidente", models.CharField(max_length=100)),
+                ("segretario", models.CharField(max_length=100)),
                 (
-                    'utente',
+                    "utente",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.RESTRICT,
                         to=settings.AUTH_USER_MODEL,
@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                'verbose_name_plural': 'Sezioni',
+                "verbose_name_plural": "Sezioni",
             },
         ),
     ]

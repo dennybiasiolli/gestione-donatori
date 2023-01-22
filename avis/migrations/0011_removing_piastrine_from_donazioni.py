@@ -6,7 +6,7 @@ from django.db import migrations
 def forwards_func(apps, schema_editor):
     # We get the model from the versioned app registry;
     # if we directly import it, it'll be the wrong version
-    DonazioneModel = apps.get_model('avis', 'Donazione')
+    DonazioneModel = apps.get_model("avis", "Donazione")
     db_alias = schema_editor.connection.alias
     DonazioneModel.objects.using(db_alias).filter(
         tipo_donazione=3  # Donazione.TipoDonazione.PIASTRINE
@@ -16,7 +16,7 @@ def forwards_func(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('avis', '0010_donatore_luogo_nascita'),
+        ("avis", "0010_donatore_luogo_nascita"),
     ]
 
     operations = [

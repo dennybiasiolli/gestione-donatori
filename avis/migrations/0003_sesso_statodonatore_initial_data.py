@@ -25,15 +25,15 @@ from django.db import migrations
 def forwards_func(apps, schema_editor):
     # We get the model from the versioned app registry;
     # if we directly import it, it'll be the wrong version
-    Sesso = apps.get_model('avis', 'Sesso')
-    StatoDonatore = apps.get_model('avis', 'StatoDonatore')
+    Sesso = apps.get_model("avis", "Sesso")
+    StatoDonatore = apps.get_model("avis", "StatoDonatore")
     db_alias = schema_editor.connection.alias
 
     Sesso.objects.using(db_alias).bulk_create(
         [
             Sesso(
-                codice='M',
-                descrizione='Maschio',
+                codice="M",
+                descrizione="Maschio",
                 gg_da_sangue_a_sangue=90,
                 gg_da_sangue_a_plasma=30,
                 gg_da_sangue_a_piastrine=30,
@@ -45,8 +45,8 @@ def forwards_func(apps, schema_editor):
                 gg_da_piastrine_a_piastrine=30,
             ),
             Sesso(
-                codice='F',
-                descrizione='Femmina',
+                codice="F",
+                descrizione="Femmina",
                 gg_da_sangue_a_sangue=180,
                 gg_da_sangue_a_plasma=30,
                 gg_da_sangue_a_piastrine=30,
@@ -63,14 +63,14 @@ def forwards_func(apps, schema_editor):
         [
             StatoDonatore(
                 sezione=None,
-                codice='Attivo',
-                descrizione='Attivo',
+                codice="Attivo",
+                descrizione="Attivo",
                 is_attivo=True,
             ),
             StatoDonatore(
                 sezione=None,
-                codice='Inattivo',
-                descrizione='Inattivo',
+                codice="Inattivo",
+                descrizione="Inattivo",
                 is_attivo=False,
             ),
         ]
@@ -80,22 +80,22 @@ def forwards_func(apps, schema_editor):
 def reverse_func(apps, schema_editor):
     # forwards_func() creates instances,
     # so reverse_func() should delete them.
-    Sesso = apps.get_model('avis', 'Sesso')
-    StatoDonatore = apps.get_model('avis', 'StatoDonatore')
+    Sesso = apps.get_model("avis", "Sesso")
+    StatoDonatore = apps.get_model("avis", "StatoDonatore")
     db_alias = schema_editor.connection.alias
 
-    Sesso.objects.using(db_alias).filter(codice='M').delete()
-    Sesso.objects.using(db_alias).filter(codice='F').delete()
-    StatoDonatore.objects.using(db_alias).filter(sezione=None, codice='Attivo').delete()
+    Sesso.objects.using(db_alias).filter(codice="M").delete()
+    Sesso.objects.using(db_alias).filter(codice="F").delete()
+    StatoDonatore.objects.using(db_alias).filter(sezione=None, codice="Attivo").delete()
     StatoDonatore.objects.using(db_alias).filter(
-        sezione=None, codice='Inattivo'
+        sezione=None, codice="Inattivo"
     ).delete()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('avis', '0002_sesso_statodonatore'),
+        ("avis", "0002_sesso_statodonatore"),
     ]
 
     operations = [

@@ -7,6 +7,10 @@ nav img.logo {
     width: auto;
 }
 
+.nav-link.active {
+    text-decoration: underline;
+}
+
 /* personalizzazione stampa benemerenza */
 .benemerenza {
     width: 8.3in;  /* A4 format */

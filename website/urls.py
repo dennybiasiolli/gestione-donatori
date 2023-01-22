@@ -20,6 +20,6 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path(f'{settings.ADMIN_BASE_URL}/', admin.site.urls),
-    path('', include('avis.urls')),
+    path(f"{settings.ADMIN_BASE_URL}/", admin.site.urls),
+    path("", include("avis.urls")),
 ]

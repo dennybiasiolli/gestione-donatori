@@ -23,18 +23,18 @@ class Sezione(models.Model):
     luogo_stampa_benemerenze = models.CharField(
         max_length=100,
         blank=True,
-        help_text='Luogo da usare per la stampa delle benemerenze,'
-        ' se non specificato, verrà usato il comune della sezione.',
+        help_text="Luogo da usare per la stampa delle benemerenze,"
+        " se non specificato, verrà usato il comune della sezione.",
     )
     data_stampa_benemerenze = models.DateField(
         null=True,
         blank=True,
-        help_text='Data da usare per la stampa delle benemerenze,'
-        ' se non specificata, verrà usata la data corrente.',
+        help_text="Data da usare per la stampa delle benemerenze,"
+        " se non specificata, verrà usata la data corrente.",
     )
 
     class Meta:
-        verbose_name_plural = 'Sezioni'
+        verbose_name_plural = "Sezioni"
 
     def __str__(self):
         return self.descrizione
@@ -54,7 +54,7 @@ class Sesso(models.Model):
     gg_da_piastrine_a_piastrine = models.IntegerField()
 
     class Meta:
-        verbose_name_plural = 'Sessi'
+        verbose_name_plural = "Sessi"
 
     def __str__(self):
         return self.descrizione
@@ -66,14 +66,14 @@ class StatoDonatore(models.Model):
     )
     codice = models.CharField(max_length=20)
     descrizione = models.CharField(max_length=100, blank=True)
-    is_attivo = models.BooleanField(default=True, verbose_name='Attivo')
+    is_attivo = models.BooleanField(default=True, verbose_name="Attivo")
 
     class Meta:
-        verbose_name = 'Stato donatore'
-        verbose_name_plural = 'Stati donatore'
+        verbose_name = "Stato donatore"
+        verbose_name_plural = "Stati donatore"
         unique_together = (
-            'sezione',
-            'codice',
+            "sezione",
+            "codice",
         )
 
     def __str__(self):
@@ -82,21 +82,21 @@ class StatoDonatore(models.Model):
 
 class Donatore(models.Model):
     sezione = models.ForeignKey(
-        Sezione, related_name='donatori', on_delete=models.RESTRICT
+        Sezione, related_name="donatori", on_delete=models.RESTRICT
     )
     num_tessera_avis = models.CharField(
         max_length=255,
-        help_text='Num. Tessera AVIS, inserito nel programma',
-        verbose_name='N. Tessera AVIS',
+        help_text="Num. Tessera AVIS, inserito nel programma",
+        verbose_name="N. Tessera AVIS",
     )
     num_tessera_ct = models.CharField(
         max_length=255,
         blank=True,
         help_text=(
-            'Num. Tessera usato per la registrazione'
-            ' e comunicato al Centro Trasfusionale'
+            "Num. Tessera usato per la registrazione"
+            " e comunicato al Centro Trasfusionale"
         ),
-        verbose_name='N. Tessera C.T.',
+        verbose_name="N. Tessera C.T.",
     )
     cognome = models.CharField(max_length=255)
     nome = models.CharField(max_length=255)
@@ -105,8 +105,8 @@ class Donatore(models.Model):
     motivo_inattivita = models.CharField(
         max_length=255,
         blank=True,
-        verbose_name='Motivo inattività',
-        help_text='Inserire eventuale motivo di inattività',
+        verbose_name="Motivo inattività",
+        help_text="Inserire eventuale motivo di inattività",
     )
     data_rilascio_tessera = models.DateField(null=True, blank=True)
     codice_fiscale = models.CharField(max_length=255, blank=True)
@@ -134,19 +134,19 @@ class Donatore(models.Model):
     stampa_donatore = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name_plural = 'Donatori'
+        verbose_name_plural = "Donatori"
         unique_together = (
-            'sezione',
-            'num_tessera_avis',
+            "sezione",
+            "num_tessera_avis",
         )
 
     def __str__(self):
-        return '{} - {} {}'.format(self.num_tessera_avis, self.cognome, self.nome)
+        return "{} - {} {}".format(self.num_tessera_avis, self.cognome, self.nome)
 
     def validate_unique(self, exclude: Optional[Collection[str]] = ...) -> None:
         if (
             self.num_tessera_ct
-            and Donatore.objects.select_related('stato_donatore')
+            and Donatore.objects.select_related("stato_donatore")
             .filter(
                 num_tessera_ct=self.num_tessera_ct,
                 stato_donatore__is_attivo=True,
@@ -156,8 +156,8 @@ class Donatore(models.Model):
         ):
             raise ValidationError(
                 {
-                    'num_tessera_ct': (
-                        'Questo valore è già utilizzato da un altro donatore attivo'
+                    "num_tessera_ct": (
+                        "Questo valore è già utilizzato da un altro donatore attivo"
                     )
                 }
             )
@@ -166,13 +166,13 @@ class Donatore(models.Model):
 
 class Donazione(models.Model):
     class TipoDonazione(models.IntegerChoices):
-        SANGUE_INTERO = 1, 'Sangue intero'
-        PLASMA = 2, 'Plasma'
+        SANGUE_INTERO = 1, "Sangue intero"
+        PLASMA = 2, "Plasma"
         # PIASTRINE = 3, 'Piastrine'
-        __empty__ = 'Non specificato'
+        __empty__ = "Non specificato"
 
     donatore = models.ForeignKey(
-        Donatore, related_name='donazioni', on_delete=models.CASCADE
+        Donatore, related_name="donazioni", on_delete=models.CASCADE
     )
     tipo_donazione = models.IntegerField(
         null=True,
@@ -183,13 +183,13 @@ class Donazione(models.Model):
     data_donazione = models.DateField(default=date.today)
 
     class Meta:
-        verbose_name_plural = 'Donazioni'
+        verbose_name_plural = "Donazioni"
         unique_together = (
-            'donatore',
-            'data_donazione',
+            "donatore",
+            "data_donazione",
         )
 
     def __str__(self):
-        return '{} - {} {}'.format(
+        return "{} - {} {}".format(
             self.data_donazione, self.donatore.cognome, self.donatore.nome
         )

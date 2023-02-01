@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("avis", "0011_removing_piastrine_from_donazioni"),
     ]

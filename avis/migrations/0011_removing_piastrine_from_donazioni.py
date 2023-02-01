@@ -14,7 +14,6 @@ def forwards_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("avis", "0010_donatore_luogo_nascita"),
     ]

@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("avis", "0007_sezione_fields_stampa_benemerenze"),
     ]

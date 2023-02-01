@@ -93,7 +93,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("avis", "0002_sesso_statodonatore"),
     ]

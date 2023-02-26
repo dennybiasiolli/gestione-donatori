@@ -39,4 +39,9 @@ urlpatterns = [
         views.DonazioneCreateView.as_view(),
         name="donazione-create",
     ),
+    path(
+        "dati-statistici/",
+        views.dati_statistici,
+        name="dati-statistici",
+    ),
 ]

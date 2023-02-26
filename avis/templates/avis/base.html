@@ -58,6 +58,12 @@
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'dati-statistici' %}active{% endif %}"
+              href="{% url 'dati-statistici' %}">
+              Dati statistici
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{% url 'admin:avis_donatore_changelist' %}" target="_blank">
               Amministrazione donatori
             </a>

@@ -131,9 +131,6 @@
         </tbody>
     </table>
 
-
-    <br />
-
     <table class="table">
         <thead class="table-light">
             <tr>
@@ -170,7 +167,12 @@
         </tbody>
     </table>
 
-    <br />
+    <p>
+        <b>
+            Numero di soci donatori attualmente attivi (al {% now "SHORT_DATE_FORMAT" %})
+            che non hanno donato nell'anno {{ anno_filtro }}: {{ donatori_attivi_senza_donazioni }}
+        </b>
+    </p>
 
     <table class="table">
         <thead class="table-light">

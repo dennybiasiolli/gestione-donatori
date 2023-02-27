@@ -1,6 +1,6 @@
-import datetime
+from django.db.models import Count
 
-from .models import Donazione
+from .models import Donatore, Donazione
 
 
 def get_dati_statistici(user, anno: int) -> dict:
@@ -193,7 +193,21 @@ def get_dati_statistici(user, anno: int) -> dict:
         stats_tipo[tipo_key][sesso_key] += 1
         stats_tipo[tipo_key]["Totale"] += 1
 
-    # TODO: num. soci_donatori senza donazioni nell'anno
+    # num. soci_donatori attivi senza donazioni nell'anno
+    donatori_attivi_qs = Donatore.objects.select_related("stato_donatore").filter(
+        sezione__utente=user,
+        stato_donatore__is_attivo=True,
+    )
+    donatori_attivi = donatori_attivi_qs.count()
+
+    donatori_con_donazioni_qs = (
+        donatori_attivi_qs.prefetch_related("donazioni")
+        .filter(
+            donazioni__data_donazione__year=anno,
+        )
+        .annotate(num_donazioni=Count("donazioni"))
+    )
+    donatori_con_donazioni = donatori_con_donazioni_qs.count()
 
     return {
         "count": qs.count(),
@@ -202,4 +216,5 @@ def get_dati_statistici(user, anno: int) -> dict:
         "stats_tipo": stats_tipo,
         "donazioni_no_data_rilascio_tessera": donazioni_no_data_rilascio_tessera,
         "donazioni_no_data_nascita": donazioni_no_data_nascita,
+        "donatori_attivi_senza_donazioni": donatori_attivi - donatori_con_donazioni,
     }

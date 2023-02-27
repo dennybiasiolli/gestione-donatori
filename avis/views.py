@@ -355,7 +355,6 @@ class DonazioneCreateView(CreateView):
         return context_data
 
 
-@csrf_exempt
 @require_http_methods(["GET"])
 @user_passes_test(avis_user_check)
 def dati_statistici(request):

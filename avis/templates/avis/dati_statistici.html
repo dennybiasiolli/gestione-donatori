@@ -23,7 +23,7 @@
         </div>
     </form>
 
-    <table class="table">
+    <table class="table" aria-describedby="Statistiche donazioni per fasce di et&agrave;">
         <thead class="table-light">
             <tr>
                 <th scope="col" rowspan="3">&nbsp;</th>
@@ -63,7 +63,7 @@
         </thead>
         <tbody>
             <tr>
-                <th>Soci Donatori</th>
+                <th scope="col">Soci Donatori</th>
                 <td scope="col" class="text-center">{{ stats.Soci_Donatori.Maschi.Totale }}</td>
                 <td scope="col" class="text-center">{{ stats.Soci_Donatori.Femmine.Totale }}</td>
                 <td scope="col" class="text-center">{{ stats.Soci_Donatori.Totale }}</td>
@@ -85,7 +85,7 @@
                 <td scope="col" class="text-center">{{ stats.Soci_Donatori.Femmine.Totale }}</td>
             </tr>
             <tr>
-                <th>Soci Non Donatori</th>
+                <th scope="col">Soci Non Donatori</th>
                 <td scope="col" class="text-center">{{ stats.Soci_Non_Donatori.Maschi.Totale }}</td>
                 <td scope="col" class="text-center">{{ stats.Soci_Non_Donatori.Femmine.Totale }}</td>
                 <td scope="col" class="text-center">{{ stats.Soci_Non_Donatori.Totale }}</td>
@@ -107,7 +107,7 @@
                 <td scope="col" class="text-center">{{ stats.Soci_Non_Donatori.Femmine.Totale }}</td>
             </tr>
             <tr>
-                <th>Soci Nuovi Iscritti *</th>
+                <th scope="col">Soci Nuovi Iscritti *</th>
                 <td scope="col" class="text-center">{{ stats.Soci_Nuovi_Iscritti.Maschi.Totale }}</td>
                 <td scope="col" class="text-center">{{ stats.Soci_Nuovi_Iscritti.Femmine.Totale }}</td>
                 <td scope="col" class="text-center">{{ stats.Soci_Nuovi_Iscritti.Totale }}</td>
@@ -131,7 +131,7 @@
         </tbody>
     </table>
 
-    <table class="table">
+    <table class="table" aria-describedby="Statistiche donazioni per gruppo ematico">
         <thead class="table-light">
             <tr>
                 <th scope="col" rowspan="2">&nbsp;</th>
@@ -152,7 +152,7 @@
         </thead>
         <tbody>
             <tr>
-                <th>Soci Donatori **</th>
+                <th scope="col">Soci Donatori **</th>
                 <td scope="col" class="text-center">{{ stats_gruppo.0_RHp }}</td>
                 <td scope="col" class="text-center">{{ stats_gruppo.0_RHn }}</td>
                 <td scope="col" class="text-center">{{ stats_gruppo.A_RHp }}</td>
@@ -174,7 +174,7 @@
         </b>
     </p>
 
-    <table class="table">
+    <table class="table" aria-describedby="Statistiche donazioni per genere">
         <thead class="table-light">
             <tr>
                 <th scope="col" rowspan="2">&nbsp;</th>
@@ -188,19 +188,19 @@
         </thead>
         <tbody>
             <tr>
-                <th>Sangue Intero</th>
+                <th scope="col">Sangue Intero</th>
                 <td scope="col" class="text-center">{{ stats_tipo.Sangue_Intero.Maschi }}</td>
                 <td scope="col" class="text-center">{{ stats_tipo.Sangue_Intero.Femmine }}</td>
                 <td scope="col" class="text-center">{{ stats_tipo.Sangue_Intero.Totale }}</td>
             </tr>
             <tr>
-                <th>Plasmaferesi</th>
+                <th scope="col">Plasmaferesi</th>
                 <td scope="col" class="text-center">{{ stats_tipo.Plasmaferesi.Maschi }}</td>
                 <td scope="col" class="text-center">{{ stats_tipo.Plasmaferesi.Femmine }}</td>
                 <td scope="col" class="text-center">{{ stats_tipo.Plasmaferesi.Totale }}</td>
             </tr>
             <tr>
-                <th>Altre Donazioni</th>
+                <th scope="col">Altre Donazioni</th>
                 <td scope="col" class="text-center">{{ stats_tipo.Altre_donazioni.Maschi }}</td>
                 <td scope="col" class="text-center">{{ stats_tipo.Altre_donazioni.Femmine }}</td>
                 <td scope="col" class="text-center">{{ stats_tipo.Altre_donazioni.Totale }}</td>

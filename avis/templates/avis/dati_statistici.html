@@ -1,0 +1,262 @@
+{% extends 'avis/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <form type="get" action="/dati-statistici" id="formDatiStatistici" class="d-print-none" style="margin: 0;">
+        <script>
+            const formDatiStatistici = document.getElementById("formDatiStatistici");
+            function handleAnnoChange() {
+                formDatiStatistici.submit();
+            }
+        </script>
+        <div class="m-1 row">
+            <div class="col-sm-2"></div>
+            <label class="col-sm-2 col-form-label">Anno statistico</label>
+            <div class="col-sm-2">
+                <select class="form-select" name="anno" onchange="handleAnnoChange()">
+                    {% for anno in anni %}
+                    <option value="{{ anno }}"{% if anno == anno_filtro %} selected{% endif %}>{{ anno }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <table class="table" aria-describedby="Statistiche donazioni per fasce di et&agrave;">
+        <thead class="table-light">
+            <tr>
+                <th scope="col" rowspan="3">&nbsp;</th>
+                <th scope="col" rowspan="2" colspan="3" class="align-middle text-center">Genere</th>
+                <th scope="col" colspan="16" class="align-middle text-center">
+                    Donazioni per fasce d'et&agrave;
+                    {% if donazioni_no_data_nascita %}
+                    ***
+                    {% endif %}
+                </th>
+            </tr>
+            <tr>
+                <th scope="col" colspan="8" class="align-middle text-center">Maschi</th>
+                <th scope="col" colspan="8" class="align-middle text-center">Femmine</th>
+            </tr>
+            <tr>
+                <th scope="col" class="align-middle text-center">Maschi</th>
+                <th scope="col" class="align-middle text-center">Femmine</th>
+                <th scope="col" class="align-middle text-center">Totale</th>
+                <th scope="col" class="align-middle text-center">18/25</th>
+                <th scope="col" class="align-middle text-center">26/35</th>
+                <th scope="col" class="align-middle text-center">36/45</th>
+                <th scope="col" class="align-middle text-center">46/55</th>
+                <th scope="col" class="align-middle text-center">56/65</th>
+                <th scope="col" class="align-middle text-center">Oltre 65</th>
+                <th scope="col" class="align-middle text-center">N/D</th>
+                <th scope="col" class="align-middle text-center">Totale</th>
+                <th scope="col" class="align-middle text-center">18/25</th>
+                <th scope="col" class="align-middle text-center">26/35</th>
+                <th scope="col" class="align-middle text-center">36/45</th>
+                <th scope="col" class="align-middle text-center">46/55</th>
+                <th scope="col" class="align-middle text-center">56/65</th>
+                <th scope="col" class="align-middle text-center">Oltre 65</th>
+                <th scope="col" class="align-middle text-center">N/D</th>
+                <th scope="col" class="align-middle text-center">Totale</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="col">Soci Donatori</th>
+                <td class="text-center">{{ stats.Soci_Donatori.Maschi.Totale }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Femmine.Totale }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Totale }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Maschi.18_25 }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Maschi.26_35 }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Maschi.36_45 }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Maschi.46_55 }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Maschi.56_65 }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Maschi.Oltre_65 }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Maschi.N_D }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Maschi.Totale }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Femmine.18_25 }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Femmine.26_35 }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Femmine.36_45 }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Femmine.46_55 }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Femmine.56_65 }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Femmine.Oltre_65 }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Femmine.N_D }}</td>
+                <td class="text-center">{{ stats.Soci_Donatori.Femmine.Totale }}</td>
+            </tr>
+            <tr>
+                <th scope="col">Soci Non Donatori</th>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Maschi.Totale }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Femmine.Totale }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Totale }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Maschi.18_25 }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Maschi.26_35 }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Maschi.36_45 }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Maschi.46_55 }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Maschi.56_65 }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Maschi.Oltre_65 }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Maschi.N_D }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Maschi.Totale }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Femmine.18_25 }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Femmine.26_35 }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Femmine.36_45 }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Femmine.46_55 }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Femmine.56_65 }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Femmine.Oltre_65 }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Femmine.N_D }}</td>
+                <td class="text-center">{{ stats.Soci_Non_Donatori.Femmine.Totale }}</td>
+            </tr>
+            <tr>
+                <th scope="col">Soci Nuovi Iscritti *</th>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Maschi.Totale }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Femmine.Totale }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Totale }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Maschi.18_25 }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Maschi.26_35 }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Maschi.36_45 }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Maschi.46_55 }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Maschi.56_65 }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Maschi.Oltre_65 }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Maschi.N_D }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Maschi.Totale }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Femmine.18_25 }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Femmine.26_35 }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Femmine.36_45 }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Femmine.46_55 }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Femmine.56_65 }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Femmine.Oltre_65 }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Femmine.N_D }}</td>
+                <td class="text-center">{{ stats.Soci_Nuovi_Iscritti.Femmine.Totale }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table" aria-describedby="Statistiche donazioni per gruppo ematico">
+        <thead class="table-light">
+            <tr>
+                <th scope="col" rowspan="2">&nbsp;</th>
+                <th scope="col" colspan="10" class="align-middle text-center">
+                    Donazioni per Gruppo Ematico
+                </th>
+            </tr>
+            <tr>
+                <th scope="col" class="text-center">0 RH+</th>
+                <th scope="col" class="text-center">0 RH-</th>
+                <th scope="col" class="text-center">A RH+</th>
+                <th scope="col" class="text-center">A RH-</th>
+                <th scope="col" class="text-center">B RH+</th>
+                <th scope="col" class="text-center">B RH-</th>
+                <th scope="col" class="text-center">AB RH+</th>
+                <th scope="col" class="text-center">AB RH-</th>
+                <th scope="col" class="text-center">N/D</th>
+                <th scope="col" class="text-center">Totale</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="col">Soci Donatori **</th>
+                <td class="text-center">{{ stats_gruppo.0_RHp }}</td>
+                <td class="text-center">{{ stats_gruppo.0_RHn }}</td>
+                <td class="text-center">{{ stats_gruppo.A_RHp }}</td>
+                <td class="text-center">{{ stats_gruppo.A_RHn }}</td>
+                <td class="text-center">{{ stats_gruppo.B_RHp }}</td>
+                <td class="text-center">{{ stats_gruppo.B_RHn }}</td>
+                <td class="text-center">{{ stats_gruppo.AB_RHp }}</td>
+                <td class="text-center">{{ stats_gruppo.AB_RHn }}</td>
+                <td class="text-center">{{ stats_gruppo.N_D }}</td>
+                <td class="text-center">{{ stats_gruppo.Totale }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        <b>
+            Numero di soci donatori attualmente attivi (al {% now "SHORT_DATE_FORMAT" %})
+            che non hanno donato nell'anno {{ anno_filtro }}: {{ donatori_attivi_senza_donazioni }}
+        </b>
+    </p>
+
+    <table class="table" aria-describedby="Statistiche donazioni per genere">
+        <thead class="table-light">
+            <tr>
+                <th scope="col" rowspan="2">&nbsp;</th>
+                <th scope="col" colspan="10" class="align-middle text-center">Tipo donazione per genere</th>
+            </tr>
+            <tr>
+                <th scope="col" class="text-center">Donazioni Maschi</th>
+                <th scope="col" class="text-center">Donazioni Femmine</th>
+                <th scope="col" class="text-center">Totale</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="col">Sangue Intero</th>
+                <td class="text-center">{{ stats_tipo.Sangue_Intero.Maschi }}</td>
+                <td class="text-center">{{ stats_tipo.Sangue_Intero.Femmine }}</td>
+                <td class="text-center">{{ stats_tipo.Sangue_Intero.Totale }}</td>
+            </tr>
+            <tr>
+                <th scope="col">Plasmaferesi</th>
+                <td class="text-center">{{ stats_tipo.Plasmaferesi.Maschi }}</td>
+                <td class="text-center">{{ stats_tipo.Plasmaferesi.Femmine }}</td>
+                <td class="text-center">{{ stats_tipo.Plasmaferesi.Totale }}</td>
+            </tr>
+            <tr>
+                <th scope="col">Altre Donazioni</th>
+                <td class="text-center">{{ stats_tipo.Altre_donazioni.Maschi }}</td>
+                <td class="text-center">{{ stats_tipo.Altre_donazioni.Femmine }}</td>
+                <td class="text-center">{{ stats_tipo.Altre_donazioni.Totale }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <small class="row">
+        <div class="col-auto">
+            *&nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+        <div class="col">
+            per &quot;<u>Soci Nuovi Iscritti</u>&quot; si intendono tutti quei donatori
+            con &quot;<u>Data Rilascio Tessera</u>&quot; uguale o successiva all'anno
+            selezionato per le statistiche ({{ anno_filtro }} in questo caso).<br>
+            Nel caso di &quot;<u>Data Rilascio Tessera</u>&quot; non impostata,
+            il donatore sarà considerato tra i &quot;<u>Soci Donatori</u>&quot;.<br>
+            {% if donazioni_no_data_rilascio_tessera %}
+            <b>
+                Attenzione, sono presenti {{ donazioni_no_data_rilascio_tessera }}
+                donazioni {{ anno_filtro }} abbinate a un donatore senza
+                &quot;<u>Data Rilascio Tessera</u>&quot; o impostata su
+                &quot;01 Gennaio 1900&quot;.
+            </b>
+            {% endif %}
+        </div>
+    </small>
+    <small class="row">
+        <div class="col-auto">
+            **&nbsp;&nbsp;
+        </div>
+        <div class="col">
+            per &quot;<u>Soci Donatori</u>&quot; nelle statistiche
+            &quot;<u>Per Gruppo Ematico</u>&quot; si intendono tutti gli iscritti
+            alla Sezione, senza fare riferimento a
+            &quot;<u>Donatori</u>&quot;, &quot;<u>Non Donatori</u>&quot; o &quot;<u>Nuovi Iscritti</u>&quot;
+            delle statistiche &quot;<u>Per fasce d'et&agrave;</u>&quot; 
+        </div>
+    </small>
+    {% if donazioni_no_data_nascita %}
+    <small class="row">
+        <div class="col-auto">
+            ***
+        </div>
+        <div class="col">
+            <b>
+                Attenzione: sono presenti {{ donazioni_no_data_nascita }}
+                donazioni {{ anno_filtro }} abbinate a un donatore senza
+                &quot;<u>data di nascita</u>&quot; o impostata su
+                &quot;01 Gennaio 1900&quot;.
+            </b>
+        </div>
+    </small>
+    {% endif %}
+</div>
+
+{% endblock %}

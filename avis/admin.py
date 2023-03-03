@@ -76,9 +76,11 @@ class DonatoreAdmin(VersionAdmin):
     list_display = (
         "num_tessera_avis",
         "num_tessera_ct",
+        "data_rilascio_tessera",
         "cognome",
         "nome",
         "sesso",
+        "data_nascita",
         "comune",
         "email",
         "cellulare",

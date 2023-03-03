@@ -5,7 +5,7 @@ from typing import Any, Dict
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count, F, Max, Prefetch, Q
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -13,8 +13,8 @@ from django.views.decorators.http import require_GET, require_http_methods
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView
 
-from avis.forms import DonazioneForm
-
+from .forms import DonazioneForm
+from .functions import get_dati_statistici
 from .models import Donatore, Donazione, Sesso, Sezione, StatoDonatore
 
 
@@ -353,3 +353,25 @@ class DonazioneCreateView(CreateView):
             }
         )
         return context_data
+
+
+@require_http_methods(["GET"])
+@user_passes_test(avis_user_check)
+def dati_statistici(request):
+    anno_corrente = datetime.date.today().year
+    anno_prima_donazione = anno_corrente
+    prima_donazione = Donazione.objects.order_by("data_donazione").first()
+    if prima_donazione:
+        anno_prima_donazione = prima_donazione.data_donazione.year
+
+    anno_filtro = int(request.GET.get("anno", anno_corrente - 1))
+
+    dati_statistici = get_dati_statistici(request.user, anno_filtro)
+
+    dati_statistici.update(
+        {
+            "anni": [a for a in range(anno_prima_donazione, anno_corrente + 1)],
+            "anno_filtro": anno_filtro,
+        }
+    )
+    return render(request, "avis/dati_statistici.html", context=dati_statistici)

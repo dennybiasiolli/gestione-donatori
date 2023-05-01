@@ -45,6 +45,10 @@
 
     `python manage.py migrate`
 
+- Loading default data
+
+    `python manage.py loaddata avis`
+
 - Create an admin
 
     `python manage.py createsuperuser`

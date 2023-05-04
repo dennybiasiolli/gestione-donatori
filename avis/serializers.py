@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from .models import Donatore, Sesso
+from .models import Donatore, Sesso, StatoDonatore
 
 
 class SessoLightSerializer(ModelSerializer):
@@ -9,8 +9,15 @@ class SessoLightSerializer(ModelSerializer):
         fields = ["id", "codice"]
 
 
+class StatoDonatoreSerializer(ModelSerializer):
+    class Meta:
+        model = StatoDonatore
+        fields = ["id", "codice", "descrizione"]
+
+
 class DonatoreListSerializer(ModelSerializer):
     sesso = SessoLightSerializer(read_only=True)
+    stato_donatore = StatoDonatoreSerializer(read_only=True)
 
     class Meta:
         model = Donatore
@@ -33,6 +40,7 @@ class DonatoreListSerializer(ModelSerializer):
             "cellulare",
             "fax",
             "email",
+            "stato_donatore",
         ]
 
 

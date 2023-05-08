@@ -30,4 +30,4 @@ jobs:
     - name: Run Tests
       run: |
         pipenv run make style-check
-        pipenv run make test-coverage
+        pipenv run make tests

@@ -16,12 +16,12 @@ uvicorn = "*"
 
 [dev-packages]
 black = "*"
-coverage = "*"
 flake8 = "*"
 isort = "*"
 pylint = "*"
 pylint-django = "*"
-
+pytest-django = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.9"

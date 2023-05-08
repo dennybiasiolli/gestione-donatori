@@ -16,13 +16,8 @@ style-check:
 	black --check --diff .
 	flake8
 
-test:
-	python manage.py test --settings=website.settings_test --parallel=4
-
-test-coverage:
-	coverage run --concurrency=multiprocessing manage.py test --settings=website.settings_test --parallel=4
-	coverage combine
-	coverage report -m
+tests:
+	pytest
 	coverage html
 	coverage xml
 

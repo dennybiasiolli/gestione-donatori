@@ -3,3 +3,7 @@ profile = 'black'
 
 [tool.black]
 # skip-string-normalization = 1
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "website.settings_test"
+addopts = "-x --cov --no-migrations"

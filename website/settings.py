@@ -155,3 +155,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # custom settings
 
 ADMIN_BASE_URL = os.getenv("ADMIN_BASE_URL", "admin")
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}

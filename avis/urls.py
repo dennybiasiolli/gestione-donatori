@@ -1,7 +1,11 @@
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
 from . import forms, views
+
+router = DefaultRouter()
+router.register("donatori", views.DonatoreViewSet)
 
 urlpatterns = [
     path(

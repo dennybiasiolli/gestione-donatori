@@ -20,23 +20,11 @@
     make get-static-libs:
     ```
 
-- Create a virtual environment for this project (Python 3.10.x suggested)
+- Create and enable a virtual environment for this project (Python 3.9)
 
-    ```
-    mkdir -p $HOME/.virtualenvs/gestione-donatori
-    python -m venv $HOME/.virtualenvs/gestione-donatori
-    ```
+- Install required packages
 
-- Enable the virtual environment (each time you work on the project)
-
-    `source $HOME/.virtualenvs/gestione-donatori/bin/activate`
-
-- Install required dependencies
-
-    ```
-    pip install --upgrade pip
-    pip install -r requirements_dev.txt
-    ```
+    `make requirements`
 
 - Create/update database with migrations
 
@@ -109,11 +97,11 @@ And launch `manage.py` commands with
     make get-static-libs:
     ```
 
-- Enable the virtual environment (see instructions above in the setup section)
+- Enable the virtual environment
 
-- Update database
+- Update packages
 
-    `python manage.py migrate`
+    `make requirements`
 
 ## Enabling Git Hooks (optional)
 

@@ -1,6 +1,10 @@
 BOOTSTRAP_VERSION=5.2.3
 BOOTSTRAP_ICON_VERSION=1.10.3
 
+requirements:
+	pip install pipenv
+	pipenv sync --dev
+
 style-fix:
 	isort .
 	black .

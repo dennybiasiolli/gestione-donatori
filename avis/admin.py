@@ -84,6 +84,7 @@ class DonatoreAdmin(VersionAdmin):
         "num_tessera_ct",
         "data_iscrizione",
         "data_rilascio_tessera",
+        "data_cessata_iscrizione",
         "cognome",
         "nome",
         "sesso",

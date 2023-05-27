@@ -119,6 +119,8 @@ class Donatore(models.Model):
     data_nascita = models.DateField(null=True, blank=True)
     luogo_nascita = models.CharField(max_length=255, blank=True)
     data_iscrizione = models.DateField(null=True, blank=True)
+    data_cessata_iscrizione = models.DateField(null=True, blank=True)
+    causa_cessata_iscrizione = models.CharField(max_length=255, blank=True)
     gruppo_sanguigno = models.CharField(max_length=10, blank=True)
     rh = models.CharField(max_length=10, blank=True)
     fenotipo = models.CharField(max_length=10, blank=True)

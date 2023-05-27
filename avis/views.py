@@ -1,5 +1,6 @@
 import datetime
 import http
+from tempfile import NamedTemporaryFile
 from typing import Any, Dict
 
 from django.contrib.auth.decorators import user_passes_test
@@ -12,12 +13,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_http_methods
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView
+from openpyxl import Workbook
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from website.paginations import DefaultLimitOffsetPagination
 
 from .forms import DonazioneForm
-from .functions import get_dati_statistici
+from .functions import get_dati_statistici, get_elenco_soci_xls
 from .models import Donatore, Donazione, Sesso, Sezione, StatoDonatore
 from .serializers import DonatoreDetailSerializer, DonatoreListSerializer
 
@@ -397,3 +399,16 @@ class DonatoreViewSet(ReadOnlyModelViewSet):
 
     def get_serializer_class(self):
         return self.serializers.get(self.action, self.serializers["default"])
+
+
+@require_http_methods(["GET"])
+@user_passes_test(avis_user_check)
+def export_elenco_soci(request):
+    wb: Workbook = get_elenco_soci_xls(request.user)
+    with NamedTemporaryFile() as tmp:
+        wb.save(tmp.name)
+        tmp.seek(0)
+        stream = tmp.read()
+        response = HttpResponse(stream)
+        response["Content-Disposition"] = 'attachment; filename="Elenco soci.xlsx"'
+        return response

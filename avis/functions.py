@@ -1,4 +1,5 @@
 from django.db.models import Count
+from openpyxl import Workbook
 
 from .models import Donatore, Donazione
 
@@ -218,3 +219,73 @@ def get_dati_statistici(user, anno: int) -> dict:
         "donazioni_no_data_nascita": donazioni_no_data_nascita,
         "donatori_attivi_senza_donazioni": donatori_attivi - donatori_con_donazioni,
     }
+
+
+def get_elenco_soci_xls(user) -> Workbook:
+    qs = (
+        Donatore.objects.select_related("sezione", "stato_donatore")
+        .filter(
+            sezione__utente=user,
+            stato_donatore__can_export_elenco_soci_xls=True,
+        )
+        .order_by("stato_donatore__pk", "cognome", "nome")
+    )
+
+    wb = Workbook()
+
+    ws = wb.active  # grab the active worksheet
+    ws.title = "Elenco soci"
+    ws.append(
+        [
+            "COGNOME",
+            "NOME",
+            "LUOGO DI NASCITA",
+            "DATA DI NASCITA",
+            "CODICE FISCALE",
+            "INDIRIZZO DI RESIDENZA",
+            "COMUNE",
+            "CAP",
+            "NAZIONALITA'",
+            "DATA DI ISCRIZIONE",
+            "TIPOLOGIA DI SOCIO",
+            "DATA CESSATA ISCRIZIONE",
+            "CAUSA CESSATA ISCRIZIONE",
+            "TELEFONO",
+            "INDIRIZZO MAIL",
+            "Provinciale",
+            "Comunale",
+        ]
+    )
+    for donatore in qs:
+        indirizzo = (
+            donatore.indirizzo + f" Fraz. {donatore.frazione}"
+            if donatore.frazione
+            else ""
+        )
+        telefono = donatore.cellulare if donatore.cellulare else donatore.telefono
+        tipologia = "DONATORE"
+        if not donatore.stato_donatore.is_attivo:
+            tipologia = "EX DONATORE"
+
+        ws.append(
+            [
+                donatore.cognome,
+                donatore.nome,
+                donatore.luogo_nascita,
+                donatore.data_nascita,
+                donatore.codice_fiscale,
+                indirizzo,
+                donatore.comune,
+                donatore.cap,
+                "",  # NAZIONALITA'
+                donatore.data_iscrizione,
+                tipologia,
+                donatore.data_cessata_iscrizione,
+                donatore.causa_cessata_iscrizione,
+                telefono,
+                donatore.email,
+                "",  # Provinciale
+                "",  # Comunale
+            ]
+        )
+    return wb

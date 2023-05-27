@@ -48,4 +48,9 @@ urlpatterns = [
         views.dati_statistici,
         name="dati-statistici",
     ),
+    path(
+        "export-elenco-soci/",
+        views.export_elenco_soci,
+        name="export-elenco-soci",
+    ),
 ]

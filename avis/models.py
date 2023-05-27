@@ -108,6 +108,7 @@ class Donatore(models.Model):
         verbose_name="Motivo inattività",
         help_text="Inserire eventuale motivo di inattività",
     )
+    fermo_per_malattia = models.BooleanField(default=False)
     data_rilascio_tessera = models.DateField(null=True, blank=True)
     codice_fiscale = models.CharField(max_length=255, blank=True)
     data_nascita = models.DateField(null=True, blank=True)
@@ -127,7 +128,6 @@ class Donatore(models.Model):
     cellulare = models.CharField(max_length=255, blank=True)
     fax = models.CharField(max_length=255, blank=True)
     email = models.CharField(max_length=255, blank=True)
-    fermo_per_malattia = models.BooleanField(default=False)
     donazioni_pregresse = models.IntegerField(default=0)
     num_benemerenze = models.IntegerField(default=0)
     scheda_anamnestica = models.TextField(blank=True)

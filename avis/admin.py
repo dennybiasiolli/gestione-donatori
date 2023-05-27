@@ -31,7 +31,13 @@ class SezioneAdmin(admin.ModelAdmin):
 
 @admin.register(StatoDonatore)
 class StatoDonatoreAdmin(admin.ModelAdmin):
-    list_display = ("codice", "descrizione", "sezione", "is_attivo")
+    list_display = (
+        "codice",
+        "descrizione",
+        "sezione",
+        "is_attivo",
+        "can_export_elenco_soci_xls",
+    )
     ordering = ("codice",)
 
     def get_queryset(self, request: HttpRequest):

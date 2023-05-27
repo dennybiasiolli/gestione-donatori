@@ -67,6 +67,11 @@ class StatoDonatore(models.Model):
     codice = models.CharField(max_length=20)
     descrizione = models.CharField(max_length=100, blank=True)
     is_attivo = models.BooleanField(default=True, verbose_name="Attivo")
+    can_export_elenco_soci_xls = models.BooleanField(
+        default=True,
+        verbose_name="Includi in Elenco Soci Excel",
+        help_text="Include i donatori in questo stato nell'export dell'elenco soci",
+    )
 
     class Meta:
         verbose_name = "Stato donatore"

@@ -67,6 +67,11 @@ class StatoDonatore(models.Model):
     codice = models.CharField(max_length=20)
     descrizione = models.CharField(max_length=100, blank=True)
     is_attivo = models.BooleanField(default=True, verbose_name="Attivo")
+    can_export_elenco_soci_xls = models.BooleanField(
+        default=True,
+        verbose_name="Includi in Elenco Soci Excel",
+        help_text="Include i donatori in questo stato nell'export dell'elenco soci",
+    )
 
     class Meta:
         verbose_name = "Stato donatore"
@@ -108,11 +113,14 @@ class Donatore(models.Model):
         verbose_name="Motivo inattività",
         help_text="Inserire eventuale motivo di inattività",
     )
+    fermo_per_malattia = models.BooleanField(default=False)
     data_rilascio_tessera = models.DateField(null=True, blank=True)
     codice_fiscale = models.CharField(max_length=255, blank=True)
     data_nascita = models.DateField(null=True, blank=True)
     luogo_nascita = models.CharField(max_length=255, blank=True)
     data_iscrizione = models.DateField(null=True, blank=True)
+    data_cessata_iscrizione = models.DateField(null=True, blank=True)
+    causa_cessata_iscrizione = models.CharField(max_length=255, blank=True)
     gruppo_sanguigno = models.CharField(max_length=10, blank=True)
     rh = models.CharField(max_length=10, blank=True)
     fenotipo = models.CharField(max_length=10, blank=True)
@@ -127,7 +135,6 @@ class Donatore(models.Model):
     cellulare = models.CharField(max_length=255, blank=True)
     fax = models.CharField(max_length=255, blank=True)
     email = models.CharField(max_length=255, blank=True)
-    fermo_per_malattia = models.BooleanField(default=False)
     donazioni_pregresse = models.IntegerField(default=0)
     num_benemerenze = models.IntegerField(default=0)
     scheda_anamnestica = models.TextField(blank=True)

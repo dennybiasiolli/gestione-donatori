@@ -11,6 +11,7 @@ djangorestframework = "*"
 djangorestframework-simplejwt = "*"
 gunicorn = "*"
 markdown = "*"
+openpyxl = "*"
 psycopg = "*"
 uvicorn = "*"
 

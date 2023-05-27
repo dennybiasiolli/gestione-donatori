@@ -153,6 +153,14 @@
                             <!-- {% if donatore.data_rilascio_tessera and donatore.data_rilascio_tessera.year > 1900 %}
                             (tessera rilasciata il {{ donatore.data_rilascio_tessera | date:'d/m/Y' }})
                             {% endif %} -->
+                            {% if donatore.data_cessata_iscrizione %}
+                            <br>
+                            Cessata iscrizione dal {{ donatore.data_cessata_iscrizione | date:'d/m/Y' }}
+                            {% endif %}
+                            {% if donatore.causa_cessata_iscrizione %}
+                            <br>
+                            Motivo cessata iscrizione: {{ donatore.causa_cessata_iscrizione }}
+                            {% endif %}
                         </h6>
                     </div>
                 </div>

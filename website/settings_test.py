@@ -1,9 +1,4 @@
-import multiprocessing
-
 from .settings import *  # noqa
-
-print("Using multiproc for testing.")
-multiprocessing.set_start_method("fork")
 
 DEBUG = True
 

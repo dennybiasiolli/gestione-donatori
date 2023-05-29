@@ -276,7 +276,7 @@ def get_elenco_soci_xls(user) -> Workbook:
                 if donatore.data_nascita
                 else "",
                 donatore.codice_fiscale,
-                indirizzo,
+                indirizzo.strip(),
                 donatore.comune,
                 donatore.cap,
                 "",  # NAZIONALITA'

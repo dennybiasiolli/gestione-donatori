@@ -260,7 +260,7 @@ def get_elenco_soci_xls(user) -> Workbook:
         indirizzo = (
             donatore.indirizzo + f" Fraz. {donatore.frazione}"
             if donatore.frazione
-            else ""
+            else donatore.indirizzo
         )
         telefono = donatore.cellulare if donatore.cellulare else donatore.telefono
         tipologia = "DONATORE"

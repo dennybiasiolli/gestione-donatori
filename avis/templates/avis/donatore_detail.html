@@ -2,8 +2,19 @@
 
 {% block content %}
 
-<div class="row m-2">
-    <div class="col-12 text-end d-print-none">
+<div class="row m-2 align-items-center">
+    <div class="col-6 d-print-none">
+        <span class="ps-2">
+            {% if donatore.check_privacy %}
+            <i class="bi bi-check-square-fill"></i>
+            Modulo privacy consegnato
+            {% else %}
+            <i class="bi bi-square"></i>
+            Modulo privacy da consegnare
+            {% endif %}
+        </span>
+    </div>
+    <div class="col-6 text-end d-print-none">
         <a class="btn btn-outline-secondary" href="#"
             onclick="handleAddRemovePrint(event, 'add', '{% url 'donatore-add-stampa' pk=donatore.pk %}')">
             Aggiungi a elenco stampa

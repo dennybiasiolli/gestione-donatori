@@ -139,6 +139,15 @@ class Donatore(models.Model):
     num_benemerenze = models.IntegerField(default=0)
     scheda_anamnestica = models.TextField(blank=True)
     stampa_donatore = models.BooleanField(default=False)
+    check_privacy = models.BooleanField(
+        default=False,
+        verbose_name="Modulo privacy compilato e consegnato",
+    )
+    check_privacy_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="Data compilazione e consegna modulo privacy",
+    )
 
     class Meta:
         verbose_name_plural = "Donatori"

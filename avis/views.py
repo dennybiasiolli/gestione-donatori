@@ -137,6 +137,7 @@ class DonatoreListView(ListView):
         filter_donatori = self.request.GET.get("filter_donatori", "")
         comune = self.request.GET.get("comune", None)
         provincia = self.request.GET.get("provincia", None)
+        show_privacy_check = self.request.GET.get("show_privacy_check", False)
         show_n_donazioni = self.request.GET.get("show_n_donazioni", None)
         if show_n_donazioni:
             show_n_donazioni = int(show_n_donazioni)
@@ -267,6 +268,7 @@ class DonatoreListView(ListView):
             "comune": comune or "",
             "provincia": provincia or "",
             "show_n_donazioni": show_n_donazioni or 0,
+            "show_privacy_check": show_privacy_check,
             "show_advanced": bool(
                 data_iscrizione_dal
                 or data_iscrizione_al
@@ -333,6 +335,28 @@ def donatore_remove_stampa(request, pk=None):
     else:
         Donatore.objects.filter(stampa_donatore=True).update(stampa_donatore=False)
         return redirect("donatori")
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@user_passes_test(avis_user_check)
+def donatore_check_privacy(request, pk):
+    donatore = get_object_or_404(Donatore, pk=pk)
+    donatore.check_privacy = True
+    donatore.check_privacy_date = datetime.date.today()
+    donatore.save()
+    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@user_passes_test(avis_user_check)
+def donatore_uncheck_privacy(request, pk):
+    donatore = get_object_or_404(Donatore, pk=pk)
+    donatore.check_privacy = False
+    donatore.check_privacy_date = None
+    donatore.save()
+    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
 @method_decorator(user_passes_test(avis_user_check), name="dispatch")

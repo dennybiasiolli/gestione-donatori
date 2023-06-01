@@ -34,6 +34,16 @@ urlpatterns = [
         name="donatore-remove-stampa",
     ),
     path(
+        "donatori/check-privacy/<int:pk>/",
+        views.donatore_check_privacy,
+        name="donatore-check-privacy",
+    ),
+    path(
+        "donatori/uncheck-privacy/<int:pk>/",
+        views.donatore_uncheck_privacy,
+        name="donatore-uncheck-privacy",
+    ),
+    path(
         "donatori/remove-stampa/<int:pk>/",
         views.donatore_remove_stampa,
         name="donatore-remove-stampa",

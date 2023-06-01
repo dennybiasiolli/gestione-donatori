@@ -260,13 +260,13 @@
         </div>
     </div>
 
-    <div class="m-1 row">
-        <label class="col-md-2 col-form-label">Risultati per pagina</label>
-        <div class="col-md-1">
-            <input type="number" class="form-control form-control-inline" name="paginate_by" value="{{ paginate_by }}" min="1" />
-        </div>
-        <label class="col-md-1 col-form-label">Ordina per</label>
+    <div class="m-2 row align-items-center">
         <div class="col-md-2">
+            <label class="form-label">Risultati per pagina</label>
+            <input type="number" class="form-control" name="paginate_by" value="{{ paginate_by }}" min="1" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Ordina per</label>
             <select class="form-select" name="order_by">
                 <option value="cognome,nome"{% if order_by == 'cognome,nome' %} selected{% endif %}>Cognome, Nome</option>
                 <option value="gruppo_sanguigno,rh"{% if order_by == 'gruppo_sanguigno,rh' %} selected{% endif %}>Gruppo Sanguigno</option>
@@ -277,19 +277,29 @@
                 <option value="ultima_donazione"{% if order_by == 'ultima_donazione' %} selected{% endif %}>Data ultima donazione</option>
             </select>
         </div>
-        <div class="col-md-3 col-form-label">
-            <div class="form-check form-check-inline">
+        <div class="col-md-2">
+            <div class="form-check">
                 <input class="form-check-input" type="radio" name="order_by_direction" value=""{% if order_by_direction == '' %} checked{% endif %}>
                 <label class="form-check-label">Crescente</label>
             </div>
-            <div class="form-check form-check-inline">
+            <div class="form-check">
                 <input class="form-check-input" type="radio" name="order_by_direction" value="-"{% if order_by_direction == '-' %} checked{% endif %}>
                 <label class="form-check-label">Decrescente</label>
             </div>
         </div>
-        <label class="col-md-2 col-form-label">Visualizza ultime donazioni</label>
-        <div class="col-md-1">
-            <input type="number" class="form-control form-control-inline" name="show_n_donazioni" value="{{ show_n_donazioni }}" min="0" max="12" />
+        <div class="col-md-2">
+            <input class="form-check-input me-2" type="checkbox"
+                name="show_privacy_check"
+                value="1"
+                {% if show_privacy_check %}checked{% endif %}
+            >
+            <label class="form-check-label">
+                Visualizza Privacy
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Visualizza ultime donazioni</label>
+            <input type="number" class="form-control" name="show_n_donazioni" value="{{ show_n_donazioni }}" min="0" max="12" />
         </div>
     </div>
 
@@ -365,6 +375,22 @@
                 <a href="{% url 'donatore' pk=donatore.pk %}">
                     {{ donatore.cognome }} {{ donatore.nome }}
                 </a>
+                {% if show_privacy_check %}
+                <br>
+                <span class="ps-2">
+                    {% if donatore.check_privacy %}
+                    <a href="" data-bs-toggle="tooltip" data-bs-title="Annulla consegna del modulo"
+                        onclick="handleCheckUncheckPrivacy(event, '{% url 'donatore-uncheck-privacy' pk=donatore.pk %}')">
+                        <i class="bi bi-check-square-fill"></i></a>
+                        Modulo privacy consegnato
+                    {% else %}
+                    <a href="" data-bs-toggle="tooltip" data-bs-title="Imposta consegnato"
+                        onclick="handleCheckUncheckPrivacy(event, '{% url 'donatore-check-privacy' pk=donatore.pk %}')">
+                        <i class="bi bi-square"></i></a>
+                        Modulo privacy da consegnare
+                    {% endif %}
+                </span>
+                {% endif %}
             </td>
             <td>{{ donatore.sesso.codice }}</td>
             <td>

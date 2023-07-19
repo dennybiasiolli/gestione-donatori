@@ -26,11 +26,11 @@
         },
         "click": {
             "hashes": [
-                "sha256:4be4b1af8d665c6d942909916d31a213a106800c47d0eeba73d34da3cbc11367",
-                "sha256:e576aa487d679441d7d30abb87e1b43d24fc53bffb8758443b1a9e1cee504548"
+                "sha256:48ee849951919527a045bfe3bf7baa8a959c423134e1a5b98c05c20ba75a1cbd",
+                "sha256:fa244bb30b3b5ee2cae3da8f55c9e5e0c0e86093306301fb418eb9dc40fbded5"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==8.1.5"
+            "version": "==8.1.6"
         },
         "django": {
             "hashes": [
@@ -82,11 +82,11 @@
         },
         "gunicorn": {
             "hashes": [
-                "sha256:949880781d74f55eda34eb1a552f9c83db6edb42f2bd4f87c09e2a66b13922ea",
-                "sha256:b18fa5a9b22becdffc29d2586b914225a69624bb3e3a064cb04decfb2f34bfe8"
+                "sha256:11fc98ea214a5845f614891e8c90b0211fbe595e677d204d7cd7d80f6f348891",
+                "sha256:37ced4b6622f263a6483eb7cbe9606df81afd57dc0fa464883600624790271c5"
             ],
             "index": "pypi",
-            "version": "==21.0.1"
+            "version": "==21.1.0"
         },
         "h11": {
             "hashes": [
@@ -138,11 +138,11 @@
         },
         "pyjwt": {
             "hashes": [
-                "sha256:ba2b425b15ad5ef12f200dc67dd56af4e26de2331f965c5439994dad075876e1",
-                "sha256:bd6ca4a3c4285c1a2d4349e5a035fdf8fb94e04ccd0fcbe6ba289dae9cc3e074"
+                "sha256:57e28d156e3d5c10088e0c68abb90bfac3df82b40a71bd0daa20c65ccd5c23de",
+                "sha256:59127c392cc44c2da5bb3192169a91f429924e17aff6534d70fdc02ab3e04320"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==2.7.0"
+            "version": "==2.8.0"
         },
         "pytz": {
             "hashes": [
@@ -223,11 +223,11 @@
         },
         "click": {
             "hashes": [
-                "sha256:4be4b1af8d665c6d942909916d31a213a106800c47d0eeba73d34da3cbc11367",
-                "sha256:e576aa487d679441d7d30abb87e1b43d24fc53bffb8758443b1a9e1cee504548"
+                "sha256:48ee849951919527a045bfe3bf7baa8a959c423134e1a5b98c05c20ba75a1cbd",
+                "sha256:fa244bb30b3b5ee2cae3da8f55c9e5e0c0e86093306301fb418eb9dc40fbded5"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==8.1.5"
+            "version": "==8.1.6"
         },
         "coverage": {
             "extras": [

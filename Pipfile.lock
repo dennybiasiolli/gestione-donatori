@@ -130,11 +130,11 @@
         },
         "psycopg": {
             "hashes": [
-                "sha256:ab400f207a8c120bafdd8077916d8f6c0106e809401378708485b016508c30c9",
-                "sha256:fbbac339274d8733ee70ba9822297af3e8871790a26e967b5ea53e30a4b74dcc"
+                "sha256:15b25741494344c24066dc2479b0f383dd1b82fa5e75612fa4fa5bb30726e9b6",
+                "sha256:8bbeddae5075c7890b2fa3e3553440376d3c5e28418335dee3c3656b06fa2b52"
             ],
             "index": "pypi",
-            "version": "==3.1.9"
+            "version": "==3.1.10"
         },
         "pyjwt": {
             "hashes": [
@@ -164,7 +164,7 @@
                 "sha256:440d5dd3af93b060174bf433bccd69b0babc3b15b1a8dca43789fd7f61514b36",
                 "sha256:b75ddc264f0ba5615db7ba217daeb99701ad295353c45f9e95963337ceeeffb2"
             ],
-            "markers": "python_version >= '3.7'",
+            "markers": "python_version < '3.11'",
             "version": "==4.7.1"
         },
         "uvicorn": {
@@ -513,7 +513,7 @@
                 "sha256:440d5dd3af93b060174bf433bccd69b0babc3b15b1a8dca43789fd7f61514b36",
                 "sha256:b75ddc264f0ba5615db7ba217daeb99701ad295353c45f9e95963337ceeeffb2"
             ],
-            "markers": "python_version >= '3.7'",
+            "markers": "python_version < '3.11'",
             "version": "==4.7.1"
         },
         "wrapt": {

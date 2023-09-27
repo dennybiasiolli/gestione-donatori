@@ -190,6 +190,10 @@ def get_dati_statistici(user, anno: int) -> dict:
             tipo_key = "Sangue_Intero"
         elif donazione.tipo_donazione == Donazione.TipoDonazione.PLASMA:
             tipo_key = "Plasmaferesi"
+        elif donazione.tipo_donazione == Donazione.TipoDonazione.ERITRO_PLASMAFERESI:
+            tipo_key = "Eritro-Plasmaferesi"
+        elif donazione.tipo_donazione == Donazione.TipoDonazione.ERITROCITI:
+            tipo_key = "Eritrociti"
 
         stats_tipo[tipo_key][sesso_key] += 1
         stats_tipo[tipo_key]["Totale"] += 1

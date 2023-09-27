@@ -43,3 +43,22 @@ nav img.logo {
 .etichetta {
     height: 37mm;
 }
+
+.badge-tipo-donazione-0 {
+    background-color: #c9c9c9;
+}
+.badge-tipo-donazione-1 {
+    background-color: #9c0c1a;
+}
+.badge-tipo-donazione-2 {
+    background-color: #ffc107;
+}
+.badge-tipo-donazione-3 {
+    background-color: #fa7884;
+}
+.badge-tipo-donazione-4 {
+    background-color: #f75c39;
+}
+.badge-tipo-donazione-5 {
+    background-color: #f70c23;
+}

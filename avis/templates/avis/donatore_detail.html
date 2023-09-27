@@ -279,7 +279,7 @@
                                     <tr>
                                         <td>{{ donazione.data_donazione }}</td>
                                         <td>
-                                            <span class="badge rounded-pill {% if donazione.tipo_donazione == 1 %}text-bg-danger{% elif donazione.tipo_donazione == 2 %}text-bg-warning{% else %}text-bg-light{% endif %} d-print-none">
+                                            <span class="badge badge-tipo-donazione-{{ donazione.tipo_donazione|default_if_none:"0" }} rounded-pill d-print-none">
                                                 &nbsp;
                                             </span>                        
                                             {{ donazione.get_tipo_donazione_display }}

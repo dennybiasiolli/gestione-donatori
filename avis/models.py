@@ -185,6 +185,8 @@ class Donazione(models.Model):
         SANGUE_INTERO = 1, "Sangue intero"
         PLASMA = 2, "Plasma"
         # PIASTRINE = 3, 'Piastrine'
+        ERITRO_PLASMAFERESI = 4, "Eritro-Plasmaferesi"
+        ERITROCITI = 5, "Eritrociti"
         __empty__ = "Non specificato"
 
     donatore = models.ForeignKey(

@@ -57,7 +57,7 @@
     <td colspan="100%">
         Ultime {{ show_n_donazioni }} donazioni:
         {% for donazione in donatore.donazioni.all|slice:show_n_donazioni %}
-        <span class="badge {% if donazione.tipo_donazione == 1 %}text-bg-danger{% elif donazione.tipo_donazione == 2 %}text-bg-warning{% else %}text-bg-light{% endif %}">
+        <span class="badge badge-tipo-donazione-{{ donazione.tipo_donazione|default_if_none:"0" }}">
             {{ donazione.data_donazione | date:'d/m/y' }}
         </span>
         {% endfor %}

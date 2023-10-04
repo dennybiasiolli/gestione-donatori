@@ -458,7 +458,7 @@
             <td colspan="100%">
                 Ultime {{ show_n_donazioni }} donazioni:
                 {% for donazione in donatore.donazioni.all|slice:show_n_donazioni %}
-                <span class="badge badge-tipo-donazione-{{ donazione.tipo_donazione|default_if_none:"0" }}">
+                <span class="badge badge-tipo-donazione-{{ donazione.tipo_donazione|default_if_none:"0" }}" title="{{ donazione.get_tipo_donazione_display }}">
                     {{ donazione.data_donazione | date:'d/m/y' }}
                 </span>
                 {% endfor %}

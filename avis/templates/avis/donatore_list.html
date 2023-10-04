@@ -308,7 +308,9 @@
     <div class="m-1 row">
         <div class="col-sm-4">
             <button type="submit" class="btn btn-primary">Ricerca</button>
-            {{ page_obj.paginator.count }} donatori trovati
+            <span class="ml-2">
+                {{ page_obj.paginator.count }} donatori trovati
+            </span>
         </div>
         <div class="col-sm-8 text-end d-print-none">
             {% if only_stampa %}

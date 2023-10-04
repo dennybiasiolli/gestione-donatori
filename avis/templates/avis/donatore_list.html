@@ -308,7 +308,9 @@
     <div class="m-1 row">
         <div class="col-sm-4">
             <button type="submit" class="btn btn-primary">Ricerca</button>
-            {{ page_obj.paginator.count }} donatori trovati
+            <span class="ml-2">
+                {{ page_obj.paginator.count }} donatori trovati
+            </span>
         </div>
         <div class="col-sm-8 text-end d-print-none">
             {% if only_stampa %}
@@ -456,7 +458,7 @@
             <td colspan="100%">
                 Ultime {{ show_n_donazioni }} donazioni:
                 {% for donazione in donatore.donazioni.all|slice:show_n_donazioni %}
-                <span class="badge badge-tipo-donazione-{{ donazione.tipo_donazione|default_if_none:"0" }}">
+                <span class="badge badge-tipo-donazione-{{ donazione.tipo_donazione|default_if_none:"0" }}" title="{{ donazione.get_tipo_donazione_display }}">
                     {{ donazione.data_donazione | date:'d/m/y' }}
                 </span>
                 {% endfor %}

@@ -456,11 +456,12 @@
         },
         "pylint-django": {
             "hashes": [
-                "sha256:0ac090d106c62fe33782a1d01bda1610b761bb1c9bf5035ced9d5f23a13d8591",
-                "sha256:56b12b6adf56d548412445bd35483034394a1a94901c3f8571980a13882299d5"
+                "sha256:08bedfd7ccc4c47afa09cbfee6f4b5074437178d8e51fd891e2232c0d3a5b140",
+                "sha256:d167b1437342543727925a98c0dee9c8de8e8e1f8cb8caf868018febd2c4e2b7"
             ],
             "index": "pypi",
-            "version": "==2.5.3"
+            "markers": "python_version >= '3.7' and python_version < '4.0'",
+            "version": "==2.5.4"
         },
         "pylint-plugin-utils": {
             "hashes": [

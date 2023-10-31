@@ -20,7 +20,7 @@
     make get-static-libs:
     ```
 
-- Create and enable a virtual environment for this project (Python 3.9)
+- Create and enable a virtual environment for this project (Python 3.11)
 
 - Install required packages
 

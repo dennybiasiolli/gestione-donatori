@@ -130,12 +130,12 @@
         },
         "psycopg": {
             "hashes": [
-                "sha256:1253010894cfb64e2da4556d4eff5f05e45cafee641f64e02453be849c8f7687",
-                "sha256:e6d047ce16950651d6e26c7c19ca57cc42e1d4841b58729f691244baeee46e30"
+                "sha256:7a63249f52e9c312d2d3978df5f170d21a0defd3a0c950d7859d226b7cfbfad5",
+                "sha256:f5bce37d357578b230ede15fb461e2c601122986f6dd590e94283aaca8958b14"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==3.1.13"
+            "version": "==3.1.14"
         },
         "pyjwt": {
             "hashes": [

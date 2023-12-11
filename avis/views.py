@@ -4,7 +4,7 @@ from tempfile import NamedTemporaryFile
 from typing import Any, Dict
 
 from django.contrib.auth.decorators import user_passes_test
-from django.db.models import Count, F, Max, Prefetch, Q
+from django.db.models import Count, F, Max, OuterRef, Prefetch, Q, Subquery
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -86,6 +86,7 @@ class DonatoreListView(ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        anno_corrente = datetime.date.today().year
 
         donatore_id = self.request.GET.get("donatore_id", None)
         ricerca = self.request.GET.get("ricerca", None)
@@ -126,6 +127,9 @@ class DonatoreListView(ListView):
         data_donazione_al = self.request.GET.get("data_donazione_al", None)
         if data_donazione_al:
             data_donazione_al = datetime.date.fromisoformat(data_donazione_al)
+        show_donazioni_anno = self.request.GET.get("show_donazioni_anno", None)
+        if show_donazioni_anno:
+            show_donazioni_anno = int(show_donazioni_anno)
         benemerenze_da = self.request.GET.get("benemerenze_da", None)
         if benemerenze_da:
             benemerenze_da = int(benemerenze_da)
@@ -221,9 +225,18 @@ class DonatoreListView(ListView):
             qs = qs.filter(stampa_donatore=True)
 
         qs = qs.annotate(
-            num_donazioni=Count("donazioni"),
-            tot_donazioni=Count("donazioni") + F("donazioni_pregresse"),
+            num_donazioni=Count("donazioni", distinct=True),
+            tot_donazioni=Count("donazioni", distinct=True) + F("donazioni_pregresse"),
             ultima_donazione=Max("donazioni__data_donazione"),
+            donazioni_periodo=Subquery(
+                Donazione.objects.filter(
+                    donatore=OuterRef("pk"),
+                    data_donazione__year=show_donazioni_anno or anno_corrente,
+                )
+                .values("donatore")
+                .annotate(num_donazioni=Count("id"))
+                .values("num_donazioni")
+            ),
         )
         qs = qs.order_by(*order_by)
 
@@ -260,6 +273,7 @@ class DonatoreListView(ListView):
             "data_donazione_al": data_donazione_al.isoformat()
             if data_donazione_al
             else "",
+            "show_donazioni_anno": show_donazioni_anno,
             "benemerenze_da": benemerenze_da if benemerenze_da else "",
             "benemerenze_a": benemerenze_a if benemerenze_a else "",
             "cap": cap or "",
@@ -280,6 +294,7 @@ class DonatoreListView(ListView):
                 or kell
                 or data_donazione_dal
                 or data_donazione_al
+                or show_donazioni_anno
                 or benemerenze_da
                 or benemerenze_a
                 or comune

@@ -200,6 +200,13 @@
                 </div>
 
                 <div class="m-1 row">
+                    <label class="col-sm-2 col-form-label">Visualizza numero di donazioni dell'anno</label>
+                    <div class="col-sm-4">
+                        <input type="number" class="form-control" name="show_donazioni_anno" value="{{ show_donazioni_anno }}" />
+                    </div>
+                </div>
+
+                <div class="m-1 row">
                     <label class="col-sm-2 col-form-label">Benemerenze da</label>
                     <div class="col-sm-4">
                         <input type="number" class="form-control" name="benemerenze_da" value="{{ benemerenze_da }}" min="0" />
@@ -371,6 +378,9 @@
             </th>
             <td>
                 {{ donatore.tot_donazioni }}
+                {% if show_donazioni_anno %}
+                <br>{% if donatore.donazioni_periodo %}{{ donatore.donazioni_periodo }}{% else %}0{% endif %} nel {{ show_donazioni_anno }}
+                {% endif %}
                 <!-- ({{ donatore.donazioni_pregresse }} + {{ donatore.num_donazioni }})-->
             </td>
             <td>

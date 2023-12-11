@@ -46,6 +46,9 @@
     </td>
     <td>
         {{ donatore.tot_donazioni }}
+        {% if show_donazioni_anno %}
+        <br>{% if donatore.donazioni_periodo %}{{ donatore.donazioni_periodo }}{% else %}0{% endif %} nel {{ show_donazioni_anno }}
+        {% endif %}
         <!-- ({{ donatore.donazioni_pregresse }} + {{ donatore.num_donazioni }})-->
     </td>
     <td>

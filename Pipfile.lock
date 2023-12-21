@@ -52,12 +52,12 @@
         },
         "django-reversion": {
             "hashes": [
-                "sha256:229ad0d2819416157502ff13d81bad2366227b763ce85b63b8a223edb756a513",
-                "sha256:45d378bc6e606df6b2ad0077aec8b0a00e35f18c74ca2a1ae9cc262ceb32fb9a"
+                "sha256:9f4d83df2c0ec6d013e2495649fc85eae5df4ead0f7552fe89709360959f73af",
+                "sha256:a17242d68ee801fbee689d2c284aa958dd6ef4b8a2800ec061c81b1674f1c01b"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==5.0.8"
+            "version": "==5.0.9"
         },
         "djangorestframework": {
             "hashes": [

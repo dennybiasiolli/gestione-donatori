@@ -351,11 +351,14 @@
     <thead class="table-light">
         <tr>
             <th scope="col" class="align-middle">
-                N. Tessera AVIS<br>
-                N. Tessera C.T.
+                Tessera AVIS N.<br>
+                Tessera C.T. N.
             </th>
             <th scope="col" class="align-middle">Donazioni</th>
-            <th scope="col" class="align-middle">Nome</th>
+            <th scope="col" class="align-middle">
+                Nome<br>
+                Data di nascita
+            </th>
             <th scope="col" class="align-middle">Sesso</th>
             <th scope="col" class="align-middle">Gr.</th>
             <th scope="col" class="align-middle">Contatti</th>
@@ -387,6 +390,10 @@
                 <a href="{% url 'donatore' pk=donatore.pk %}">
                     {{ donatore.cognome }} {{ donatore.nome }}
                 </a>
+                <br>
+                {% if donatore.data_nascita %}
+                {{ donatore.data_nascita | date:'d/m/Y' }}
+                {% endif %}
                 {% if show_privacy_check %}
                 <br>
                 <span class="ps-2">

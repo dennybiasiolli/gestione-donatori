@@ -9,6 +9,10 @@
         <a href="{% url 'donatore' pk=donatore.pk %}">
             {{ donatore.cognome }} {{ donatore.nome }}
         </a>
+        <br>
+        {% if donatore.data_nascita %}
+        {{ donatore.data_nascita | date:'d/m/Y' }}
+        {% endif %}
     </td>
     <td>{{ donatore.sesso.codice }}</td>
     <td>

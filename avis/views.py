@@ -253,26 +253,26 @@ class DonatoreListView(ListView):
             "sezione_id": sezione_id or "",
             "stato_donatore_ids": stato_donatore_ids or [],
             "sesso_id": sesso_id or "",
-            "data_nascita_dal": data_nascita_dal.isoformat()
-            if data_nascita_dal
-            else "",
+            "data_nascita_dal": (
+                data_nascita_dal.isoformat() if data_nascita_dal else ""
+            ),
             "data_nascita_al": data_nascita_al.isoformat() if data_nascita_al else "",
-            "data_iscrizione_dal": data_iscrizione_dal.isoformat()
-            if data_iscrizione_dal
-            else "",
-            "data_iscrizione_al": data_iscrizione_al.isoformat()
-            if data_iscrizione_al
-            else "",
+            "data_iscrizione_dal": (
+                data_iscrizione_dal.isoformat() if data_iscrizione_dal else ""
+            ),
+            "data_iscrizione_al": (
+                data_iscrizione_al.isoformat() if data_iscrizione_al else ""
+            ),
             "gruppo_sanguigno": gruppo_sanguigno or "",
             "rh": rh or "",
             "fenotipo": fenotipo or "",
             "kell": kell or "",
-            "data_donazione_dal": data_donazione_dal.isoformat()
-            if data_donazione_dal
-            else "",
-            "data_donazione_al": data_donazione_al.isoformat()
-            if data_donazione_al
-            else "",
+            "data_donazione_dal": (
+                data_donazione_dal.isoformat() if data_donazione_dal else ""
+            ),
+            "data_donazione_al": (
+                data_donazione_al.isoformat() if data_donazione_al else ""
+            ),
             "show_donazioni_anno": show_donazioni_anno,
             "benemerenze_da": benemerenze_da if benemerenze_da else "",
             "benemerenze_a": benemerenze_a if benemerenze_a else "",

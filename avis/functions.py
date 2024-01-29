@@ -276,21 +276,27 @@ def get_elenco_soci_xls(user) -> Workbook:
                 donatore.cognome,
                 donatore.nome,
                 donatore.luogo_nascita,
-                donatore.data_nascita.strftime("%d/%m/%Y")
-                if donatore.data_nascita
-                else "",
+                (
+                    donatore.data_nascita.strftime("%d/%m/%Y")
+                    if donatore.data_nascita
+                    else ""
+                ),
                 donatore.codice_fiscale,
                 indirizzo.strip(),
                 donatore.comune,
                 donatore.cap,
                 "",  # NAZIONALITA'
-                donatore.data_iscrizione.strftime("%d/%m/%Y")
-                if donatore.data_iscrizione
-                else "",
+                (
+                    donatore.data_iscrizione.strftime("%d/%m/%Y")
+                    if donatore.data_iscrizione
+                    else ""
+                ),
                 tipologia,
-                donatore.data_cessata_iscrizione.strftime("%d/%m/%Y")
-                if donatore.data_cessata_iscrizione
-                else "",
+                (
+                    donatore.data_cessata_iscrizione.strftime("%d/%m/%Y")
+                    if donatore.data_cessata_iscrizione
+                    else ""
+                ),
                 donatore.causa_cessata_iscrizione,
                 telefono,
                 donatore.email,

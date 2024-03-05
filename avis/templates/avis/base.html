@@ -75,8 +75,12 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}?next={% url 'index' %}"
-              title="{{ request.user.email }}">Esci</a>
+            <form id="logout-form" method="post" action="{% url 'logout' %}?next={% url 'index' %}">
+              {% csrf_token %}
+              <a class="nav-link" href="#"
+                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                title="{{ request.user.email }}">Esci</a>
+            </form>
           </li>
           {% else %}
           <li class="nav-item">

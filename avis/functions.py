@@ -105,6 +105,11 @@ def get_dati_statistici(user, anno: int) -> dict:
             "Femmine": 0,
             "Totale": 0,
         },
+        "Eritro_Plasmaferesi": {
+            "Maschi": 0,
+            "Femmine": 0,
+            "Totale": 0,
+        },
         "Altre_donazioni": {
             "Maschi": 0,
             "Femmine": 0,
@@ -191,7 +196,7 @@ def get_dati_statistici(user, anno: int) -> dict:
         elif donazione.tipo_donazione == Donazione.TipoDonazione.PLASMA:
             tipo_key = "Plasmaferesi"
         elif donazione.tipo_donazione == Donazione.TipoDonazione.ERITRO_PLASMAFERESI:
-            tipo_key = "Eritro-Plasmaferesi"
+            tipo_key = "Eritro_Plasmaferesi"
         elif donazione.tipo_donazione == Donazione.TipoDonazione.ERITROCITI:
             tipo_key = "Eritrociti"
 

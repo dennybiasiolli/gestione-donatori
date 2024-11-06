@@ -2,24 +2,23 @@ BOOTSTRAP_VERSION=5.3.2
 BOOTSTRAP_ICON_VERSION=1.11.1
 
 requirements:
-	pip install -U pipenv
-	pipenv sync --dev
+	poetry install --sync
 
 style-fix:
-	isort .
-	black .
-	flake8
+	poetry run isort .
+	poetry run black .
+	poetry run flake8
 
 style-check:
-	pylint --load-plugins pylint_django --django-settings-module=website.settings_test --errors-only --recursive=y .
-	isort --check-only .
-	black --check --diff .
-	flake8
+	poetry run pylint --load-plugins pylint_django --django-settings-module=website.settings_test --errors-only --recursive=y .
+	poetry run isort --check-only .
+	poetry run black --check --diff .
+	poetry run flake8
 
 tests:
-	pytest
-	coverage html
-	coverage xml
+	poetry run pytest
+	poetry run coverage html
+	poetry run coverage xml
 
 get-static-libs:
 	mkdir -p avis/static/libs

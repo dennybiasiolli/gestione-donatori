@@ -16,18 +16,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Install poetry
+      run: pipx install poetry
     - name: Set up Python ${{ env.PYTHON_VERSION }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ env.PYTHON_VERSION }}
-        cache: 'pipenv'
+        cache: 'poetry'
     - name: Downloading 3rd party libs
       run: make get-static-libs
     - name: Install Dependencies
       run: |
-        python -m pip install --upgrade pip
         make requirements
     - name: Run Tests
       run: |
-        pipenv run make style-check
-        pipenv run make tests
+        make style-check
+        make tests

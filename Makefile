@@ -2,7 +2,7 @@ BOOTSTRAP_VERSION=5.3.2
 BOOTSTRAP_ICON_VERSION=1.11.1
 
 requirements:
-	poetry install --sync
+	poetry sync
 
 style-fix:
 	poetry run isort .

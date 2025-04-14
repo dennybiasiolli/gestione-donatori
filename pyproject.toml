@@ -30,7 +30,7 @@ psycopg = "^3.2.6"
 
 [tool.poetry.group.deploy.dependencies]
 gunicorn = "^23.0.0"
-uvicorn = "^0.34.0"
+uvicorn = "^0.34.1"
 
 
 [tool.poetry.group.dev.dependencies]

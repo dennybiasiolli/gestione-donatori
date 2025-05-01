@@ -25,7 +25,7 @@ django = "^5.1.8"
 djangorestframework-simplejwt = "^5.5.0"
 markdown = "^3.8"
 openpyxl = "^3.1.5"
-psycopg = "^3.2.6"
+psycopg = "^3.2.7"
 
 
 [tool.poetry.group.deploy.dependencies]

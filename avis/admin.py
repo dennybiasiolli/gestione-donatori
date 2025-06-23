@@ -34,10 +34,11 @@ class StatoDonatoreAdmin(admin.ModelAdmin):
     list_display = (
         "codice",
         "descrizione",
-        "sezione",
+        "sezione__descrizione",
         "is_attivo",
         "can_export_elenco_soci_xls",
     )
+    list_select_related = ("sezione",)
     ordering = ("codice",)
 
     def get_queryset(self, request: HttpRequest):
@@ -87,13 +88,14 @@ class DonatoreAdmin(VersionAdmin):
         "data_cessata_iscrizione",
         "cognome",
         "nome",
-        "sesso",
+        "sesso__descrizione",
         "data_nascita",
         "comune",
         "email",
         "cellulare",
-        "stato_donatore",
+        "stato_donatore__descrizione",
     )
+    list_select_related = ("sesso", "sezione", "stato_donatore")
     list_filter = (
         ("sezione", admin.RelatedOnlyFieldListFilter),
         "sesso",

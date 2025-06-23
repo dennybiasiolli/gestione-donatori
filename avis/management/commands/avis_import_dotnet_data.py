@@ -115,7 +115,7 @@ class Command(BaseCommand):
                     email=d["Email"],
                     fermo_per_malattia=d["FermoPerMalattia"],
                     donazioni_pregresse=d["DonazioniPregresse"],
-                    num_benemerenze=d["NumBenemerenze"],
+                    num_benemerenze_consegnate=d["NumBenemerenze"],
                 )
 
             # import donazioni

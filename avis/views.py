@@ -202,9 +202,9 @@ class DonatoreListView(ListView):
         if data_donazione_al:
             qs = qs.filter(donazioni__data_donazione__lte=data_donazione_al)
         if benemerenze_da:
-            qs = qs.filter(num_benemerenze__gte=benemerenze_da)
+            qs = qs.filter(num_benemerenze_consegnate__gte=benemerenze_da)
         if benemerenze_a:
-            qs = qs.filter(num_benemerenze__lte=benemerenze_a)
+            qs = qs.filter(num_benemerenze_consegnate__lte=benemerenze_a)
         if cap:
             qs = qs.filter(cap__icontains=cap)
         if cap_diverso:

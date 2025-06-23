@@ -136,7 +136,7 @@ class Donatore(models.Model):
     fax = models.CharField(max_length=255, blank=True)
     email = models.CharField(max_length=255, blank=True)
     donazioni_pregresse = models.IntegerField(default=0)
-    num_benemerenze = models.IntegerField(default=0)
+    num_benemerenze_consegnate = models.IntegerField(default=0)
     scheda_anamnestica = models.TextField(blank=True)
     stampa_donatore = models.BooleanField(default=False)
     check_privacy = models.BooleanField(

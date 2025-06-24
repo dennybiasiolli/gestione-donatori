@@ -388,11 +388,15 @@
                 <!-- ({{ donatore.donazioni_pregresse }} + {{ donatore.num_donazioni }})-->
             </td>
             <td>
-                {% if donatore.num_benemerenze_consegnate and donatore.num_benemerenze_conseguite == donatore.num_benemerenze_consegnate %}
-                <i class="bi bi-check-circle-fill" style="color:green;"></i> {{ donatore.num_benemerenze_consegnate }} consegnate
-                {% elif donatore.num_benemerenze_conseguite %}
-                {{ donatore.num_benemerenze_conseguite }} conseguite,<br>
-                <i class="bi bi-exclamation-triangle-fill" style="color:orange;"></i> {{ donatore.num_benemerenze_consegnate }} consegnate
+                {% if donatore.sezione.configurazione_benemerenze %}
+                    {% if donatore.num_benemerenze_consegnate and donatore.num_benemerenze_conseguite == donatore.num_benemerenze_consegnate %}
+                    <i class="bi bi-check-circle-fill" style="color:green;"></i> {{ donatore.num_benemerenze_consegnate }} consegnate
+                    {% elif donatore.num_benemerenze_conseguite %}
+                    {{ donatore.num_benemerenze_conseguite }} conseguite,<br>
+                    <i class="bi bi-exclamation-triangle-fill" style="color:orange;"></i> {{ donatore.num_benemerenze_consegnate }} consegnate
+                    {% endif %}
+                {% elif donatore.num_benemerenze_consegnate %}
+                {{ donatore.num_benemerenze_consegnate }}
                 {% endif %}
             </td>
             <td>

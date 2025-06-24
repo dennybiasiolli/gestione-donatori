@@ -2,6 +2,7 @@ from datetime import date
 from typing import Collection, Optional
 
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -31,6 +32,16 @@ class Sezione(models.Model):
         blank=True,
         help_text="Data da usare per la stampa delle benemerenze,"
         " se non specificata, verrà usata la data corrente.",
+    )
+    configurazione_benemerenze = ArrayField(
+        models.SmallIntegerField(),
+        blank=True,
+        default=list,
+        # default=[7, 15, 24, 48, 72, 95, 114],
+        help_text=(
+            "Configurazione delle benemerenze conseguite "
+            "(valori numerici interi, separati da virgola)."
+        ),
     )
 
     class Meta:
@@ -178,6 +189,16 @@ class Donatore(models.Model):
                 }
             )
         return super().validate_unique(exclude)
+
+    @property
+    def num_benemerenze_conseguite(self):
+        """Restituisce il numero di benemerenze conseguite dal donatore."""
+        if not self.sezione.configurazione_benemerenze:
+            return 0
+        for i, soglia in enumerate(self.sezione.configurazione_benemerenze):
+            if self.donazioni.count() < soglia:
+                return i
+        return len(self.sezione.configurazione_benemerenze)
 
 
 class Donazione(models.Model):

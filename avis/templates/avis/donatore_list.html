@@ -207,7 +207,7 @@
                 </div>
 
                 <div class="m-1 row">
-                    <label class="col-sm-2 col-form-label">Benemerenze da</label>
+                    <label class="col-sm-2 col-form-label">Benemerenze consegnate, da</label>
                     <div class="col-sm-4">
                         <input type="number" class="form-control" name="benemerenze_da" value="{{ benemerenze_da }}" min="0" />
                     </div>
@@ -355,6 +355,7 @@
                 Tessera C.T. N.
             </th>
             <th scope="col" class="align-middle">Donazioni</th>
+            <th scope="col" class="align-middle">Benemerenze</th>
             <th scope="col" class="align-middle">
                 Nome<br>
                 Data di nascita
@@ -385,6 +386,14 @@
                 <br>{% if donatore.donazioni_periodo %}{{ donatore.donazioni_periodo }}{% else %}0{% endif %} nel {{ show_donazioni_anno }}
                 {% endif %}
                 <!-- ({{ donatore.donazioni_pregresse }} + {{ donatore.num_donazioni }})-->
+            </td>
+            <td>
+                {% if donatore.num_benemerenze_consegnate and donatore.num_benemerenze_conseguite == donatore.num_benemerenze_consegnate %}
+                <i class="bi bi-check-circle-fill" style="color:green;"></i> {{ donatore.num_benemerenze_consegnate }} consegnate
+                {% elif donatore.num_benemerenze_conseguite %}
+                {{ donatore.num_benemerenze_conseguite }} conseguite,<br>
+                <i class="bi bi-exclamation-triangle-fill" style="color:orange;"></i> {{ donatore.num_benemerenze_consegnate }} consegnate
+                {% endif %}
             </td>
             <td>
                 <a href="{% url 'donatore' pk=donatore.pk %}">

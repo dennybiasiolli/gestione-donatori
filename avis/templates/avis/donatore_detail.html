@@ -205,7 +205,12 @@
                             <br>Donazioni inserite: {{ donatore.donazioni.all.count }}
                             <br>Donazioni pregresse: {{ donatore.donazioni_pregresse }}
                             {% endif %}
-                            <br>Benemerenze consegnate: {{ donatore.num_benemerenze_consegnate }}
+                            <br>Benemerenze conseguite: {{ donatore.num_benemerenze_conseguite }}
+                            {% if donatore.num_benemerenze_consegnate and donatore.num_benemerenze_conseguite == donatore.num_benemerenze_consegnate %}
+                            <br>Benemerenze consegnate: {{ donatore.num_benemerenze_consegnate }} <i class="bi bi-check-circle-fill" style="color:green;"></i>
+                            {% elif donatore.num_benemerenze_conseguite %}
+                            <br>Benemerenze consegnate: {{ donatore.num_benemerenze_consegnate }} <i class="bi bi-exclamation-triangle-fill" style="color:orange;"></i>
+                            {% endif %}
                         </h6>
                     </div>
                 </div>

@@ -51,6 +51,7 @@ jobs:
         make style-check
         make tests
       env:
+        SECRET_KEY: '12345678901234567890123456789012345678901234567890'
         DB_HOST: 127.0.0.1
         DB_PORT: 5432
         DB_NAME: ${{ env.DB_NAME }}

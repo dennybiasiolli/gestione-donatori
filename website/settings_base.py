@@ -135,7 +135,7 @@ CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
 
 # custom settings
 
-ADMIN_BASE_URL = os.getenv("ADMIN_BASE_URL", "admin")
+ADMIN_BASE_URL = os.getenv("ADMIN_BASE_URL", "admin/")
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (

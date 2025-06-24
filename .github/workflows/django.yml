@@ -51,6 +51,8 @@ jobs:
         make style-check
         make tests
       env:
+        DB_HOST: db
+        DB_PORT: 5432
         DB_NAME: ${{ env.DB_NAME }}
         DB_USER: ${{ env.DB_USER }}
         DB_PASSWORD: ${{ env.DB_PASSWORD }}

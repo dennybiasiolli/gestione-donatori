@@ -168,12 +168,10 @@ class DonatoreListView(ListView):
             qs = qs.filter(id=donatore_id)
         if ricerca:
             qs = qs.filter(
-                # pylint: disable=unsupported-binary-operation
                 Q(num_tessera_avis__icontains=ricerca)
                 | Q(num_tessera_ct__icontains=ricerca)
                 | Q(cognome__icontains=ricerca)
                 | Q(nome__icontains=ricerca)
-                # pylint: enable=unsupported-binary-operation
             )
         if sezione_id:
             qs = qs.filter(sezione_id=sezione_id)

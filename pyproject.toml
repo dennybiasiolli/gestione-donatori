@@ -5,8 +5,8 @@ profile = 'black'
 # skip-string-normalization = 1
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "website.settings_test"
-addopts = "-x --cov --no-migrations"
+DJANGO_SETTINGS_MODULE = "website.settings"
+addopts = "-x --cov"
 
 [tool.poetry]
 name = "gestione-donatori"
@@ -26,6 +26,7 @@ djangorestframework-simplejwt = "^5.5.0"
 markdown = "^3.8"
 openpyxl = "^3.1.5"
 psycopg = "^3.2.9"
+python-dotenv = "^1.1.1"
 
 
 [tool.poetry.group.deploy.dependencies]
@@ -37,8 +38,6 @@ uvicorn = "^0.34.3"
 black = "^25.1.0"
 flake8 = "^7.3.0"
 isort = "^6.0.1"
-pylint = "^3.3.7"
-pylint-django = "^2.6.1"
 pytest-django = "^4.11.1"
 pytest-cov = "^6.2.1"
 

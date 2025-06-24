@@ -10,7 +10,6 @@ style-fix:
 	poetry run flake8
 
 style-check:
-	poetry run pylint --load-plugins pylint_django --django-settings-module=website.settings_test --errors-only --recursive=y .
 	poetry run isort --check-only .
 	poetry run black --check --diff .
 	poetry run flake8

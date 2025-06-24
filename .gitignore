@@ -5,5 +5,5 @@ __pycache__/
 .coverage
 /htmlcov/
 coverage.xml
-/website/settings_local.py
+.env
 avis/static/libs

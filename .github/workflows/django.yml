@@ -1,6 +1,9 @@
 name: Django CI
 
 env:
+  DB_NAME: test_db
+  DB_USER: test_user
+  DB_PASSWORD: test_password
   PYTHON_VERSION: '3.11'
 
 on:
@@ -13,6 +16,21 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: ${{ env.DB_NAME }}
+          POSTGRES_USER: ${{ env.DB_USER }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
     - uses: actions/checkout@v4
@@ -32,3 +50,7 @@ jobs:
       run: |
         make style-check
         make tests
+      env:
+        DB_NAME: ${{ env.DB_NAME }}
+        DB_USER: ${{ env.DB_USER }}
+        DB_PASSWORD: ${{ env.DB_PASSWORD }}

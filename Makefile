@@ -2,22 +2,22 @@ BOOTSTRAP_VERSION=5.3.2
 BOOTSTRAP_ICON_VERSION=1.11.1
 
 requirements:
-	poetry sync
+	uv sync --locked --all-extras --dev
 
 style-fix:
-	poetry run isort .
-	poetry run black .
-	poetry run flake8
+	uv run isort .
+	uv run black .
+	uv run flake8
 
 style-check:
-	poetry run isort --check-only .
-	poetry run black --check --diff .
-	poetry run flake8
+	uv run isort --check-only .
+	uv run black --check --diff .
+	uv run flake8
 
 tests:
-	poetry run pytest
-	poetry run coverage html
-	poetry run coverage xml
+	uv run pytest
+	uv run coverage html
+	uv run coverage xml
 
 get-static-libs:
 	mkdir -p avis/static/libs

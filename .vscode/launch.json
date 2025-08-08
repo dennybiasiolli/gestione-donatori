@@ -9,9 +9,6 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
-            "env": {
-                "DJANGO_SETTINGS_MODULE": "website.settings_local"
-            },
             "args": [
                 "runserver",
                 "localhost:8002"

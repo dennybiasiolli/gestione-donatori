@@ -2,7 +2,7 @@ BOOTSTRAP_VERSION=5.3.2
 BOOTSTRAP_ICON_VERSION=1.11.1
 
 requirements:
-	uv sync --locked --all-extras --dev
+	uv sync --dev
 
 style-fix:
 	uv run isort .

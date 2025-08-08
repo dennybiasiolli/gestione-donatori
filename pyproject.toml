@@ -39,7 +39,6 @@ dev = [
 package = false
 default-groups = [
     "deploy",
-    "dev",
 ]
 
 [build-system]

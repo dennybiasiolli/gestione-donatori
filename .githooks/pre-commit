@@ -1,6 +1,6 @@
 #!/bin/sh
 
 files=`git diff --cached --name-status --diff-filter=ACMR -- '***.py' | awk '/^[ACMR]/ {print $2}'`
-echo "$files" | xargs isort --check-only && \
-echo "$files" | xargs black --check --diff && \
-echo "$files" | xargs flake8
+echo "$files" | xargs uv run isort --check-only && \
+echo "$files" | xargs uv run black --check --diff && \
+echo "$files" | xargs uv run flake8

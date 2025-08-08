@@ -26,7 +26,7 @@
 
 - Create and enable a virtual environment for this project (Python 3.11)
 
-- Install required packages (**Poetry needed**)
+- Install required packages (**UV needed**)
 
     `make requirements`
 

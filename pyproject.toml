@@ -1,46 +1,51 @@
+[project]
+name = "gestione-donatori"
+version = "0.1.0"
+description = ""
+authors = [{ name = "Denny Biasiolli", email = "dennybiasiolli@users.noreply.github.com" }]
+requires-python = ">=3.11,<3.12"
+readme = "README.md"
+dependencies = [
+    "django-filter~=25.1",
+    "django-reversion>=5.1.0,<6",
+    "djangorestframework>=3.16.1,<4",
+    "django>=5.2.5,<6",
+    "djangorestframework-simplejwt>=5.5.1,<6",
+    "markdown~=3.8",
+    "openpyxl>=3.1.5,<4",
+    "psycopg>=3.2.9,<4",
+    "python-dotenv>=1.1.1,<2",
+]
+
 [tool.isort]
 profile = 'black'
 
+[dependency-groups]
+deploy = [
+    "gunicorn>=23.0.0,<24",
+    "uvicorn>=0.35.0,<0.36",
+]
+dev = [
+    "black>=25.1.0,<26",
+    "flake8>=7.3.0,<8",
+    "isort>=6.0.1,<7",
+    "pytest-django>=4.11.1,<5",
+    "pytest-cov>=6.2.1,<7",
+]
+
 [tool.black]
-# skip-string-normalization = 1
+
+[tool.uv]
+package = false
+default-groups = [
+    "deploy",
+    "dev",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "website.settings"
 addopts = "-x --cov"
-
-[tool.poetry]
-name = "gestione-donatori"
-version = "0.1.0"
-description = ""
-authors = ["Denny Biasiolli <dennybiasiolli@users.noreply.github.com>"]
-readme = "README.md"
-package-mode = false
-
-[tool.poetry.dependencies]
-python = "^3.11"
-django-filter = "^25.1"
-django-reversion = "^5.1.0"
-djangorestframework = "^3.16.1"
-django = "^5.2.5"
-djangorestframework-simplejwt = "^5.5.1"
-markdown = "^3.8"
-openpyxl = "^3.1.5"
-psycopg = "^3.2.9"
-python-dotenv = "^1.1.1"
-
-
-[tool.poetry.group.deploy.dependencies]
-gunicorn = "^23.0.0"
-uvicorn = "^0.35.0"
-
-
-[tool.poetry.group.dev.dependencies]
-black = "^25.1.0"
-flake8 = "^7.3.0"
-isort = "^6.0.1"
-pytest-django = "^4.11.1"
-pytest-cov = "^6.2.1"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"

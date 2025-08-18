@@ -24,6 +24,7 @@ profile = 'black'
 deploy = [
     "gunicorn>=23.0.0,<24",
     "uvicorn>=0.35.0,<0.36",
+    "uvicorn-worker>=0.3.0",
 ]
 dev = [
     "black>=25.1.0,<26",

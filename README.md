@@ -24,7 +24,7 @@
 
   `cp .env.default .env`
 
-- Create and enable a virtual environment for this project (Python 3.11)
+- Create and enable a virtual environment for this project (Python 3.13)
 
 - Install required packages (**UV needed**)
 

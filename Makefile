@@ -44,3 +44,9 @@ get-static-libs:
 	mv avis/static/libs/bootstrap-icons/bootstrap-icons-$(BOOTSTRAP_ICON_VERSION)/fonts avis/static/libs/bootstrap-icons/fonts
 	rm -r avis/static/libs/bootstrap-icons/bootstrap-icons-$(BOOTSTRAP_ICON_VERSION)
 	rm avis/static/libs/bootstrap-icons/bootstrap-icons.zip
+
+update-packages:
+	uv lock --upgrade
+
+list-outdated-packages:
+	uv tree --all-groups --outdated --depth 1

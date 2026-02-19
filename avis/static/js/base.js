@@ -1,3 +1,10 @@
+function getCsrfToken() {
+  return document.cookie
+    .split("; ")
+    .find((c) => c.startsWith("csrftoken="))
+    ?.split("=")[1];
+}
+
 window.addEventListener("load", () => {
   const tooltipTriggerList = document.querySelectorAll(
     '[data-bs-toggle="tooltip"]',
@@ -9,7 +16,10 @@ window.addEventListener("load", () => {
 
 function handleAddRemovePrint(e, type, donatoreUrl, moveTo = undefined) {
   e.preventDefault();
-  fetch(donatoreUrl, { method: "POST" });
+  fetch(donatoreUrl, {
+    method: "POST",
+    headers: { "X-CSRFToken": getCsrfToken() },
+  });
   const modalMessage = new bootstrap.Modal("#modalMessage");
   const modalMessageContent = document.getElementById("modalMessageContent");
   switch (type) {
@@ -30,5 +40,8 @@ function handleAddRemovePrint(e, type, donatoreUrl, moveTo = undefined) {
 }
 
 function handleCheckUncheckPrivacy(e, donatoreUrl) {
-  fetch(donatoreUrl, { method: "POST" });
+  fetch(donatoreUrl, {
+    method: "POST",
+    headers: { "X-CSRFToken": getCsrfToken() },
+  });
 }

@@ -9,7 +9,6 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_http_methods
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView
@@ -313,55 +312,57 @@ class DonatoreDetailView(DetailView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.select_related("sesso", "sezione", "stato_donatore").prefetch_related(
-            Prefetch(
-                "donazioni",
-                queryset=Donazione.objects.order_by("-data_donazione"),
-            ),
+        qs = (
+            qs.select_related("sesso", "sezione", "stato_donatore")
+            .prefetch_related(
+                Prefetch(
+                    "donazioni",
+                    queryset=Donazione.objects.order_by("-data_donazione"),
+                ),
+            )
+            .filter(sezione__utente=self.request.user)
         )
         return qs
 
 
-@csrf_exempt
 @require_http_methods(["POST"])
 @user_passes_test(avis_user_check)
 def donatore_add_stampa(request, pk):
-    donatore = get_object_or_404(Donatore, pk=pk)
+    donatore = get_object_or_404(Donatore, pk=pk, sezione__utente=request.user)
     donatore.stampa_donatore = True
     donatore.save()
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
-@csrf_exempt
 @require_http_methods(["POST"])
 @user_passes_test(avis_user_check)
 def donatore_remove_stampa(request, pk=None):
     if pk:
-        donatore = get_object_or_404(Donatore, pk=pk)
+        donatore = get_object_or_404(Donatore, pk=pk, sezione__utente=request.user)
         donatore.stampa_donatore = False
         donatore.save()
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     else:
-        Donatore.objects.filter(stampa_donatore=True).update(stampa_donatore=False)
+        Donatore.objects.filter(
+            stampa_donatore=True, sezione__utente=request.user
+        ).update(stampa_donatore=False)
         return redirect("donatori")
 
 
-@csrf_exempt
 @require_http_methods(["POST"])
 @user_passes_test(avis_user_check)
 def donatore_check_privacy(request, pk):
-    donatore = get_object_or_404(Donatore, pk=pk)
+    donatore = get_object_or_404(Donatore, pk=pk, sezione__utente=request.user)
     donatore.check_privacy = True
     donatore.check_privacy_date = datetime.date.today()
     donatore.save()
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
-@csrf_exempt
 @require_http_methods(["POST"])
 @user_passes_test(avis_user_check)
 def donatore_uncheck_privacy(request, pk):
-    donatore = get_object_or_404(Donatore, pk=pk)
+    donatore = get_object_or_404(Donatore, pk=pk, sezione__utente=request.user)
     donatore.check_privacy = False
     donatore.check_privacy_date = None
     donatore.save()
@@ -385,7 +386,9 @@ class DonazioneCreateView(CreateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context_data = super().get_context_data(**kwargs)
-        donatore = get_object_or_404(Donatore, pk=self.kwargs["pk"])
+        donatore = get_object_or_404(
+            Donatore, pk=self.kwargs["pk"], sezione__utente=self.request.user
+        )
         context_data.update(
             {
                 "donatore": donatore,

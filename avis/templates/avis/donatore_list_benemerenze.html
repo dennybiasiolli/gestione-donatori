@@ -1,4 +1,5 @@
 {% extends 'avis/base.html' %}
+{% load static %}
 
 {% block nav %}
 {% endblock %}
@@ -9,10 +10,6 @@
 {% include "avis/includes/donatore_benemerenza.html" %}
 {% endfor %}
 
-<script>
-    window.addEventListener('load', () => {
-        window.print();
-    });
-</script>
+<script src="{% static 'js/print-on-load.js' %}"></script>
 
 {% endblock %}

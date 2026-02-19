@@ -1,15 +1,11 @@
 {% extends 'avis/base.html' %}
+{% load static %}
 
 {% block content %}
 
 <div class="container-fluid">
     <form type="get" action="/dati-statistici" id="formDatiStatistici" class="d-print-none" style="margin: 0;">
-        <script>
-            const formDatiStatistici = document.getElementById("formDatiStatistici");
-            function handleAnnoChange() {
-                formDatiStatistici.submit();
-            }
-        </script>
+        <script src="{% static 'js/dati-statistici.js' %}"></script>
         <div class="m-1 row">
             <div class="col-sm-2"></div>
             <label class="col-sm-2 col-form-label">Anno statistico</label>

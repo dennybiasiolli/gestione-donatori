@@ -14,14 +14,10 @@ from django.views.decorators.http import require_GET, require_http_methods
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView
 from openpyxl import Workbook
-from rest_framework.viewsets import ReadOnlyModelViewSet
-
-from website.paginations import DefaultLimitOffsetPagination
 
 from .forms import DonazioneForm
 from .functions import get_dati_statistici, get_elenco_soci_xls
 from .models import Donatore, Donazione, Sesso, Sezione, StatoDonatore
-from .serializers import DonatoreDetailSerializer, DonatoreListSerializer
 
 
 def avis_user_check(user):
@@ -418,24 +414,6 @@ def dati_statistici(request):
         }
     )
     return render(request, "avis/dati_statistici.html", context=dati_statistici)
-
-
-class DonatoreViewSet(ReadOnlyModelViewSet):
-    queryset = Donatore.objects.select_related(
-        "sesso", "sezione", "sezione__utente"
-    ).all()
-    pagination_class = DefaultLimitOffsetPagination
-    serializers = {
-        "list": DonatoreListSerializer,
-        "default": DonatoreDetailSerializer,
-    }
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.filter(sezione__utente=self.request.user)
-
-    def get_serializer_class(self):
-        return self.serializers.get(self.action, self.serializers["default"])
 
 
 @require_http_methods(["GET"])

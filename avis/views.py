@@ -379,7 +379,6 @@ class DonazioneCreateView(CreateView):
 
     def get_initial(self) -> Dict[str, Any]:
         return {
-            "donatore": self.kwargs["pk"],
             "tipo_donazione": Donazione.TipoDonazione.SANGUE_INTERO,
             "data_donazione": datetime.date.today(),
         }
@@ -395,6 +394,21 @@ class DonazioneCreateView(CreateView):
             }
         )
         return context_data
+
+    def form_valid(self, form):
+        get_object_or_404(
+            Donatore, pk=self.kwargs["pk"], sezione__utente=self.request.user
+        )
+        form.instance.donatore_id = self.kwargs["pk"]
+        if Donazione.objects.filter(
+            donatore_id=self.kwargs["pk"],
+            data_donazione=form.instance.data_donazione,
+        ).exists():
+            form.add_error(
+                "data_donazione", "Esiste già una donazione per questa data."
+            )
+            return self.form_invalid(form)
+        return super().form_valid(form)
 
 
 @require_http_methods(["GET"])

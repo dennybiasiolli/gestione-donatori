@@ -3,6 +3,7 @@ import http
 from tempfile import NamedTemporaryFile
 from typing import Any, Dict
 
+from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count, F, Max, OuterRef, Prefetch, Q, Subquery
 from django.http import HttpResponse
@@ -141,7 +142,11 @@ class DonatoreListView(ListView):
         if show_n_donazioni:
             show_n_donazioni = int(show_n_donazioni)
         order_by_str = self.request.GET.get("order_by", "cognome,nome")
+        if order_by_str not in settings.ALLOWED_ORDER_BY:
+            order_by_str = "cognome,nome"
         order_by_direction = self.request.GET.get("order_by_direction", "")
+        if order_by_direction not in settings.ALLOWED_ORDER_DIRECTIONS:
+            order_by_direction = ""
         only_stampa = self.request.GET.get("only_stampa", "0") == "1"
         order_by = list(map(lambda o: order_by_direction + o, order_by_str.split(",")))
         if "cognome" not in order_by:

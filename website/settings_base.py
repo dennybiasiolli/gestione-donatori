@@ -136,6 +136,17 @@ CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
 
 ADMIN_BASE_URL = os.getenv("ADMIN_BASE_URL", "admin/")
 
+ALLOWED_ORDER_BY = {
+    "cognome,nome",
+    "gruppo_sanguigno,rh",
+    "comune",
+    "sesso",
+    "num_donazioni,tot_donazioni",
+    "tot_donazioni,num_donazioni",
+    "ultima_donazione",
+}
+ALLOWED_ORDER_DIRECTIONS = {"", "-"}
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

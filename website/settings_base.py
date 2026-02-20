@@ -146,6 +146,7 @@ ALLOWED_ORDER_BY = {
     "ultima_donazione",
 }
 ALLOWED_ORDER_DIRECTIONS = {"", "-"}
+MAX_PAGINATE_BY = 500
 
 LOGGING = {
     "version": 1,

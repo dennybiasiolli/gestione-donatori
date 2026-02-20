@@ -50,7 +50,9 @@ class DonatoreListView(ListView):
             return 0
         default_paginate_by = super().get_paginate_by(queryset)
         paginate_by = self.request.GET.get("paginate_by", "")
-        return paginate_by if paginate_by.isdigit() else default_paginate_by
+        if paginate_by.isdigit():
+            return min(int(paginate_by), settings.MAX_PAGINATE_BY)
+        return default_paginate_by
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -75,6 +77,7 @@ class DonatoreListView(ListView):
                 "stati_donatore": stati_donatore,
                 "querystring": querystring,
                 "skip_etichette_list": range(skip_etichette),
+                "MAX_PAGINATE_BY": settings.MAX_PAGINATE_BY,
             }
         )
 

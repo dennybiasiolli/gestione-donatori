@@ -1,61 +1,65 @@
 {% extends 'avis/base.html' %}
+{% load static %}
+
+{% block title %}Accedi — AVIS{% endblock %}
 
 {% block content %}
 
-{% if form.errors %}
-<div class="alert alert-warning" role="alert">
-    Nome utente e password non corrispondono. Riprova nuovamente.
-</div>
-{% endif %}
+<div class="login-wrapper">
+  <div class="login-card">
 
-{% if next %}
-{% if user.is_authenticated %}
-<div class="alert alert-warning" role="alert">
-    Il tuo utente non ha accesso a questa pagina.
-    Per procedere, accedi con un utente abilitato.
-</div>
-{% else %}
-<div class="alert alert-info" role="alert">
-    Accedi per poter vedere questa pagina.
-</div>
-{% endif %}
-{% endif %}
+    {% if form.errors %}
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      Nome utente e password non corrispondono. Riprova.
+    </div>
+    {% endif %}
 
-<div class="container text-center">
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <div class="row my-2">
-            <div class="col-sm-3"></div>
-            <div class="col-sm-6">
-                <div class="form-floating">
-                    {{ form.username }}
-                    {{ form.username.label_tag }}
-                </div>
+    {% if next %}
+    {% if user.is_authenticated %}
+    <div class="alert alert-warning" role="alert">
+      <i class="bi bi-shield-exclamation me-2"></i>
+      Il tuo utente non ha accesso a questa pagina.
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+      <i class="bi bi-info-circle-fill me-2"></i>
+      Accedi per poter vedere questa pagina.
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <div class="card">
+      <div class="card-body p-4">
+        <h5 class="fw-normal text-center mb-4">Accedi al gestionale</h5>
+        <form method="post" action="{% url 'login' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <div class="form-floating">
+              {{ form.username }}
+              {{ form.username.label_tag }}
             </div>
-            <div class="col-sm-3"></div>
-        </div>
-        <div class="row my-2">
-            <div class="col-sm-3"></div>
-            <div class="col-sm-6">
-                <div class="form-floating">
-                    {{ form.password }}
-                    {{ form.password.label_tag }}
-                </div>
+          </div>
+          <div class="mb-4">
+            <div class="form-floating">
+              {{ form.password }}
+              {{ form.password.label_tag }}
             </div>
-            <div class="col-sm-3"></div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <input type="submit" value="Accedi">
-            </div>
-        </div>
+          </div>
+          <button type="submit" class="btn btn-avis w-100">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Accedi
+          </button>
+          {% if next %}
+          <input type="hidden" name="next" value="{{ next }}">
+          {% else %}
+          <input type="hidden" name="next" value="{% url 'index' %}">
+          {% endif %}
+        </form>
+      </div>
+    </div>
 
-        {% if next %}
-        <input type="hidden" name="next" value="{{ next }}">
-        {% else %}
-        <input type="hidden" name="next" value="{% url 'index' %}">
-        {% endif %}
-    </form>
+  </div>
 </div>
 
+<script src="{% static 'js/login.js' %}"></script>
 {% endblock %}

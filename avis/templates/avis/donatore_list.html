@@ -1,544 +1,538 @@
 {% extends 'avis/base.html' %}
 {% load static %}
 
+{% block title %}Donatori — AVIS{% endblock %}
+
 {% block content %}
 
-<!-- Modal -->
+<!-- Modal: Stampa Etichette -->
 <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="myModalLabel">Stampa etichette</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <div class="m-1 row">
-                        <label class="col-auto col-form-label">Etichette già stampate</label>
-                        <div class="col">
-                            <input id="skipEtichette" type="number" min="0" max="11" class="form-control" value="0"
-                                autofocus />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
-                <button type="button" class="btn btn-primary"
-                    onclick="handlePrint('?stampa=etichette&{{ querystring }}', '_blank')">
-                    Stampa Etichette
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<script src="{% static 'js/print.js' %}"></script>
-<!-- End Modal -->
-
-<!-- Modal PulisciElencoStampa -->
-<div class="modal fade" id="modalPulisciElencoStampa" tabindex="-1" aria-labelledby="modalPulisciElencoStampaLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalPulisciElencoStampaLabel">Sei sicuro di voler pulire l'elenco stampa?</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <div class="m-1 row">
-                        <label class="col-auto col-form-label">Tutti i donatori aggiunti all'elenco verranno rimossi.</label>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                <button type="button" class="btn btn-danger"
-                    onclick="handleAddRemovePrint(event, 'remove-all', '{% url 'donatore-remove-stampa' %}', '{% url 'donatori' %}')">
-                    Pulisci
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- End Modal PulisciElencoStampa -->
-
-
-<form type="get" action="/donatori" class="d-print-none" style="margin: 0;">
-    <div class="m-1 row">
-        <label class="col-sm-2 col-form-label">Ricerca</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" name="ricerca" placeholder="Ricerca generica..." value="{{ ricerca }}" autofocus />
-        </div>
-    </div>
-    {% if sezioni.count > 1 %}
-    <div class="m-1 row">
-        <label class="col-sm-2 col-form-label">Sezione</label>
-        <div class="col-sm-10">
-            <select class="form-select" name="sezione_id">
-                <option value="">Tutte</option>
-                {% for sezione in sezioni %}
-                <option value="{{ sezione.id }}"{% if sezione.id == sezione_id %} selected{% endif %}>{{ sezione.descrizione }}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
-    {% endif %}
-    <div class="m-1 row">
-        <label class="col-sm-2 col-form-label">
-            Stato donatore
-        </label>
-        <div class="col-sm-7">
-            <div class="row">
-                {% for stato_donatore in stati_donatore %}
-                <div class="col-md-auto">
-                    <input class="form-check-input" type="checkbox"
-                        name="stato_donatore_ids"
-                        value="{{ stato_donatore.id }}"
-                        {% if stato_donatore.id in stato_donatore_ids %}checked{% endif %}
-                    >
-                    <label class="form-check-label">
-                        &nbsp;{{ stato_donatore.descrizione }}
-                    </label>
-                </div>
-                {% endfor %}
-            </div>
-            <!-- <select class="form-select" name="stato_donatore_id">
-                <option value="">Qualsiasi</option>
-                {% for stato_donatore in stati_donatore %}
-                <option value="{{ stato_donatore.id }}"{% if stato_donatore.id == stato_donatore_id %} selected{% endif %}>{{ stato_donatore.descrizione }}</option>
-                {% endfor %}
-            </select> -->
-            <!-- <select class="form-select" multiple size="3" name="stato_donatore_ids">
-                {% for stato_donatore in stati_donatore %}
-                <option value="{{ stato_donatore.id }}"{% if stato_donatore.id in stato_donatore_ids %} selected{% endif %}>{{ stato_donatore.descrizione }}</option>
-                {% endfor %}
-            </select> -->
-        </div>
-
-        <label class="col-sm-1 col-form-label">Sesso</label>
-        <div class="col-sm-2">
-            <select class="form-select" name="sesso_id">
-                <option value="">-</option>
-                {% for sesso in sessi %}
-                <option value="{{ sesso.id }}"{% if sesso.id == sesso_id %} selected{% endif %}>{{ sesso.codice }}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
-
-    <div class="accordion" id="accordionExample">
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="headingTwo">
-            <button class="accordion-button{% if not show_advanced %} collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-              Ricerca avanzata
-            </button>
-          </h2>
-          <div id="collapseTwo" class="accordion-collapse{% if not show_advanced %} collapse{% endif %}" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-            <div class="accordion-body p-0">
-                <div class="m-1 row">
-                    <label class="col-sm-2 col-form-label">Data iscrizione dal</label>
-                    <div class="col-sm-4">
-                        <input type="date" class="form-control" name="data_iscrizione_dal" value="{{ data_iscrizione_dal }}" />
-                    </div>
-
-                    <label class="col-sm-2 col-form-label">al</label>
-                    <div class="col-sm-4">
-                        <input type="date" class="form-control" name="data_iscrizione_al" value="{{ data_iscrizione_al }}" />
-                    </div>
-                </div>
-
-                <div class="m-1 row">
-                    <label class="col-sm-2 col-form-label">Data nascita dal</label>
-                    <div class="col-sm-4">
-                        <input type="date" class="form-control" name="data_nascita_dal" value="{{ data_nascita_dal }}" />
-                    </div>
-
-                    <label class="col-sm-2 col-form-label">al</label>
-                    <div class="col-sm-4">
-                        <input type="date" class="form-control" name="data_nascita_al" value="{{ data_nascita_al }}" />
-                    </div>
-                </div>
-
-                <div class="m-1 row">
-                    <label class="col-sm-2 col-form-label">Gruppo sanguigno</label>
-                    <div class="col-sm-2">
-                        <input type="text" class="form-control" name="gruppo_sanguigno" value="{{ gruppo_sanguigno }}" />
-                    </div>
-                    <label class="col-sm-1 col-form-label">Rh</label>
-                    <div class="col-sm-1">
-                        <input type="text" class="form-control" name="rh" value="{{ rh }}" />
-                    </div>
-
-                    <label class="col-sm-2 col-form-label">Fenotipo</label>
-                    <div class="col-sm-2">
-                        <input type="text" class="form-control" name="fenotipo" value="{{ fenotipo }}" />
-                    </div>
-                    <label class="col-sm-1 col-form-label">Kell</label>
-                    <div class="col-sm-1">
-                        <input type="text" class="form-control" name="kell" value="{{ kell }}" />
-                    </div>
-                </div>
-
-                <div class="m-1 row">
-                    <label class="col-sm-2 col-form-label">Donazioni tra il</label>
-                    <div class="col-sm-4">
-                        <input type="date" class="form-control" name="data_donazione_dal" value="{{ data_donazione_dal }}" />
-                    </div>
-
-                    <label class="col-sm-2 col-form-label">e il</label>
-                    <div class="col-sm-4">
-                        <input type="date" class="form-control" name="data_donazione_al" value="{{ data_donazione_al }}" />
-                    </div>
-                </div>
-
-                <div class="m-1 row">
-                    <label class="col-sm-2 col-form-label">Visualizza numero di donazioni dell'anno</label>
-                    <div class="col-sm-4">
-                        <input type="number" class="form-control" name="show_donazioni_anno" value="{{ show_donazioni_anno|default_if_none:'' }}" />
-                    </div>
-                </div>
-
-                <div class="m-1 row">
-                    <label class="col-sm-2 col-form-label">Benemerenze consegnate, da</label>
-                    <div class="col-sm-4">
-                        <input type="number" class="form-control" name="benemerenze_da" value="{{ benemerenze_da }}" min="0" />
-                    </div>
-
-                    <label class="col-sm-2 col-form-label">a</label>
-                    <div class="col-sm-4">
-                        <input type="number" class="form-control" name="benemerenze_a" value="{{ benemerenze_a }}" min="0" />
-                    </div>
-                </div>
-
-                <div class="m-1 row">
-                    <label class="col-sm-2 col-form-label">Comune</label>
-                    <div class="col-sm-4">
-                        <input type="text" class="form-control" name="comune" value="{{ comune }}" />
-                    </div>
-                    <label class="col-sm-1 col-form-label">Prov.</label>
-                    <div class="col-sm-1">
-                        <input type="text" class="form-control" name="provincia" value="{{ provincia }}" />
-                    </div>
-                    <label class="col-sm-1 col-form-label">CAP</label>
-                    <div class="col-sm-1">
-                        <input type="text" class="form-control" name="cap" value="{{ cap }}" />
-                    </div>
-                    <label class="col-sm-1 col-form-label">non CAP</label>
-                    <div class="col-sm-1">
-                        <input type="text" class="form-control" name="cap_diverso" value="{{ cap_diverso }}" />
-                    </div>
-                </div>
-
-                <div class="m-1 row">
-                    <label class="col-md-2 col-form-label">Visualizza</label>
-                    <div class="col-md-10 col-form-label">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="filter_donatori" value=""{% if filter_donatori == '' %} checked{% endif %}>
-                            <label class="form-check-label">tutti</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="filter_donatori" value="email"{% if filter_donatori == 'email' %} checked{% endif %}>
-                            <label class="form-check-label">con email</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="filter_donatori" value="no_email"{% if filter_donatori == 'no_email' %} checked{% endif %}>
-                            <label class="form-check-label">senza email</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="filter_donatori" value="cell"{% if filter_donatori == 'cell' %} checked{% endif %}>
-                            <label class="form-check-label">con cell.</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="filter_donatori" value="no_cell"{% if filter_donatori == 'no_cell' %} checked{% endif %}>
-                            <label class="form-check-label">senza cell.</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title" id="myModalLabel">Stampa etichette</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row align-items-center">
+          <label class="col-auto col-form-label">Etichette già stampate</label>
+          <div class="col">
+            <input id="skipEtichette" type="number" min="0" max="11" class="form-control" value="0" autofocus />
           </div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Chiudi</button>
+        <button type="button" class="btn btn-primary btn-sm"
+          onclick="handlePrint('?stampa=etichette&{{ querystring }}', '_blank')">
+          <i class="bi bi-printer me-1"></i>Stampa Etichette
+        </button>
+      </div>
     </div>
+  </div>
+</div>
+<script src="{% static 'js/print.js' %}"></script>
 
-    <div class="m-2 row align-items-center">
-        <div class="col-md-2">
-            <label class="form-label">Risultati per pagina</label>
-            <input type="number" class="form-control" name="paginate_by" value="{{ paginate_by }}" min="1" max="{{ MAX_PAGINATE_BY }}" />
-        </div>
-        <div class="col-md-3">
-            <label class="form-label">Ordina per</label>
-            <select class="form-select" name="order_by">
-                <option value="cognome,nome"{% if order_by == 'cognome,nome' %} selected{% endif %}>Cognome, Nome</option>
-                <option value="gruppo_sanguigno,rh"{% if order_by == 'gruppo_sanguigno,rh' %} selected{% endif %}>Gruppo Sanguigno</option>
-                <option value="comune"{% if order_by == 'comune' %} selected{% endif %}>Comune</option>
-                <option value="sesso"{% if order_by == 'sesso' %} selected{% endif %}>Sesso</option>
-                <option value="num_donazioni,tot_donazioni"{% if order_by == 'num_donazioni,tot_donazioni' %} selected{% endif %}>Donazioni registrate</option>
-                <option value="tot_donazioni,num_donazioni"{% if order_by == 'tot_donazioni,num_donazioni' %} selected{% endif %}>Donazioni totali (incluse pregresse)</option>
-                <option value="ultima_donazione"{% if order_by == 'ultima_donazione' %} selected{% endif %}>Data ultima donazione</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="order_by_direction" value=""{% if order_by_direction == '' %} checked{% endif %}>
-                <label class="form-check-label">Crescente</label>
+<!-- Modal: Pulisci Elenco Stampa -->
+<div class="modal fade" id="modalPulisciElencoStampa" tabindex="-1"
+  aria-labelledby="modalPulisciElencoStampaLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title" id="modalPulisciElencoStampaLabel">Pulisci elenco stampa</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-0 text-muted">Tutti i donatori aggiunti all'elenco verranno rimossi.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annulla</button>
+        <button type="button" class="btn btn-danger btn-sm"
+          onclick="handleAddRemovePrint(event, 'remove-all', '{% url 'donatore-remove-stampa' %}', '{% url 'donatori' %}')">
+          <i class="bi bi-trash me-1"></i>Pulisci
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search Panel -->
+<form method="get" action="{% url 'donatori' %}" class="d-print-none search-panel">
+
+  <div class="row g-2 align-items-center mb-2">
+    <div class="col-md-5">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="bi bi-search text-muted"></i>
+        </span>
+        <input type="text" class="form-control border-start-0 ps-0"
+          name="ricerca" placeholder="Cerca per nome, cognome, tessera…"
+          value="{{ ricerca }}" autofocus />
+      </div>
+    </div>
+    {% if sezioni.count > 1 %}
+    <div class="col-md-3">
+      <select class="form-select" name="sezione_id">
+        <option value="">Tutte le sezioni</option>
+        {% for sezione in sezioni %}
+        <option value="{{ sezione.id }}"{% if sezione.id == sezione_id %} selected{% endif %}>
+          {{ sezione.descrizione }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endif %}
+    <div class="col-md-2">
+      <select class="form-select" name="sesso_id">
+        <option value="">Sesso: tutti</option>
+        {% for sesso in sessi %}
+        <option value="{{ sesso.id }}"{% if sesso.id == sesso_id %} selected{% endif %}>
+          {{ sesso.descrizione }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="mb-2">
+    <span class="small text-muted me-2">Stato donatore:</span>
+    {% for stato_donatore in stati_donatore %}
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="checkbox"
+        name="stato_donatore_ids" value="{{ stato_donatore.id }}"
+        id="stato_{{ stato_donatore.id }}"
+        {% if stato_donatore.id in stato_donatore_ids %}checked{% endif %}>
+      <label class="form-check-label small" for="stato_{{ stato_donatore.id }}">
+        {{ stato_donatore.descrizione }}
+      </label>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Advanced Search Accordion -->
+  <div class="accordion" id="accordionAvanzata">
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button{% if not show_advanced %} collapsed{% endif %}"
+          type="button" data-bs-toggle="collapse" data-bs-target="#collapseAvanzata"
+          aria-expanded="{{ show_advanced|yesno:'true,false' }}" aria-controls="collapseAvanzata">
+          <i class="bi bi-sliders me-2"></i>Ricerca avanzata
+        </button>
+      </h2>
+      <div id="collapseAvanzata"
+        class="accordion-collapse{% if not show_advanced %} collapse{% endif %}"
+        data-bs-parent="#accordionAvanzata">
+        <div class="accordion-body">
+          <div class="row g-2 mb-2">
+            <div class="col-sm-2"><label class="col-form-label small">Iscrizione dal</label></div>
+            <div class="col-sm-2">
+              <input type="date" class="form-control form-control-sm"
+                name="data_iscrizione_dal" value="{{ data_iscrizione_dal }}" />
             </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="order_by_direction" value="-"{% if order_by_direction == '-' %} checked{% endif %}>
-                <label class="form-check-label">Decrescente</label>
+            <div class="col-sm-1"><label class="col-form-label small">al</label></div>
+            <div class="col-sm-2">
+              <input type="date" class="form-control form-control-sm"
+                name="data_iscrizione_al" value="{{ data_iscrizione_al }}" />
             </div>
-        </div>
-        <div class="col-md-2">
-            <input class="form-check-input me-2" type="checkbox"
-                name="show_privacy_check"
-                value="1"
-                {% if show_privacy_check %}checked{% endif %}
-            >
-            <label class="form-check-label">
-                Visualizza Privacy
-            </label>
-        </div>
-        <div class="col-md-3">
-            <label class="form-label">Visualizza ultime donazioni</label>
-            <input type="number" class="form-control" name="show_n_donazioni" value="{{ show_n_donazioni }}" min="0" max="12" />
-        </div>
-    </div>
+          </div>
 
-    <input type="hidden" name="only_stampa" value="{{ only_stampa }}" />
+          <div class="row g-2 mb-2">
+            <div class="col-sm-2"><label class="col-form-label small">Nascita dal</label></div>
+            <div class="col-sm-2">
+              <input type="date" class="form-control form-control-sm"
+                name="data_nascita_dal" value="{{ data_nascita_dal }}" />
+            </div>
+            <div class="col-sm-1"><label class="col-form-label small">al</label></div>
+            <div class="col-sm-2">
+              <input type="date" class="form-control form-control-sm"
+                name="data_nascita_al" value="{{ data_nascita_al }}" />
+            </div>
+          </div>
 
-    <div class="m-1 row">
-        <div class="col-sm-4">
-            <button type="submit" class="btn btn-primary">Ricerca</button>
-            <span class="ml-2">
-                {{ page_obj.paginator.count }} donatori trovati
-            </span>
+          <div class="row g-2 mb-2">
+            <div class="col-sm-2"><label class="col-form-label small">Gruppo sanguigno</label></div>
+            <div class="col-sm-1">
+              <input type="text" class="form-control form-control-sm"
+                name="gruppo_sanguigno" value="{{ gruppo_sanguigno }}" placeholder="es. A" />
+            </div>
+            <div class="col-sm-1"><label class="col-form-label small">Rh</label></div>
+            <div class="col-sm-1">
+              <input type="text" class="form-control form-control-sm"
+                name="rh" value="{{ rh }}" placeholder="+/-" />
+            </div>
+            <div class="col-sm-1"><label class="col-form-label small">Fenotipo</label></div>
+            <div class="col-sm-1">
+              <input type="text" class="form-control form-control-sm"
+                name="fenotipo" value="{{ fenotipo }}" />
+            </div>
+            <div class="col-sm-1"><label class="col-form-label small">Kell</label></div>
+            <div class="col-sm-1">
+              <input type="text" class="form-control form-control-sm"
+                name="kell" value="{{ kell }}" />
+            </div>
+          </div>
+
+          <div class="row g-2 mb-2">
+            <div class="col-sm-2"><label class="col-form-label small">Donazioni tra il</label></div>
+            <div class="col-sm-2">
+              <input type="date" class="form-control form-control-sm"
+                name="data_donazione_dal" value="{{ data_donazione_dal }}" />
+            </div>
+            <div class="col-sm-1"><label class="col-form-label small">e il</label></div>
+            <div class="col-sm-2">
+              <input type="date" class="form-control form-control-sm"
+                name="data_donazione_al" value="{{ data_donazione_al }}" />
+            </div>
+          </div>
+
+          <div class="row g-2 mb-2">
+            <div class="col-sm-2"><label class="col-form-label small">Don. nell'anno</label></div>
+            <div class="col-sm-2">
+              <input type="number" class="form-control form-control-sm"
+                name="show_donazioni_anno" value="{{ show_donazioni_anno|default_if_none:'' }}" />
+            </div>
+            <div class="col-sm-2"><label class="col-form-label small">Benemerenze da</label></div>
+            <div class="col-sm-1">
+              <input type="number" class="form-control form-control-sm"
+                name="benemerenze_da" value="{{ benemerenze_da }}" min="0" />
+            </div>
+            <div class="col-sm-1"><label class="col-form-label small">a</label></div>
+            <div class="col-sm-1">
+              <input type="number" class="form-control form-control-sm"
+                name="benemerenze_a" value="{{ benemerenze_a }}" min="0" />
+            </div>
+          </div>
+
+          <div class="row g-2 mb-2">
+            <div class="col-sm-2"><label class="col-form-label small">Comune</label></div>
+            <div class="col-sm-3">
+              <input type="text" class="form-control form-control-sm"
+                name="comune" value="{{ comune }}" />
+            </div>
+            <div class="col-sm-1"><label class="col-form-label small">Prov.</label></div>
+            <div class="col-sm-1">
+              <input type="text" class="form-control form-control-sm"
+                name="provincia" value="{{ provincia }}" />
+            </div>
+            <div class="col-sm-1"><label class="col-form-label small">CAP</label></div>
+            <div class="col-sm-1">
+              <input type="text" class="form-control form-control-sm"
+                name="cap" value="{{ cap }}" />
+            </div>
+            <div class="col-sm-1"><label class="col-form-label small">non CAP</label></div>
+            <div class="col-sm-1">
+              <input type="text" class="form-control form-control-sm"
+                name="cap_diverso" value="{{ cap_diverso }}" />
+            </div>
+          </div>
+
+          <div class="row g-2">
+            <div class="col-sm-2"><label class="col-form-label small">Visualizza</label></div>
+            <div class="col-sm-10 d-flex align-items-center gap-3 flex-wrap">
+              <div class="form-check form-check-inline mb-0">
+                <input class="form-check-input" type="radio" name="filter_donatori" value=""
+                  {% if filter_donatori == '' %}checked{% endif %}>
+                <label class="form-check-label small">tutti</label>
+              </div>
+              <div class="form-check form-check-inline mb-0">
+                <input class="form-check-input" type="radio" name="filter_donatori" value="email"
+                  {% if filter_donatori == 'email' %}checked{% endif %}>
+                <label class="form-check-label small">con email</label>
+              </div>
+              <div class="form-check form-check-inline mb-0">
+                <input class="form-check-input" type="radio" name="filter_donatori" value="no_email"
+                  {% if filter_donatori == 'no_email' %}checked{% endif %}>
+                <label class="form-check-label small">senza email</label>
+              </div>
+              <div class="form-check form-check-inline mb-0">
+                <input class="form-check-input" type="radio" name="filter_donatori" value="cell"
+                  {% if filter_donatori == 'cell' %}checked{% endif %}>
+                <label class="form-check-label small">con cellulare</label>
+              </div>
+              <div class="form-check form-check-inline mb-0">
+                <input class="form-check-input" type="radio" name="filter_donatori" value="no_cell"
+                  {% if filter_donatori == 'no_cell' %}checked{% endif %}>
+                <label class="form-check-label small">senza cellulare</label>
+              </div>
+            </div>
+          </div>
+
         </div>
-        <div class="col-sm-8 text-end d-print-none">
-            {% if only_stampa %}
-            <a class="btn btn-outline-secondary" href="#"
-                data-bs-toggle="modal"
-                data-bs-target="#modalPulisciElencoStampa"
-            >
-                Pulisci elenco stampa
-            </a>
-            {% endif %}
-            <a class="btn btn-outline-secondary" href="?stampa=elenco&{{ querystring }}" target="_blank">
-                Stampa elenco
-            </a>
-            <a class="btn btn-outline-secondary" href="?stampa=emails&{{ querystring }}" target="_blank">
-                Elenco email
-            </a>
-            <a class="btn btn-outline-secondary" href="?stampa=benemerenze&{{ querystring }}" target="_blank">
-                Benemerenze
-            </a>
-            <a class="btn btn-outline-secondary" href="#"
-                data-bs-toggle="modal"
-                data-bs-target="#myModal"
-            >
-                Etichette
-            </a>
-        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- Options row -->
+  <div class="row g-2 align-items-end mt-1 mb-2">
+    <div class="col-md-2">
+      <label class="form-label small mb-1">Risultati per pagina</label>
+      <input type="number" class="form-control form-control-sm"
+        name="paginate_by" value="{{ paginate_by }}" min="1" max="{{ MAX_PAGINATE_BY }}" />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small mb-1">Ordina per</label>
+      <select class="form-select form-select-sm" name="order_by">
+        <option value="cognome,nome"{% if order_by == 'cognome,nome' %} selected{% endif %}>Cognome, Nome</option>
+        <option value="gruppo_sanguigno,rh"{% if order_by == 'gruppo_sanguigno,rh' %} selected{% endif %}>Gruppo Sanguigno</option>
+        <option value="comune"{% if order_by == 'comune' %} selected{% endif %}>Comune</option>
+        <option value="sesso"{% if order_by == 'sesso' %} selected{% endif %}>Sesso</option>
+        <option value="num_donazioni,tot_donazioni"{% if order_by == 'num_donazioni,tot_donazioni' %} selected{% endif %}>Donazioni registrate</option>
+        <option value="tot_donazioni,num_donazioni"{% if order_by == 'tot_donazioni,num_donazioni' %} selected{% endif %}>Donazioni totali</option>
+        <option value="ultima_donazione"{% if order_by == 'ultima_donazione' %} selected{% endif %}>Ultima donazione</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="order_by_direction" value=""
+          {% if order_by_direction == '' %}checked{% endif %}>
+        <label class="form-check-label small">Crescente</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="order_by_direction" value="-"
+          {% if order_by_direction == '-' %}checked{% endif %}>
+        <label class="form-check-label small">Decrescente</label>
+      </div>
+    </div>
+    <div class="col-md-2 d-flex align-items-center gap-3">
+      <div class="form-check mb-0">
+        <input class="form-check-input" type="checkbox" name="show_privacy_check"
+          value="1" {% if show_privacy_check %}checked{% endif %} id="showPrivacy">
+        <label class="form-check-label small" for="showPrivacy">Privacy</label>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label small mb-1">Ultime donazioni</label>
+      <input type="number" class="form-control form-control-sm"
+        name="show_n_donazioni" value="{{ show_n_donazioni }}" min="0" max="12" />
+    </div>
+  </div>
+
+  <input type="hidden" name="only_stampa" value="{{ only_stampa }}" />
+
+  <div class="d-flex justify-content-between align-items-center pb-1">
+    <div class="d-flex align-items-center gap-3">
+      <button type="submit" class="btn btn-primary btn-sm">
+        <i class="bi bi-search me-1"></i>Cerca
+      </button>
+      <span class="text-muted small">
+        <strong>{{ page_obj.paginator.count }}</strong> donatori trovati
+      </span>
+    </div>
+    <div class="d-flex gap-2 d-print-none">
+      {% if only_stampa %}
+      <button type="button" class="btn btn-outline-secondary btn-sm"
+        data-bs-toggle="modal" data-bs-target="#modalPulisciElencoStampa">
+        <i class="bi bi-trash me-1"></i>Pulisci elenco
+      </button>
+      {% endif %}
+      <a class="btn btn-outline-secondary btn-sm" href="?stampa=elenco&{{ querystring }}" target="_blank">
+        <i class="bi bi-list-ul me-1"></i>Stampa elenco
+      </a>
+      <a class="btn btn-outline-secondary btn-sm" href="?stampa=emails&{{ querystring }}" target="_blank">
+        <i class="bi bi-envelope me-1"></i>Email
+      </a>
+      <a class="btn btn-outline-secondary btn-sm" href="?stampa=benemerenze&{{ querystring }}" target="_blank">
+        <i class="bi bi-award me-1"></i>Benemerenze
+      </a>
+      <button type="button" class="btn btn-outline-secondary btn-sm"
+        data-bs-toggle="modal" data-bs-target="#myModal">
+        <i class="bi bi-tag me-1"></i>Etichette
+      </button>
+    </div>
+  </div>
+
 </form>
 
-<table class="table">
+<!-- Donor Table -->
+<div class="table-responsive">
+  <table class="table table-hover table-sm align-middle mb-2">
     <thead class="table-light">
-        <tr>
-            <th scope="col" class="align-middle">
-                Tessera AVIS N.<br>
-                Tessera C.T. N.
-            </th>
-            <th scope="col" class="align-middle">Donazioni</th>
-            <th scope="col" class="align-middle">Benemerenze</th>
-            <th scope="col" class="align-middle">
-                Nome<br>
-                Data di nascita
-            </th>
-            <th scope="col" class="align-middle">Sesso</th>
-            <th scope="col" class="align-middle">Gr.</th>
-            <th scope="col" class="align-middle">Contatti</th>
-            <th scope="col" class="align-middle">Indirizzo</th>
-            <!-- {% if show_n_donazioni > 0 %}
-            <th scope="col" class="align-middle">Ultime {{ show_n_donazioni }} donazioni</th>
-            {% endif %} -->
-            <th scope="col" class="align-middle">Ultima donazione</th>
-            <th scope="col" class="align-middle text-end d-print-none"></th>
-        </tr>
+      <tr>
+        <th>Tessera</th>
+        <th>Donazioni</th>
+        <th>Benemerenze</th>
+        <th>Donatore</th>
+        <th>Sesso</th>
+        <th>Gruppo</th>
+        <th>Contatti</th>
+        <th>Indirizzo</th>
+        <th>Ultima donazione</th>
+        <th class="d-print-none"></th>
+      </tr>
     </thead>
     <tbody>
-        {% for donatore in page_obj %}
-        <tr style="page-break-inside:avoid; page-break-after:avoid;">
-            <th scope="row">
-                <a href="{% url 'donatore' pk=donatore.pk %}">
-                    AVIS: {{ donatore.num_tessera_avis }}<br>
-                    C.T.: {{ donatore.num_tessera_ct }}
-                </a>
-            </th>
-            <td>
-                {{ donatore.tot_donazioni }}
-                {% if show_donazioni_anno %}
-                <br>{% if donatore.donazioni_periodo %}{{ donatore.donazioni_periodo }}{% else %}0{% endif %} nel {{ show_donazioni_anno }}
-                {% endif %}
-                <!-- ({{ donatore.donazioni_pregresse }} + {{ donatore.num_donazioni }})-->
-            </td>
-            <td>
-                {% if donatore.sezione.configurazione_benemerenze %}
-                    {% if donatore.num_benemerenze_consegnate and donatore.num_benemerenze_conseguite == donatore.num_benemerenze_consegnate %}
-                    <i class="bi bi-check-circle-fill" style="color:green;"></i> {{ donatore.num_benemerenze_consegnate }} consegnate
-                    {% elif donatore.num_benemerenze_conseguite %}
-                    {{ donatore.num_benemerenze_conseguite }} conseguite,<br>
-                    <i class="bi bi-exclamation-triangle-fill" style="color:orange;"></i> {{ donatore.num_benemerenze_consegnate }} consegnate
-                    {% endif %}
-                {% elif donatore.num_benemerenze_consegnate %}
-                {{ donatore.num_benemerenze_consegnate }}
-                {% endif %}
-            </td>
-            <td>
-                <a href="{% url 'donatore' pk=donatore.pk %}">
-                    {{ donatore.cognome }} {{ donatore.nome }}
-                </a>
-                <br>
-                {% if donatore.data_nascita %}
-                {{ donatore.data_nascita | date:'d/m/Y' }}
-                {% endif %}
-                {% if show_privacy_check %}
-                <br>
-                <span class="ps-2">
-                    {% if donatore.check_privacy %}
-                    <a href="" data-bs-toggle="tooltip" data-bs-title="Annulla consegna del modulo"
-                        onclick="handleCheckUncheckPrivacy(event, '{% url 'donatore-uncheck-privacy' pk=donatore.pk %}')">
-                        <i class="bi bi-check-square-fill"></i></a>
-                        Modulo privacy consegnato
-                    {% else %}
-                    <a href="" data-bs-toggle="tooltip" data-bs-title="Imposta consegnato"
-                        onclick="handleCheckUncheckPrivacy(event, '{% url 'donatore-check-privacy' pk=donatore.pk %}')">
-                        <i class="bi bi-square"></i></a>
-                        Modulo privacy da consegnare
-                    {% endif %}
-                </span>
-                {% endif %}
-            </td>
-            <td>{{ donatore.sesso.codice }}</td>
-            <td>
-                {{ donatore.gruppo_sanguigno }}{{ donatore.rh }}
-            </td>
-            <td>
-                {% if donatore.email %}
-                {{ donatore.email }}<br>
-                {% endif %}
-                {% if donatore.telefono %}
-                {{ donatore.telefono }}<br>
-                {% endif %}
-                {% if donatore.cellulare %}
-                {{ donatore.cellulare }}<br>
-                {% endif %}
-            </td>
-            <td>
-                {% if donatore.indirizzo %}
-                {{ donatore.indirizzo }}<br>
-                {% endif %}
-                {% if donatore.frazione %}
-                {{ donatore.frazione }}<br>
-                {% endif %}
-                {% if donatore.cap or donatore.comune or donatore.provincia %}
-                {% if donatore.cap %}{{ donatore.cap }} {% endif %}
-                {{ donatore.comune }}
-                {% if donatore.provincia.strip %} ({{ donatore.provincia }}){% endif %}
-                <br>
-                {% endif %}
-            </td>
-            <!-- {% if show_n_donazioni > 0 %}
-            <td>
-                {% for donazione in donatore.donazioni.all|slice:show_n_donazioni %}
-                <span class="badge text-bg-light">
-                    {{ donazione.data_donazione | date:'d/m/y' }}
-                </span>
-                {% endfor %}
-            </td>
-            {% endif %} -->
-            <td>
-                {% if donatore.ultima_donazione %}
-                {{ donatore.ultima_donazione }}
-                {% endif %}
-            </td>
-            <td class="text-end d-print-none">
-                <span class="mx-2">
-                    {% if donatore.stampa_donatore %}
-                    <a href="" data-bs-toggle="tooltip" data-bs-title="Rimuovi da elenco stampa"
-                        onclick="handleAddRemovePrint(event, 'remove', '{% url 'donatore-remove-stampa' pk=donatore.pk %}')">
-                        <i class="bi bi-x-circle-fill"></i>
-                    </a>
-                    {% else %}
-                    <a href="" data-bs-toggle="tooltip" data-bs-title="Aggiungi a elenco stampa"
-                        onclick="handleAddRemovePrint(event, 'add', '{% url 'donatore-add-stampa' pk=donatore.pk %}')">
-                        <i class="bi bi-printer-fill"></i>
-                    </a>
-                    {% endif %}
-                </span>
-            </td>
-        </tr>
-        {% if show_n_donazioni > 0 %}
-        <tr style="page-break-inside:avoid; page-break-before:avoid;">
-            <td colspan="100%">
-                Ultime {{ show_n_donazioni }} donazioni:
-                {% for donazione in donatore.donazioni.all|slice:show_n_donazioni %}
-                <span class="badge badge-tipo-donazione-{{ donazione.tipo_donazione|default_if_none:"0" }}" title="{{ donazione.get_tipo_donazione_display }}">
-                    {{ donazione.data_donazione | date:'d/m/y' }}
-                </span>
-                {% endfor %}
-            </td>
-        </tr>
-        {% endif %}
-        {% endfor %}
-    </tbody>
-</table>
-
-<nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
-        {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ querystring }}">
-                    &laquo;
-                </a>
-            </li>
-        {% else %}
-            <li class="disabled page-item">
-                <span class="page-link">
-                    &laquo;
-                </span>
-            </li>
-        {% endif %}
-        {% for i in page_range %}
-            {% if page_obj.number == i %}
-                <li class="active page-item">
-                    <span class="page-link">
-                        {{ i }}
-                    </span>
-                </li>
+      {% for donatore in page_obj %}
+      <tr style="page-break-inside:avoid; page-break-after:avoid;">
+        <td>
+          <a href="{% url 'donatore' pk=donatore.pk %}" class="fw-medium">
+            AVIS: {{ donatore.num_tessera_avis }}
+          </a>
+          {% if donatore.num_tessera_ct %}
+          <div class="text-muted small">C.T.: {{ donatore.num_tessera_ct }}</div>
+          {% endif %}
+        </td>
+        <td>
+          <span class="fw-medium">{{ donatore.tot_donazioni }}</span>
+          {% if show_donazioni_anno %}
+          <div class="text-muted small">
+            {% if donatore.donazioni_periodo %}{{ donatore.donazioni_periodo }}{% else %}0{% endif %}
+            nel {{ show_donazioni_anno }}
+          </div>
+          {% endif %}
+        </td>
+        <td>
+          {% if donatore.sezione.configurazione_benemerenze %}
+          {% if donatore.num_benemerenze_consegnate and donatore.num_benemerenze_conseguite == donatore.num_benemerenze_consegnate %}
+          <i class="bi bi-check-circle-fill text-success"></i>
+          <span class="small">{{ donatore.num_benemerenze_consegnate }} consegnate</span>
+          {% elif donatore.num_benemerenze_conseguite %}
+          <span class="small">{{ donatore.num_benemerenze_conseguite }} conseguite</span>
+          <br><i class="bi bi-exclamation-triangle-fill text-warning"></i>
+          <span class="small">{{ donatore.num_benemerenze_consegnate }} consegnate</span>
+          {% endif %}
+          {% elif donatore.num_benemerenze_consegnate %}
+          <span class="small">{{ donatore.num_benemerenze_consegnate }} consegnate</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'donatore' pk=donatore.pk %}" class="fw-medium">
+            {{ donatore.cognome }} {{ donatore.nome }}
+          </a>
+          {% if donatore.data_nascita %}
+          <div class="text-muted small">{{ donatore.data_nascita|date:'d/m/Y' }}</div>
+          {% endif %}
+          {% if show_privacy_check %}
+          <div class="small mt-1">
+            {% if donatore.check_privacy %}
+            <a href="" class="text-success text-decoration-none"
+              data-bs-toggle="tooltip" data-bs-title="Annulla consegna del modulo"
+              onclick="handleCheckUncheckPrivacy(event, '{% url 'donatore-uncheck-privacy' pk=donatore.pk %}')">
+              <i class="bi bi-check-square-fill"></i> Privacy ok
+            </a>
             {% else %}
-                {% if i == page_obj.paginator.ELLIPSIS %}
-                    <li class="page-item">
-                        <span class="page-link">
-                            {{ i }}
-                        </span>
-                    </li>
-                {% else %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ i }}&{{ querystring }}">
-                            {{ i }}
-                        </a>
-                    </li>
-                {% endif %}
+            <a href="" class="text-muted text-decoration-none"
+              data-bs-toggle="tooltip" data-bs-title="Imposta consegnato"
+              onclick="handleCheckUncheckPrivacy(event, '{% url 'donatore-check-privacy' pk=donatore.pk %}')">
+              <i class="bi bi-square"></i> Privacy mancante
+            </a>
             {% endif %}
-        {% endfor %}
-        {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ querystring }}">
-                    &raquo;
-                </a>
-            </li>
-        {% else %}
-            <li class="disabled page-item"><span class="page-link">&raquo;</span></li>
-        {% endif %}
-    </ul>
+          </div>
+          {% endif %}
+        </td>
+        <td class="text-center">
+          <span class="text-muted small">{{ donatore.sesso.codice }}</span>
+        </td>
+        <td>
+          {% if donatore.gruppo_sanguigno %}
+          <span class="badge-blood">{{ donatore.gruppo_sanguigno }}{{ donatore.rh }}</span>
+          {% else %}
+          <span class="text-muted small">—</span>
+          {% endif %}
+        </td>
+        <td>
+          <div class="small lh-sm">
+            {% if donatore.email %}
+            <div>{{ donatore.email }}</div>
+            {% endif %}
+            {% if donatore.cellulare %}
+            <div class="text-muted">{{ donatore.cellulare }}</div>
+            {% elif donatore.telefono %}
+            <div class="text-muted">{{ donatore.telefono }}</div>
+            {% endif %}
+          </div>
+        </td>
+        <td>
+          <div class="small lh-sm text-muted">
+            {% if donatore.indirizzo %}
+            <div>{{ donatore.indirizzo }}{% if donatore.frazione %}, {{ donatore.frazione }}{% endif %}</div>
+            {% endif %}
+            {% if donatore.cap or donatore.comune %}
+            <div>{% if donatore.cap %}{{ donatore.cap }} {% endif %}{{ donatore.comune }}{% if donatore.provincia.strip %} ({{ donatore.provincia }}){% endif %}</div>
+            {% endif %}
+          </div>
+        </td>
+        <td>
+          {% if donatore.ultima_donazione %}
+          <span class="small">{{ donatore.ultima_donazione|date:'d/m/Y' }}</span>
+          {% else %}
+          <span class="text-muted small">—</span>
+          {% endif %}
+        </td>
+        <td class="d-print-none text-end">
+          {% if donatore.stampa_donatore %}
+          <a href="" data-bs-toggle="tooltip" data-bs-title="Rimuovi da elenco stampa"
+            onclick="handleAddRemovePrint(event, 'remove', '{% url 'donatore-remove-stampa' pk=donatore.pk %}')">
+            <i class="bi bi-x-circle-fill text-danger"></i>
+          </a>
+          {% else %}
+          <a href="" data-bs-toggle="tooltip" data-bs-title="Aggiungi a elenco stampa"
+            onclick="handleAddRemovePrint(event, 'add', '{% url 'donatore-add-stampa' pk=donatore.pk %}')">
+            <i class="bi bi-printer text-muted"></i>
+          </a>
+          {% endif %}
+        </td>
+      </tr>
+      {% if show_n_donazioni > 0 %}
+      <tr style="page-break-inside:avoid; page-break-before:avoid;">
+        <td colspan="100%" class="pt-0 pb-1 border-top-0">
+          <span class="small text-muted me-1">Ultime {{ show_n_donazioni }} donazioni:</span>
+          {% for donazione in donatore.donazioni.all|slice:show_n_donazioni %}
+          <span class="badge badge-tipo-donazione-{{ donazione.tipo_donazione|default_if_none:'0' }} me-1"
+            title="{{ donazione.get_tipo_donazione_display }}">
+            {{ donazione.data_donazione|date:'d/m/y' }}
+          </span>
+          {% endfor %}
+        </td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination -->
+<nav aria-label="Navigazione pagine" class="d-print-none">
+  <ul class="pagination pagination-sm justify-content-center mb-0">
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ querystring }}">
+        <i class="bi bi-chevron-left"></i>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+    </li>
+    {% endif %}
+
+    {% for i in page_range %}
+    {% if page_obj.number == i %}
+    <li class="page-item active">
+      <span class="page-link">{{ i }}</span>
+    </li>
+    {% elif i == page_obj.paginator.ELLIPSIS %}
+    <li class="page-item disabled">
+      <span class="page-link">{{ i }}</span>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ i }}&{{ querystring }}">{{ i }}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ querystring }}">
+        <i class="bi bi-chevron-right"></i>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+    </li>
+    {% endif %}
+  </ul>
 </nav>
 
 {% endblock %}

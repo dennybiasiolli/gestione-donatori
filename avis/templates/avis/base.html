@@ -5,10 +5,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AVIS</title>
+  <title>{% block title %}AVIS{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'libs/bootstrap/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'libs/bootstrap-icons/bootstrap-icons.css' %}">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
   <link rel="stylesheet" href="{% static 'css/avis.css' %}">
   <link rel="icon" type="image/x-icon" href="{% static 'img/avis-favicon.ico' %}">
 </head>
@@ -16,93 +16,99 @@
 <body>
   <!-- Modal Messages -->
   <div class="modal fade" id="modalMessage" tabindex="-1" aria-labelledby="modalMessageLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="modalMessageLabel">Informazioni</h5>
+          <h6 class="modal-title" id="modalMessageLabel">Informazioni</h6>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <span id="modalMessageContent"></span>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+          <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">OK</button>
         </div>
       </div>
     </div>
   </div>
 
   {% block nav %}
-  <nav class="navbar navbar-expand-lg bg-light d-print-none">
-    <div class="container-fluid">
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-avis d-print-none">
+    <div class="container-fluid px-3">
       <a class="navbar-brand" href="{% url 'index' %}">
         <img class="logo" src="{% static 'img/avis-logo.svg' %}" alt="AVIS Nazionale">
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        {% if request.user.is_authenticated %}
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          {% if request.user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'donatori' and only_stampa != '1' %}active{% endif %}"
               href="{% url 'donatori' %}">
-              Elenco donatori
+              <i class="bi bi-people-fill me-1"></i>Donatori
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'donatori' and only_stampa == '1' %}active{% endif %}"
               href="{% url 'donatori' %}?stato_donatore_id=&only_stampa=1">
-              Elenco stampa
+              <i class="bi bi-printer-fill me-1"></i>Elenco stampa
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'dati-statistici' %}active{% endif %}"
               href="{% url 'dati-statistici' %}">
-              Dati statistici
+              <i class="bi bi-bar-chart-fill me-1"></i>Statistiche
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link"
-              href="{% url 'export-elenco-soci' %}">
-              Excel Elenco Soci
+            <a class="nav-link" href="{% url 'export-elenco-soci' %}">
+              <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i>Excel
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'admin:avis_donatore_changelist' %}" target="_blank">
-              Amministrazione donatori
+              <i class="bi bi-gear-fill me-1"></i>Amministrazione
             </a>
           </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
           <li class="nav-item">
             <form id="logout-form" method="post" action="{% url 'logout' %}?next={% url 'index' %}">
               {% csrf_token %}
-              <a class="nav-link" href="#"
-                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                title="{{ request.user.email }}">Esci</a>
+              <button type="submit" class="btn nav-link"
+                data-bs-toggle="tooltip" data-bs-title="{{ request.user.email }}"
+                data-bs-placement="bottom">
+                <i class="bi bi-person-circle me-1"></i>{{ request.user.username }}
+                <i class="bi bi-box-arrow-right ms-1 opacity-50"></i>
+              </button>
             </form>
           </li>
-          {% else %}
+        </ul>
+        {% else %}
+        <ul class="navbar-nav ms-auto">
           <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
-              href="{% url 'login' %}?next={% url 'index' %}">Accedi</a>
+              href="{% url 'login' %}?next={% url 'index' %}">
+              <i class="bi bi-box-arrow-in-right me-1"></i>Accedi
+            </a>
           </li>
-          {% endif %}
         </ul>
+        {% endif %}
       </div>
     </div>
   </nav>
   {% endblock %}
-  <main class="container-fluid p-0 m-0">
-    <div class="row">
-      <div class="col">
-        {% block content %}
-        {% endblock %}
-      </div>
-    </div>
-  </main>
-  <script src="{% static 'libs/bootstrap/bootstrap.bundle.min.js' %}"></script>
 
+  <main class="main-content container-fluid">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <script src="{% static 'libs/bootstrap/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'js/base.js' %}"></script>
 </body>
 

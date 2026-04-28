@@ -55,6 +55,8 @@ The project has a single Django app (`avis/`) within a `website/` project config
 
 The `Sezione` (section) model is the tenant anchor. Each Django user is linked to one or more sections. All donor data is scoped to a section. Superusers see all sections; staff see only their assigned section(s). Access is gated by `avis_user_check` (staff-only).
 
+**Critical invariant**: every queryset that touches donor data must filter by `sezione__utente=request.user` (or `sezione__utente=user` in utility functions). This is how cross-tenant data leakage is prevented. The admin enforces the same rule in each `get_queryset` override.
+
 ### Core Models
 
 - **Sezione** — Blood donor section/chapter; links to a staff user, stores award thresholds (PostgreSQL `ArrayField`)
@@ -76,6 +78,13 @@ The `Sezione` (section) model is the tenant anchor. Each Django user is linked t
 /amministrazione-donatori/ → Django admin (URL configurable via env)
 ```
 
+### Business Logic & Print Mode
+
+- `avis/functions.py` — contains `get_dati_statistici` and `get_elenco_soci_xls`; business logic lives here, not in views
+- `DonatoreListView` supports a `stampa` query parameter (`elenco`, `benemerenze`, `emails`, `etichette`) which switches the template to `donatore_list_<stampa>.html` and disables pagination (returns full results)
+- `Donatore.num_benemerenze_conseguite` (computed from donation count vs thresholds) is distinct from `num_benemerenze_consegnate` (manually tracked field)
+- `donazioni_pregresse` stores donations that occurred before the system was adopted; `tot_donazioni` annotation = `num_donazioni` + `donazioni_pregresse`
+
 ### Key Technologies
 
 - **Django 5.2+** with `django-filter` for list filtering and `django-reversion` for audit history
@@ -94,6 +103,10 @@ Settings split: `website/settings_base.py` (all config) + `website/settings.py` 
 ### Code Style
 
 Black (line length 88) + isort (Black profile) + flake8. CI enforces `make style-check` before tests.
+
+### Testing
+
+Shared fixtures are in `avis/tests/conftest.py`: `sesso_m`, `stato_attivo`, `stato_inattivo`, `staff_user`, `sezione`, `donatore`. View tests require an authenticated staff user — use the `staff_user` fixture and `client.force_login()`.
 
 ### CI
 

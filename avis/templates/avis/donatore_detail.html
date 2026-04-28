@@ -1,79 +1,50 @@
 {% extends 'avis/base.html' %}
 
+{% block title %}{{ donatore.cognome }} {{ donatore.nome }} — AVIS{% endblock %}
+
 {% block content %}
 
-<div class="row m-2 align-items-center">
-    <div class="col-6 d-print-none">
-        <span class="ps-2">
-            {% if donatore.check_privacy %}
-            <i class="bi bi-check-square-fill"></i>
-            Modulo privacy consegnato
-            {% else %}
-            <i class="bi bi-square"></i>
-            Modulo privacy da consegnare
-            {% endif %}
-        </span>
-    </div>
-    <div class="col-6 text-end d-print-none">
-        <a class="btn btn-outline-secondary" href="#"
-            onclick="handleAddRemovePrint(event, 'add', '{% url 'donatore-add-stampa' pk=donatore.pk %}')">
-            Aggiungi a elenco stampa
-        </a>
-        <a class="btn btn-outline-secondary" href="{% url 'donatori' %}?stampa=benemerenze&donatore_id={{ donatore.id }}" target="_blank">
-            Benemerenza
-        </a>
-        <a class="btn btn-outline-secondary" href="{% url 'admin:avis_donatore_change' donatore.id %}" target="_blank">
-            Modifica
-        </a>
+<div class="detail-header d-print-none">
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="donor-name">{{ donatore.cognome }} {{ donatore.nome }}</div>
+            <div class="donor-meta">
+                <strong>Tessera AVIS N. {{ donatore.num_tessera_avis }}</strong>
+                {% if donatore.num_tessera_ct %}&nbsp;·&nbsp; C.T. N. {{ donatore.num_tessera_ct }}{% endif %}
+                {% if donatore.data_iscrizione and donatore.data_iscrizione.year > 1900 %}
+                &nbsp;·&nbsp; Iscritt{% if donatore.sesso.codice == 'M' %}o{% else %}a{% endif %} dal {{ donatore.data_iscrizione | date:'d/m/Y' }}
+                {% endif %}
+                &nbsp;·&nbsp;
+                {% if donatore.check_privacy %}
+                <i class="bi bi-check-circle-fill text-success"></i> Modulo Privacy consegnato{% if donatore.check_privacy_date %} il {{ donatore.check_privacy_date | date:'d/m/Y' }}{% endif %}
+                {% else %}
+                <i class="bi bi-exclamation-circle-fill text-warning"></i> Modulo Privacy mancante
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-auto d-flex gap-2">
+            <a class="btn btn-outline-light btn-sm" href="#"
+                onclick="handleAddRemovePrint(event, 'add', '{% url 'donatore-add-stampa' pk=donatore.pk %}')">
+                <i class="bi bi-printer me-1"></i>Aggiungi a stampa
+            </a>
+            <a class="btn btn-outline-light btn-sm" href="{% url 'donatori' %}?stampa=benemerenze&donatore_id={{ donatore.id }}" target="_blank">
+                <i class="bi bi-award me-1"></i>Benemerenza
+            </a>
+            <a class="btn btn-light btn-sm" href="{% url 'admin:avis_donatore_change' donatore.id %}" target="_blank">
+                <i class="bi bi-pencil me-1"></i>Modifica
+            </a>
+        </div>
     </div>
 </div>
 
+<div class="d-none d-print-block mb-2">
+    <h4 class="mb-0">{{ donatore.cognome }} {{ donatore.nome }}</h4>
+    <small>Tessera AVIS N. {{ donatore.num_tessera_avis }}{% if donatore.num_tessera_ct %} — C.T. N. {{ donatore.num_tessera_ct }}{% endif %}</small>
+</div>
+
 <div class="card">
-    <div class="card-header">
-        <div class="row g-2">
-            <div class="col-4 text-center">
-                N. Tessera C.T. {{ donatore.num_tessera_ct }}
-            </div>
-            <div class="col-4 text-center">
-                {% if donatore.data_iscrizione and donatore.data_iscrizione.year > 1900 %}
-                Iscritt{% if donatore.sesso.codice == 'M' %}o{% else %}a{% endif %} dal {{ donatore.data_iscrizione | date:'d/m/Y' }}
-                {% endif %}
-                <!-- {% if donatore.data_rilascio_tessera and donatore.data_rilascio_tessera.year > 1900 %}
-                (tessera rilasciata il {{ donatore.data_rilascio_tessera | date:'d/m/Y' }})
-                {% endif %} -->
-            </div>
-            <div class="col-4 text-center">
-                Tessera AVIS N. {{ donatore.num_tessera_avis }}
-            </div>
-        </div>
-    </div>
     <div class="card-body">
         <div class="row g-2">
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-header">
-                        Cognome
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-text">
-                            {{ donatore.cognome }}
-                        </h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-header">
-                        Nome
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-text">
-                            {{ donatore.nome }}
-                        </h3>
-                    </div>
-                </div>
-            </div>
-
             <div class="col-6">
                 <div class="card">
                     <div class="card-header">
@@ -161,9 +132,6 @@
                             {% if donatore.data_iscrizione and donatore.data_iscrizione.year > 1900 %}
                             Iscritt{% if donatore.sesso.codice == 'M' %}o{% else %}a{% endif %} dal {{ donatore.data_iscrizione | date:'d/m/Y' }}
                             {% endif %}
-                            <!-- {% if donatore.data_rilascio_tessera and donatore.data_rilascio_tessera.year > 1900 %}
-                            (tessera rilasciata il {{ donatore.data_rilascio_tessera | date:'d/m/Y' }})
-                            {% endif %} -->
                             {% if donatore.data_cessata_iscrizione %}
                             <br>
                             Cessata iscrizione dal {{ donatore.data_cessata_iscrizione | date:'d/m/Y' }}
@@ -208,9 +176,9 @@
                             {% if donatore.sezione.configurazione_benemerenze %}
                                 <br>Benemerenze conseguite: {{ donatore.num_benemerenze_conseguite }}
                                 {% if donatore.num_benemerenze_consegnate and donatore.num_benemerenze_conseguite == donatore.num_benemerenze_consegnate %}
-                                <br>Benemerenze consegnate: {{ donatore.num_benemerenze_consegnate }} <i class="bi bi-check-circle-fill" style="color:green;"></i>
+                                <br>Benemerenze consegnate: {{ donatore.num_benemerenze_consegnate }} <i class="bi bi-check-circle-fill text-success"></i>
                                 {% elif donatore.num_benemerenze_conseguite %}
-                                <br>Benemerenze consegnate: {{ donatore.num_benemerenze_consegnate }} <i class="bi bi-exclamation-triangle-fill" style="color:orange;"></i>
+                                <br>Benemerenze consegnate: {{ donatore.num_benemerenze_consegnate }} <i class="bi bi-exclamation-triangle-fill text-warning"></i>
                                 {% endif %}
                             {% elif donatore.num_benemerenze_consegnate %}
                             <br>Benemerenze consegnate: {{ donatore.num_benemerenze_consegnate }}
@@ -269,14 +237,14 @@
                             </div>
                             <div class="col-sm-3 text-end d-print-none">
                                 <a class="btn btn-primary btn-sm" href="{% url 'donazione-create' donatore.id %}">
-                                    Nuova donazione
+                                    <i class="bi bi-plus-lg me-1"></i>Nuova donazione
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="card-text">
-                            <table class="table table-sm mb-0">
+                            <table class="table table-sm table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
                                         <th scope="col">Data</th>
@@ -286,11 +254,11 @@
                                 <tbody>
                                     {% for donazione in donatore.donazioni.all %}
                                     <tr>
-                                        <td>{{ donazione.data_donazione }}</td>
+                                        <td>{{ donazione.data_donazione | date:'d/m/Y' }}</td>
                                         <td>
                                             <span class="badge badge-tipo-donazione-{{ donazione.tipo_donazione|default_if_none:"0" }} rounded-pill d-print-none">
                                                 &nbsp;
-                                            </span>                        
+                                            </span>
                                             {{ donazione.get_tipo_donazione_display }}
                                         </td>
                                     </tr>

@@ -1,65 +1,270 @@
+:root {
+  --avis-red: #c8102e;
+  --avis-red-dark: #9e0b23;
+  --avis-navy: #1a1a2e;
+}
+
 body {
-    font-family: 'Roboto', sans-serif;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f5f5f7;
+  color: #1d1d1f;
+}
+
+/* ===== NAVBAR ===== */
+
+.navbar-avis {
+  background-color: var(--avis-navy);
+  border-bottom: 3px solid var(--avis-red);
 }
 
 nav img.logo {
-    height: 34px;
-    width: auto;
+  height: 32px;
+  width: auto;
 }
 
-.nav-link.active {
-    text-decoration: underline;
+.navbar-avis .nav-link {
+  color: rgba(255, 255, 255, .65);
+  font-size: .88rem;
+  padding: .45rem .75rem;
+  border-radius: 5px;
+  transition: color .15s, background-color .15s;
 }
 
-/* personalizzazione stampa benemerenza */
+.navbar-avis .nav-link:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, .1);
+}
+
+.navbar-avis .nav-link.active {
+  color: #fff;
+  background-color: rgba(200, 16, 46, .25);
+  text-decoration: none;
+}
+
+.navbar-avis .btn.nav-link {
+  border: none;
+  background: transparent;
+}
+
+/* ===== MAIN ===== */
+
+.main-content {
+  padding: 1.25rem;
+}
+
+/* ===== CARDS ===== */
+
+.card {
+  border: 1px solid rgba(0, 0, 0, .08);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+  border-radius: 10px;
+}
+
+.card-header {
+  background-color: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, .07);
+  border-radius: 10px 10px 0 0 !important;
+  font-size: .73rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: #8a929a;
+  padding: .55rem 1rem;
+}
+
+/* ===== SEARCH PANEL ===== */
+
+.search-panel {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, .08);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+  padding: 1rem 1.25rem 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.search-panel .col-form-label {
+  font-size: .85rem;
+}
+
+.search-panel .accordion-item {
+  border: none;
+  background: transparent;
+}
+
+.search-panel .accordion-button {
+  font-size: .83rem;
+  font-weight: 600;
+  color: #495057;
+  background: transparent;
+  padding: .5rem 0;
+  box-shadow: none;
+}
+
+.search-panel .accordion-button:not(.collapsed) {
+  color: var(--avis-red);
+  background: transparent;
+  box-shadow: none;
+}
+
+.search-panel .accordion-button::after {
+  margin-left: .4rem;
+}
+
+.search-panel .accordion-body {
+  padding: .5rem 0;
+}
+
+/* ===== TABLE ===== */
+
+.table thead th {
+  font-size: .73rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #6c757d;
+  font-weight: 700;
+  border-bottom: 2px solid #dee2e6;
+  white-space: nowrap;
+}
+
+.table-hover tbody tr:hover td,
+.table-hover tbody tr:hover th {
+  background-color: rgba(200, 16, 46, .04);
+}
+
+.table a {
+  color: inherit;
+}
+
+.table a:hover {
+  color: var(--avis-red);
+}
+
+/* ===== BLOOD TYPE BADGE ===== */
+
+.badge-blood {
+  background-color: var(--avis-red);
+  color: #fff;
+  font-weight: 700;
+  font-size: .78rem;
+  padding: .2em .55em;
+  border-radius: .3rem;
+  letter-spacing: .02em;
+  display: inline-block;
+}
+
+/* ===== LOGIN PAGE ===== */
+
+.login-wrapper {
+  min-height: calc(100vh - 57px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-card .card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, .12);
+}
+
+.btn-avis {
+  background-color: var(--avis-red);
+  border-color: var(--avis-red);
+  color: #fff;
+  font-weight: 500;
+  padding: .6rem 1.5rem;
+  border-radius: 6px;
+  transition: background-color .15s, border-color .15s;
+}
+
+.btn-avis:hover,
+.btn-avis:focus {
+  background-color: var(--avis-red-dark);
+  border-color: var(--avis-red-dark);
+  color: #fff;
+}
+
+/* ===== DONOR DETAIL INFO GRID ===== */
+
+.detail-header {
+  background: var(--avis-navy);
+  color: #fff;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.detail-header .donor-name {
+  font-size: 1.75rem;
+  font-weight: 300;
+  letter-spacing: .01em;
+  margin-bottom: .25rem;
+}
+
+.detail-header .donor-meta {
+  font-size: .85rem;
+  color: rgba(255, 255, 255, .65);
+}
+
+.detail-header .donor-meta strong {
+  color: rgba(255, 255, 255, .9);
+}
+
+.info-section {
+  margin-bottom: 1.5rem;
+}
+
+.info-section-title {
+  font-size: .73rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #8a929a;
+  padding-bottom: .4rem;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: .9rem;
+}
+
+.info-label {
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #adb5bd;
+  margin-bottom: .15rem;
+}
+
+.info-value {
+  font-size: .95rem;
+  color: #212529;
+}
+
+/* ===== DONATION TYPE BADGES ===== */
+
+.badge-tipo-donazione-0 { background-color: #c9c9c9; color: #444; }
+.badge-tipo-donazione-1 { background-color: #9c0c1a; color: #fff; }
+.badge-tipo-donazione-2 { background-color: #ffc107; color: #333; }
+.badge-tipo-donazione-3 { background-color: #fa7884; color: #333; }
+.badge-tipo-donazione-4 { background-color: #fc6f03; color: #fff; }
+.badge-tipo-donazione-5 { background-color: #c203fc; color: #fff; }
+
+/* ===== PRINT STYLES ===== */
+
 .benemerenza {
-    width: 8.3in;  /* A4 format */
-    height: 11.7in;  /* A4 format */
-    page-break-after: always;
-}
-.benemerenza .riga-comune-avis {
-    height: 50%;
-    /* height: 4.2in; */
-}
-.benemerenza .riga-donatore {
-    height: 40%;
-}
-.benemerenza .riga-pres-segr {
-    height: 5%;
-}
-.benemerenza .riga-luogo-data {
-    height: 5%;
-    padding-left: 50px;
+  width: 8.3in;
+  height: 11.7in;
+  page-break-after: always;
 }
 
-/* personalizzazione stampa etichette */
-.etichette-riga {
-    /**
-     * inserire eventuali margini sx e dx,
-     * top e bottom non funzionano al cambio di pagina
-     **/
-    margin-left: 2mm;
-}
-.etichetta {
-    height: 37mm;
-    font-size: small;
-}
+.benemerenza .riga-comune-avis { height: 50%; }
+.benemerenza .riga-donatore { height: 40%; }
+.benemerenza .riga-pres-segr { height: 5%; }
+.benemerenza .riga-luogo-data { height: 5%; padding-left: 50px; }
 
-.badge-tipo-donazione-0 {
-    background-color: #c9c9c9;
-}
-.badge-tipo-donazione-1 {
-    background-color: #9c0c1a;
-}
-.badge-tipo-donazione-2 {
-    background-color: #ffc107;
-}
-.badge-tipo-donazione-3 {
-    background-color: #fa7884;
-}
-.badge-tipo-donazione-4 {
-    background-color: #fc6f03;
-}
-.badge-tipo-donazione-5 {
-    background-color: #c203fc;
-}
+.etichette-riga { margin-left: 2mm; }
+.etichetta { height: 37mm; font-size: small; }

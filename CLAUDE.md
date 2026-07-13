@@ -87,7 +87,7 @@ The `Sezione` (section) model is the tenant anchor. Each Django user is linked t
 
 ### Key Technologies
 
-- **Django 5.2+** with `django-filter` for list filtering and `django-reversion` for audit history
+- **Django 5.2+** with `django-reversion` for audit history
 - **PostgreSQL** in production (uses `ArrayField`); SQLite works for development
 - **UV** as the Python package manager (not pip)
 - **openpyxl** for Excel exports

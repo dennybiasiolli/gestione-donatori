@@ -8,6 +8,7 @@ from .models import Donatore, Donazione, Sesso, Sezione, StatoDonatore
 
 @admin.register(Sesso)
 class SessoAdmin(admin.ModelAdmin):
+    print("SessoAdmin registered")
     pass
 
 

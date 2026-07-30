@@ -19,7 +19,7 @@ profile = 'black'
 [dependency-groups]
 deploy = [
     "gunicorn>=26.0.0,<27",
-    "uvicorn>=0.51.0,<0.52",
+    "uvicorn>=0.52.0,<0.53",
     "uvicorn-worker>=0.3.0",
 ]
 dev = [

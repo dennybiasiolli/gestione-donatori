@@ -26,6 +26,9 @@ dev = [
 ]
 
 [tool.ruff.lint]
+extend-select = [
+    "DJ", # flake8-django: Django-specific bugs
+]
 ignore = ["RUF012"]
 
 [tool.uv]

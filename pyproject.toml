@@ -7,7 +7,7 @@ requires-python = ">=3.13,<3.14"
 readme = "README.md"
 dependencies = [
     "django-reversion>=6.3.0,<7",
-    "django>=5.2.5,<6",
+    "django>=6.0.7,<7",
     "openpyxl>=3.1.5,<4",
     "psycopg>=3.3.4,<4",
     "python-dotenv>=1.1.1,<2",

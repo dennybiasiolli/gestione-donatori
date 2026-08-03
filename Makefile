@@ -5,14 +5,12 @@ requirements:
 	uv sync --dev
 
 style-fix:
-	uv run isort .
-	uv run black .
-	uv run flake8
+	uv run ruff check --fix
+	uv run ruff format
 
 style-check:
-	uv run isort --check-only .
-	uv run black --check --diff .
-	uv run flake8
+	uv run ruff check
+	uv run ruff format --check
 
 tests:
 	uv run pytest

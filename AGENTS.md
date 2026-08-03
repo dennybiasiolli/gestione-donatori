@@ -1,0 +1,116 @@
+# AGENTS.md
+
+Guidance for AI coding agents working in this repository.
+
+## Project Overview
+
+**Gestione Donatori** is a Django web application for managing blood donors in AVIS (Italian blood donor association) sections. It handles donor records, donation tracking, statistical reporting, and Excel exports.
+
+## Common Commands
+
+```bash
+# Install dependencies (requires UV)
+make requirements
+
+# Download Bootstrap & Bootstrap Icons static assets
+make get-static-libs
+
+# Run development server
+python manage.py runserver
+
+# Apply migrations
+python manage.py migrate
+
+# Load sample data
+python manage.py loaddata avis
+
+# Run tests (with coverage, stops on first failure)
+make tests
+# or: uv run pytest
+
+# Run a single test file or test
+uv run pytest avis/tests/test_views.py
+uv run pytest avis/tests/test_views.py::TestDonatore::test_list
+
+# Check code style (Ruff lint + format)
+make style-check
+
+# Auto-fix style issues
+make style-fix
+
+# Optional git hooks (pre-commit style check, pre-push tests)
+git config --local core.hooksPath .githooks/
+```
+
+## Architecture
+
+### App Structure
+
+The project has a single Django app (`avis/`) within a `website/` project config:
+
+- `website/` — Django project config (settings, root URLs, wsgi/asgi)
+- `avis/` — Main app (models, views, urls, forms, templates, static files, tests)
+
+### Multi-tenant Design
+
+The `Sezione` (section) model is the tenant anchor. Each Django user is linked to one or more sections. All donor data is scoped to a section. Superusers see all sections; staff see only their assigned section(s). Access is gated by `avis_user_check` (staff-only).
+
+**Critical invariant**: every queryset that touches donor data must filter by `sezione__utente=request.user` (or `sezione__utente=user` in utility functions). This is how cross-tenant data leakage is prevented. The admin enforces the same rule in each `get_queryset` override.
+
+### Core Models
+
+- **Sezione** — Blood donor section/chapter; links to a staff user, stores award thresholds (PostgreSQL `ArrayField`)
+- **Sesso** — Gender type with donation interval rules (whole blood, plasma, platelets)
+- **StatoDonatore** — Donor status (active/inactive); can be section-specific or global
+- **Donatore** — Individual donor with personal info, blood type, privacy consent; changes are tracked via `django-reversion`
+- **Donazione** — Individual donation record; unique constraint on (donor, date)
+
+### URL Structure
+
+```
+/                          → redirects to /donatori/
+/accounts/login/           → authentication
+/donatori/                 → donor list with search/filter and print options
+/donatori/<id>/            → donor detail with donation history
+/donatori/<id>/nuova-donazione/ → add donation
+/dati-statistici/          → statistical reports
+/export-elenco-soci/       → Excel export
+/amministrazione-donatori/ → Django admin (URL configurable via env)
+```
+
+### Business Logic & Print Mode
+
+- `avis/functions.py` — contains `get_dati_statistici` and `get_elenco_soci_xls`; business logic lives here, not in views
+- `DonatoreListView` supports a `stampa` query parameter (`elenco`, `benemerenze`, `emails`, `etichette`) which switches the template to `donatore_list_<stampa>.html` and disables pagination (returns full results)
+- `Donatore.num_benemerenze_conseguite` (computed from donation count vs thresholds) is distinct from `num_benemerenze_consegnate` (manually tracked field)
+- `donazioni_pregresse` stores donations that occurred before the system was adopted; `tot_donazioni` annotation = `num_donazioni` + `donazioni_pregresse`
+
+### Key Technologies
+
+- **Python 3.13** and **Django 5.2+** with `django-reversion` for audit history
+- **PostgreSQL** in production (uses `ArrayField`); SQLite works for development
+- **UV** as the Python package manager (not pip)
+- **openpyxl** for Excel exports
+- **Bootstrap 5.3.2** (downloaded locally via `make get-static-libs`)
+- **pytest-django** + **pytest-cov** for testing
+- **Ruff** for lint and format
+
+### Settings & Environment
+
+Copy `.env.default` to `.env` and adjust values. Key variables: `DEBUG`, `SECRET_KEY`, `DB_*` (database connection), `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, `ADMIN_BASE_URL`.
+
+Settings split: `website/settings_base.py` (all config) + `website/settings.py` (loads `.env` via python-dotenv).
+
+### Code Style
+
+**Ruff** handles both lint and format (`make style-check` / `make style-fix`). Config lives in `pyproject.toml` (`[tool.ruff.lint]`: extends with `DJ` for Django-specific rules; ignores `RUF012`). Line length defaults to Ruff’s 88. CI enforces `make style-check` before tests.
+
+Do not reintroduce Black, isort, or flake8 — Ruff replaces them.
+
+### Testing
+
+Shared fixtures are in `avis/tests/conftest.py`: `sesso_m`, `stato_attivo`, `stato_inattivo`, `staff_user`, `sezione`, `donatore`. View tests require an authenticated staff user — use the `staff_user` fixture and `client.force_login()`.
+
+### CI
+
+GitHub Actions (`.github/workflows/django.yml`) runs on push/PR to `main`: installs deps, checks style with Ruff, runs full test suite against PostgreSQL.

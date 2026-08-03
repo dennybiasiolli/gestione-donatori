@@ -1,5 +1,5 @@
+from collections.abc import Collection
 from datetime import date
-from typing import Collection, Optional
 
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
@@ -168,9 +168,9 @@ class Donatore(models.Model):
         )
 
     def __str__(self):
-        return "{} - {} {}".format(self.num_tessera_avis, self.cognome, self.nome)
+        return f"{self.num_tessera_avis} - {self.cognome} {self.nome}"
 
-    def validate_unique(self, exclude: Optional[Collection[str]] = ...) -> None:
+    def validate_unique(self, exclude: Collection[str] | None = ...) -> None:
         if (
             self.num_tessera_ct
             and Donatore.objects.select_related("stato_donatore")
@@ -229,6 +229,4 @@ class Donazione(models.Model):
         )
 
     def __str__(self):
-        return "{} - {} {}".format(
-            self.data_donazione, self.donatore.cognome, self.donatore.nome
-        )
+        return f"{self.data_donazione} - {self.donatore.cognome} {self.donatore.nome}"

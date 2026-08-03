@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("avis", "0020_rename_num_benemerenze_donatore_num_benemerenze_consegnate"),
     ]

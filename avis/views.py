@@ -1,7 +1,7 @@
 import datetime
 import http
 from tempfile import NamedTemporaryFile
-from typing import Any, Dict
+from typing import Any
 
 from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
@@ -9,6 +9,7 @@ from django.db.models import Count, F, Max, OuterRef, Prefetch, Q, Subquery
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_GET, require_http_methods
 from django.views.generic import DetailView, ListView
@@ -85,7 +86,7 @@ class DonatoreListView(ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        anno_corrente = datetime.date.today().year
+        anno_corrente = timezone.now().year
 
         donatore_id = self.request.GET.get("donatore_id", None)
         ricerca = self.request.GET.get("ricerca", None)
@@ -151,7 +152,7 @@ class DonatoreListView(ListView):
         if order_by_direction not in settings.ALLOWED_ORDER_DIRECTIONS:
             order_by_direction = ""
         only_stampa = self.request.GET.get("only_stampa", "0") == "1"
-        order_by = list(map(lambda o: order_by_direction + o, order_by_str.split(",")))
+        order_by = [order_by_direction + o for o in order_by_str.split(",")]
         if "cognome" not in order_by:
             order_by.append("cognome")
             order_by.append("nome")
@@ -362,7 +363,7 @@ def donatore_remove_stampa(request, pk=None):
 def donatore_check_privacy(request, pk):
     donatore = get_object_or_404(Donatore, pk=pk, sezione__utente=request.user)
     donatore.check_privacy = True
-    donatore.check_privacy_date = datetime.date.today()
+    donatore.check_privacy_date = timezone.now().date()
     donatore.save()
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
@@ -385,13 +386,13 @@ class DonazioneCreateView(CreateView):
     def get_success_url(self) -> str:
         return reverse_lazy("donatore", kwargs={"pk": self.object.donatore.pk})
 
-    def get_initial(self) -> Dict[str, Any]:
+    def get_initial(self) -> dict[str, Any]:
         return {
             "tipo_donazione": Donazione.TipoDonazione.SANGUE_INTERO,
-            "data_donazione": datetime.date.today(),
+            "data_donazione": timezone.now().date(),
         }
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context_data = super().get_context_data(**kwargs)
         donatore = get_object_or_404(
             Donatore, pk=self.kwargs["pk"], sezione__utente=self.request.user
@@ -422,7 +423,7 @@ class DonazioneCreateView(CreateView):
 @require_http_methods(["GET"])
 @user_passes_test(avis_user_check)
 def dati_statistici(request):
-    anno_corrente = datetime.date.today().year
+    anno_corrente = timezone.now().year
     anno_prima_donazione = anno_corrente
     prima_donazione = Donazione.objects.order_by("data_donazione").first()
     if prima_donazione:

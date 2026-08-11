@@ -22,7 +22,7 @@ deploy = [
 dev = [
     "pytest-django>=4.13.0,<5",
     "pytest-cov>=6.2.1,<8",
-    "ruff>=0.16.1",
+    "ruff>=0.16.2",
 ]
 
 [tool.ruff.lint]

@@ -37,14 +37,14 @@ class DonazioneForm(forms.ModelForm):
             "tipo_donazione": forms.Select(
                 choices=Donazione.TipoDonazione.choices,
                 attrs={
-                    "class": "form-select-sm",
+                    "class": "form-select",
                 },
             ),
             "data_donazione": forms.DateInput(
                 format=("%Y-%m-%d"),
                 attrs={
                     "type": "date",
-                    "class": "form-control-sm",
+                    "class": "form-control",
                 },
             ),
         }

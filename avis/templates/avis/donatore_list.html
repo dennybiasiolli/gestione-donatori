@@ -1,7 +1,7 @@
 {% extends 'avis/base.html' %}
 {% load static %}
 
-{% block title %}Donatori — AVIS{% endblock %}
+{% block title %}{% if only_stampa %}Elenco stampa{% else %}Donatori{% endif %} — AVIS{% endblock %}
 
 {% block content %}
 
@@ -11,11 +11,11 @@
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title" id="myModalLabel">Stampa etichette</h6>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
       </div>
       <div class="modal-body">
         <div class="row align-items-center">
-          <label class="col-auto col-form-label">Etichette già stampate</label>
+          <label class="col-auto col-form-label" for="skipEtichette">Etichette già stampate</label>
           <div class="col">
             <input id="skipEtichette" type="number" min="0" max="11" class="form-control" value="0" autofocus />
           </div>
@@ -40,15 +40,16 @@
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title" id="modalPulisciElencoStampaLabel">Pulisci elenco stampa</h6>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
       </div>
       <div class="modal-body">
         <p class="mb-0 text-muted">Tutti i donatori aggiunti all'elenco verranno rimossi.</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annulla</button>
-        <button type="button" class="btn btn-danger btn-sm"
-          onclick="handleAddRemovePrint(event, 'remove-all', '{% url 'donatore-remove-stampa' %}', '{% url 'donatori' %}')">
+        <button type="button" class="btn btn-danger btn-sm print-clear"
+          data-url="{% url 'donatore-remove-stampa' %}"
+          data-redirect="{% url 'donatori' %}">
           <i class="bi bi-trash me-1"></i>Pulisci
         </button>
       </div>
@@ -56,23 +57,41 @@
   </div>
 </div>
 
+<div class="list-page-header d-print-none">
+  <h1 class="h4 mb-1">{% if only_stampa %}Elenco stampa{% else %}Donatori{% endif %}</h1>
+  {% if only_stampa %}
+  <p class="text-muted small mb-0">
+    Donatori che hai aggiunto uno a uno per stamparli.
+    Per stampare invece i risultati del filtro qui sotto, usa
+    <strong>Stampa risultati</strong>.
+  </p>
+  {% else %}
+  <p class="text-muted small mb-0">
+    Cerca e filtra i donatori. La stampante su ogni riga li mette nell'elenco
+    di stampa; <strong>Stampa risultati</strong> stampa questo filtro.
+  </p>
+  {% endif %}
+</div>
+
 <!-- Search Panel -->
 <form method="get" action="{% url 'donatori' %}" class="d-print-none search-panel">
 
   <div class="row g-2 align-items-center mb-2">
     <div class="col-md-5">
+      <label class="visually-hidden" for="id_ricerca">Cerca per nome, cognome o tessera</label>
       <div class="input-group">
         <span class="input-group-text bg-white border-end-0">
-          <i class="bi bi-search text-muted"></i>
+          <i class="bi bi-search text-muted" aria-hidden="true"></i>
         </span>
-        <input type="text" class="form-control border-start-0 ps-0"
+        <input type="text" class="form-control border-start-0 ps-0" id="id_ricerca"
           name="ricerca" placeholder="Cerca per nome, cognome, tessera…"
           value="{{ ricerca }}" autofocus />
       </div>
     </div>
     {% if sezioni.count > 1 %}
     <div class="col-md-3">
-      <select class="form-select" name="sezione_id">
+      <label class="visually-hidden" for="id_sezione">Sezione</label>
+      <select class="form-select" name="sezione_id" id="id_sezione">
         <option value="">Tutte le sezioni</option>
         {% for sezione in sezioni %}
         <option value="{{ sezione.id }}"{% if sezione.id == sezione_id %} selected{% endif %}>
@@ -83,7 +102,8 @@
     </div>
     {% endif %}
     <div class="col-md-2">
-      <select class="form-select" name="sesso_id">
+      <label class="visually-hidden" for="id_sesso">Sesso</label>
+      <select class="form-select" name="sesso_id" id="id_sesso">
         <option value="">Sesso: tutti</option>
         {% for sesso in sessi %}
         <option value="{{ sesso.id }}"{% if sesso.id == sesso_id %} selected{% endif %}>
@@ -107,6 +127,7 @@
       </label>
     </div>
     {% endfor %}
+    <span class="small text-muted">Nessuno selezionato = tutti gli stati</span>
   </div>
 
   <!-- Advanced Search Accordion -->
@@ -124,135 +145,135 @@
         data-bs-parent="#accordionAvanzata">
         <div class="accordion-body">
           <div class="row g-2 mb-2">
-            <div class="col-sm-2"><label class="col-form-label small">Iscrizione dal</label></div>
+            <div class="col-sm-2"><label class="col-form-label small" for="id_data_iscrizione_dal">Iscrizione dal</label></div>
             <div class="col-sm-2">
-              <input type="date" class="form-control form-control-sm"
+              <input type="date" class="form-control form-control-sm" id="id_data_iscrizione_dal"
                 name="data_iscrizione_dal" value="{{ data_iscrizione_dal }}" />
             </div>
-            <div class="col-sm-1"><label class="col-form-label small">al</label></div>
+            <div class="col-sm-1"><label class="col-form-label small" for="id_data_iscrizione_al">al</label></div>
             <div class="col-sm-2">
-              <input type="date" class="form-control form-control-sm"
+              <input type="date" class="form-control form-control-sm" id="id_data_iscrizione_al"
                 name="data_iscrizione_al" value="{{ data_iscrizione_al }}" />
             </div>
           </div>
 
           <div class="row g-2 mb-2">
-            <div class="col-sm-2"><label class="col-form-label small">Nascita dal</label></div>
+            <div class="col-sm-2"><label class="col-form-label small" for="id_data_nascita_dal">Nascita dal</label></div>
             <div class="col-sm-2">
-              <input type="date" class="form-control form-control-sm"
+              <input type="date" class="form-control form-control-sm" id="id_data_nascita_dal"
                 name="data_nascita_dal" value="{{ data_nascita_dal }}" />
             </div>
-            <div class="col-sm-1"><label class="col-form-label small">al</label></div>
+            <div class="col-sm-1"><label class="col-form-label small" for="id_data_nascita_al">al</label></div>
             <div class="col-sm-2">
-              <input type="date" class="form-control form-control-sm"
+              <input type="date" class="form-control form-control-sm" id="id_data_nascita_al"
                 name="data_nascita_al" value="{{ data_nascita_al }}" />
             </div>
           </div>
 
           <div class="row g-2 mb-2">
-            <div class="col-sm-2"><label class="col-form-label small">Gruppo sanguigno</label></div>
+            <div class="col-sm-2"><label class="col-form-label small" for="id_gruppo_sanguigno">Gruppo sanguigno</label></div>
             <div class="col-sm-1">
-              <input type="text" class="form-control form-control-sm"
+              <input type="text" class="form-control form-control-sm" id="id_gruppo_sanguigno"
                 name="gruppo_sanguigno" value="{{ gruppo_sanguigno }}" placeholder="es. A" />
             </div>
-            <div class="col-sm-1"><label class="col-form-label small">Rh</label></div>
+            <div class="col-sm-1"><label class="col-form-label small" for="id_rh">Rh</label></div>
             <div class="col-sm-1">
-              <input type="text" class="form-control form-control-sm"
+              <input type="text" class="form-control form-control-sm" id="id_rh"
                 name="rh" value="{{ rh }}" placeholder="+/-" />
             </div>
-            <div class="col-sm-1"><label class="col-form-label small">Fenotipo</label></div>
+            <div class="col-sm-1"><label class="col-form-label small" for="id_fenotipo">Fenotipo</label></div>
             <div class="col-sm-1">
-              <input type="text" class="form-control form-control-sm"
+              <input type="text" class="form-control form-control-sm" id="id_fenotipo"
                 name="fenotipo" value="{{ fenotipo }}" />
             </div>
-            <div class="col-sm-1"><label class="col-form-label small">Kell</label></div>
+            <div class="col-sm-1"><label class="col-form-label small" for="id_kell">Kell</label></div>
             <div class="col-sm-1">
-              <input type="text" class="form-control form-control-sm"
+              <input type="text" class="form-control form-control-sm" id="id_kell"
                 name="kell" value="{{ kell }}" />
             </div>
           </div>
 
           <div class="row g-2 mb-2">
-            <div class="col-sm-2"><label class="col-form-label small">Donazioni tra il</label></div>
+            <div class="col-sm-2"><label class="col-form-label small" for="id_data_donazione_dal">Donazioni tra il</label></div>
             <div class="col-sm-2">
-              <input type="date" class="form-control form-control-sm"
+              <input type="date" class="form-control form-control-sm" id="id_data_donazione_dal"
                 name="data_donazione_dal" value="{{ data_donazione_dal }}" />
             </div>
-            <div class="col-sm-1"><label class="col-form-label small">e il</label></div>
+            <div class="col-sm-1"><label class="col-form-label small" for="id_data_donazione_al">e il</label></div>
             <div class="col-sm-2">
-              <input type="date" class="form-control form-control-sm"
+              <input type="date" class="form-control form-control-sm" id="id_data_donazione_al"
                 name="data_donazione_al" value="{{ data_donazione_al }}" />
             </div>
           </div>
 
           <div class="row g-2 mb-2">
-            <div class="col-sm-2"><label class="col-form-label small">Don. nell'anno</label></div>
+            <div class="col-sm-2"><label class="col-form-label small" for="id_show_donazioni_anno">Don. nell'anno</label></div>
             <div class="col-sm-2">
-              <input type="number" class="form-control form-control-sm"
+              <input type="number" class="form-control form-control-sm" id="id_show_donazioni_anno"
                 name="show_donazioni_anno" value="{{ show_donazioni_anno|default_if_none:'' }}" />
             </div>
-            <div class="col-sm-2"><label class="col-form-label small">Benemerenze da</label></div>
+            <div class="col-sm-2"><label class="col-form-label small" for="id_benemerenze_da">Benemerenze consegnate da</label></div>
             <div class="col-sm-1">
-              <input type="number" class="form-control form-control-sm"
+              <input type="number" class="form-control form-control-sm" id="id_benemerenze_da"
                 name="benemerenze_da" value="{{ benemerenze_da }}" min="0" />
             </div>
-            <div class="col-sm-1"><label class="col-form-label small">a</label></div>
+            <div class="col-sm-1"><label class="col-form-label small" for="id_benemerenze_a">a</label></div>
             <div class="col-sm-1">
-              <input type="number" class="form-control form-control-sm"
+              <input type="number" class="form-control form-control-sm" id="id_benemerenze_a"
                 name="benemerenze_a" value="{{ benemerenze_a }}" min="0" />
             </div>
           </div>
 
           <div class="row g-2 mb-2">
-            <div class="col-sm-2"><label class="col-form-label small">Comune</label></div>
+            <div class="col-sm-2"><label class="col-form-label small" for="id_comune">Comune</label></div>
             <div class="col-sm-3">
-              <input type="text" class="form-control form-control-sm"
+              <input type="text" class="form-control form-control-sm" id="id_comune"
                 name="comune" value="{{ comune }}" />
             </div>
-            <div class="col-sm-1"><label class="col-form-label small">Prov.</label></div>
+            <div class="col-sm-1"><label class="col-form-label small" for="id_provincia">Prov.</label></div>
             <div class="col-sm-1">
-              <input type="text" class="form-control form-control-sm"
+              <input type="text" class="form-control form-control-sm" id="id_provincia"
                 name="provincia" value="{{ provincia }}" />
             </div>
-            <div class="col-sm-1"><label class="col-form-label small">CAP</label></div>
+            <div class="col-sm-1"><label class="col-form-label small" for="id_cap">CAP</label></div>
             <div class="col-sm-1">
-              <input type="text" class="form-control form-control-sm"
+              <input type="text" class="form-control form-control-sm" id="id_cap"
                 name="cap" value="{{ cap }}" />
             </div>
-            <div class="col-sm-1"><label class="col-form-label small">non CAP</label></div>
+            <div class="col-sm-1"><label class="col-form-label small" for="id_cap_diverso">non CAP</label></div>
             <div class="col-sm-1">
-              <input type="text" class="form-control form-control-sm"
+              <input type="text" class="form-control form-control-sm" id="id_cap_diverso"
                 name="cap_diverso" value="{{ cap_diverso }}" />
             </div>
           </div>
 
           <div class="row g-2">
-            <div class="col-sm-2"><label class="col-form-label small">Visualizza</label></div>
+            <div class="col-sm-2"><span class="col-form-label small">Visualizza</span></div>
             <div class="col-sm-10 d-flex align-items-center gap-3 flex-wrap">
               <div class="form-check form-check-inline mb-0">
                 <input class="form-check-input" type="radio" name="filter_donatori" value=""
-                  {% if filter_donatori == '' %}checked{% endif %}>
-                <label class="form-check-label small">tutti</label>
+                  id="filter_donatori_all" {% if filter_donatori == '' %}checked{% endif %}>
+                <label class="form-check-label small" for="filter_donatori_all">tutti</label>
               </div>
               <div class="form-check form-check-inline mb-0">
                 <input class="form-check-input" type="radio" name="filter_donatori" value="email"
-                  {% if filter_donatori == 'email' %}checked{% endif %}>
-                <label class="form-check-label small">con email</label>
+                  id="filter_donatori_email" {% if filter_donatori == 'email' %}checked{% endif %}>
+                <label class="form-check-label small" for="filter_donatori_email">con email</label>
               </div>
               <div class="form-check form-check-inline mb-0">
                 <input class="form-check-input" type="radio" name="filter_donatori" value="no_email"
-                  {% if filter_donatori == 'no_email' %}checked{% endif %}>
-                <label class="form-check-label small">senza email</label>
+                  id="filter_donatori_no_email" {% if filter_donatori == 'no_email' %}checked{% endif %}>
+                <label class="form-check-label small" for="filter_donatori_no_email">senza email</label>
               </div>
               <div class="form-check form-check-inline mb-0">
                 <input class="form-check-input" type="radio" name="filter_donatori" value="cell"
-                  {% if filter_donatori == 'cell' %}checked{% endif %}>
-                <label class="form-check-label small">con cellulare</label>
+                  id="filter_donatori_cell" {% if filter_donatori == 'cell' %}checked{% endif %}>
+                <label class="form-check-label small" for="filter_donatori_cell">con cellulare</label>
               </div>
               <div class="form-check form-check-inline mb-0">
                 <input class="form-check-input" type="radio" name="filter_donatori" value="no_cell"
-                  {% if filter_donatori == 'no_cell' %}checked{% endif %}>
-                <label class="form-check-label small">senza cellulare</label>
+                  id="filter_donatori_no_cell" {% if filter_donatori == 'no_cell' %}checked{% endif %}>
+                <label class="form-check-label small" for="filter_donatori_no_cell">senza cellulare</label>
               </div>
             </div>
           </div>
@@ -265,13 +286,13 @@
   <!-- Options row -->
   <div class="row g-2 align-items-end mt-1 mb-2">
     <div class="col-md-2">
-      <label class="form-label small mb-1">Risultati per pagina</label>
-      <input type="number" class="form-control form-control-sm"
+      <label class="form-label small mb-1" for="id_paginate_by">Risultati per pagina</label>
+      <input type="number" class="form-control form-control-sm" id="id_paginate_by"
         name="paginate_by" value="{{ paginate_by }}" min="1" max="{{ MAX_PAGINATE_BY }}" />
     </div>
     <div class="col-md-3">
-      <label class="form-label small mb-1">Ordina per</label>
-      <select class="form-select form-select-sm" name="order_by">
+      <label class="form-label small mb-1" for="id_order_by">Ordina per</label>
+      <select class="form-select form-select-sm" name="order_by" id="id_order_by">
         <option value="cognome,nome"{% if order_by == 'cognome,nome' %} selected{% endif %}>Cognome, Nome</option>
         <option value="gruppo_sanguigno,rh"{% if order_by == 'gruppo_sanguigno,rh' %} selected{% endif %}>Gruppo Sanguigno</option>
         <option value="comune"{% if order_by == 'comune' %} selected{% endif %}>Comune</option>
@@ -284,13 +305,17 @@
     <div class="col-md-2">
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" name="order_by_direction" value=""
-          {% if order_by_direction == '' %}checked{% endif %}>
-        <label class="form-check-label small">Crescente</label>
+          id="order_asc" {% if order_by_direction == '' %}checked{% endif %}>
+        <label class="form-check-label small" for="order_asc">
+          <i class="bi bi-sort-up" aria-hidden="true"></i> Crescente
+        </label>
       </div>
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" name="order_by_direction" value="-"
-          {% if order_by_direction == '-' %}checked{% endif %}>
-        <label class="form-check-label small">Decrescente</label>
+          id="order_desc" {% if order_by_direction == '-' %}checked{% endif %}>
+        <label class="form-check-label small" for="order_desc">
+          <i class="bi bi-sort-down" aria-hidden="true"></i> Decrescente
+        </label>
       </div>
     </div>
     <div class="col-md-2 d-flex align-items-center gap-3">
@@ -301,15 +326,32 @@
       </div>
     </div>
     <div class="col-md-2">
-      <label class="form-label small mb-1">Ultime donazioni</label>
-      <input type="number" class="form-control form-control-sm"
+      <label class="form-label small mb-1" for="id_show_n_donazioni">Ultime donazioni</label>
+      <input type="number" class="form-control form-control-sm" id="id_show_n_donazioni"
         name="show_n_donazioni" value="{{ show_n_donazioni }}" min="0" max="12" />
     </div>
   </div>
 
+  <input type="hidden" name="stato_filter" value="1" />
   <input type="hidden" name="only_stampa" value="{{ only_stampa }}" />
 
-  <div class="d-flex justify-content-between align-items-center pb-1">
+  {% if filter_chips %}
+  <div class="filter-chips d-flex flex-wrap align-items-center gap-2 mb-2">
+    {% for chip in filter_chips %}
+    <a class="badge rounded-pill text-bg-light border text-decoration-none filter-chip"
+      href="{% url 'donatori' %}{% if chip.query %}?{{ chip.query }}{% endif %}">
+      {{ chip.label }}
+      <i class="bi bi-x ms-1" aria-hidden="true"></i>
+      <span class="visually-hidden">Rimuovi filtro {{ chip.label }}</span>
+    </a>
+    {% endfor %}
+    <a class="small" href="{% url 'donatori' %}{% if reset_filters_query %}?{{ reset_filters_query }}{% endif %}">
+      Azzera filtri
+    </a>
+  </div>
+  {% endif %}
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pb-1">
     <div class="d-flex align-items-center gap-3">
       <button type="submit" class="btn btn-primary btn-sm">
         <i class="bi bi-search me-1"></i>Cerca
@@ -325,38 +367,84 @@
         <i class="bi bi-trash me-1"></i>Pulisci elenco
       </button>
       {% endif %}
-      <a class="btn btn-outline-secondary btn-sm" href="?stampa=elenco&{{ querystring }}" target="_blank">
-        <i class="bi bi-list-ul me-1"></i>Stampa elenco
-      </a>
-      <a class="btn btn-outline-secondary btn-sm" href="?stampa=emails&{{ querystring }}" target="_blank">
-        <i class="bi bi-envelope me-1"></i>Email
-      </a>
-      <a class="btn btn-outline-secondary btn-sm" href="?stampa=benemerenze&{{ querystring }}" target="_blank">
-        <i class="bi bi-award me-1"></i>Benemerenze
-      </a>
-      <button type="button" class="btn btn-outline-secondary btn-sm"
-        data-bs-toggle="modal" data-bs-target="#myModal">
-        <i class="bi bi-tag me-1"></i>Etichette
-      </button>
+      <div class="btn-group">
+        <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-printer me-1"></i>Stampa risultati
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <a class="dropdown-item" href="?stampa=elenco&{{ querystring }}" target="_blank">
+              <i class="bi bi-list-ul me-2"></i>Elenco
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="?stampa=emails&{{ querystring }}" target="_blank">
+              <i class="bi bi-envelope me-2"></i>Email
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="?stampa=benemerenze&{{ querystring }}" target="_blank">
+              <i class="bi bi-award me-2"></i>Benemerenze
+            </a>
+          </li>
+          <li>
+            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#myModal">
+              <i class="bi bi-tag me-2"></i>Etichette
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 
 </form>
 
 <!-- Donor Table -->
+{% if page_obj.paginator.count %}
 <div class="table-responsive">
-  <table class="table table-hover table-sm align-middle mb-2">
+  <table class="table table-hover table-sm align-middle mb-2 table-donatori">
     <thead class="table-light">
       <tr>
         <th>Tessera</th>
-        <th>Donazioni</th>
+        <th{% if order_by == 'tot_donazioni,num_donazioni' %} aria-sort="{% if order_by_direction == '-' %}descending{% else %}ascending{% endif %}"{% endif %}>
+          <a class="text-decoration-none d-inline-flex align-items-center gap-1" href="?{{ sort_urls.donazioni }}">
+            Donazioni
+            {% include "avis/includes/sort_indicator.html" with sort_key="tot_donazioni,num_donazioni" %}
+          </a>
+        </th>
         <th>Benemerenze</th>
-        <th>Donatore</th>
-        <th>Sesso</th>
-        <th>Gruppo</th>
+        <th{% if order_by == 'cognome,nome' %} aria-sort="{% if order_by_direction == '-' %}descending{% else %}ascending{% endif %}"{% endif %}>
+          <a class="text-decoration-none d-inline-flex align-items-center gap-1" href="?{{ sort_urls.donatore }}">
+            Donatore
+            {% include "avis/includes/sort_indicator.html" with sort_key="cognome,nome" %}
+          </a>
+        </th>
+        <th{% if order_by == 'sesso' %} aria-sort="{% if order_by_direction == '-' %}descending{% else %}ascending{% endif %}"{% endif %}>
+          <a class="text-decoration-none d-inline-flex align-items-center gap-1" href="?{{ sort_urls.sesso }}">
+            Sesso
+            {% include "avis/includes/sort_indicator.html" with sort_key="sesso" %}
+          </a>
+        </th>
+        <th{% if order_by == 'gruppo_sanguigno,rh' %} aria-sort="{% if order_by_direction == '-' %}descending{% else %}ascending{% endif %}"{% endif %}>
+          <a class="text-decoration-none d-inline-flex align-items-center gap-1" href="?{{ sort_urls.gruppo }}">
+            Gruppo
+            {% include "avis/includes/sort_indicator.html" with sort_key="gruppo_sanguigno,rh" %}
+          </a>
+        </th>
         <th>Contatti</th>
-        <th>Indirizzo</th>
-        <th>Ultima donazione</th>
+        <th{% if order_by == 'comune' %} aria-sort="{% if order_by_direction == '-' %}descending{% else %}ascending{% endif %}"{% endif %}>
+          <a class="text-decoration-none d-inline-flex align-items-center gap-1" href="?{{ sort_urls.indirizzo }}">
+            Indirizzo
+            {% include "avis/includes/sort_indicator.html" with sort_key="comune" %}
+          </a>
+        </th>
+        <th{% if order_by == 'ultima_donazione' %} aria-sort="{% if order_by_direction == '-' %}descending{% else %}ascending{% endif %}"{% endif %}>
+          <a class="text-decoration-none d-inline-flex align-items-center gap-1" href="?{{ sort_urls.ultima }}">
+            Ultima donazione
+            {% include "avis/includes/sort_indicator.html" with sort_key="ultima_donazione" %}
+          </a>
+        </th>
         <th class="d-print-none"></th>
       </tr>
     </thead>
@@ -403,19 +491,19 @@
           {% endif %}
           {% if show_privacy_check %}
           <div class="small mt-1">
-            {% if donatore.check_privacy %}
-            <a href="" class="text-success text-decoration-none"
-              data-bs-toggle="tooltip" data-bs-title="Annulla consegna del modulo"
-              onclick="handleCheckUncheckPrivacy(event, '{% url 'donatore-uncheck-privacy' pk=donatore.pk %}')">
+            <button type="button"
+              class="btn btn-link btn-sm p-0 privacy-toggle {% if donatore.check_privacy %}text-success{% else %}text-muted{% endif %}"
+              data-check-url="{% url 'donatore-check-privacy' pk=donatore.pk %}"
+              data-uncheck-url="{% url 'donatore-uncheck-privacy' pk=donatore.pk %}"
+              data-checked="{% if donatore.check_privacy %}1{% else %}0{% endif %}"
+              data-bs-toggle="tooltip"
+              data-bs-title="{% if donatore.check_privacy %}Annulla consegna del modulo{% else %}Imposta consegnato{% endif %}">
+              {% if donatore.check_privacy %}
               <i class="bi bi-check-square-fill"></i> Privacy ok
-            </a>
-            {% else %}
-            <a href="" class="text-muted text-decoration-none"
-              data-bs-toggle="tooltip" data-bs-title="Imposta consegnato"
-              onclick="handleCheckUncheckPrivacy(event, '{% url 'donatore-check-privacy' pk=donatore.pk %}')">
+              {% else %}
               <i class="bi bi-square"></i> Privacy mancante
-            </a>
-            {% endif %}
+              {% endif %}
+            </button>
           </div>
           {% endif %}
         </td>
@@ -459,17 +547,19 @@
           {% endif %}
         </td>
         <td class="d-print-none text-end">
-          {% if donatore.stampa_donatore %}
-          <a href="" data-bs-toggle="tooltip" data-bs-title="Rimuovi da elenco stampa"
-            onclick="handleAddRemovePrint(event, 'remove', '{% url 'donatore-remove-stampa' pk=donatore.pk %}')">
+          <button type="button" class="btn btn-link btn-sm p-0 print-toggle"
+            data-add-url="{% url 'donatore-add-stampa' pk=donatore.pk %}"
+            data-remove-url="{% url 'donatore-remove-stampa' pk=donatore.pk %}"
+            data-in-list="{% if donatore.stampa_donatore %}1{% else %}0{% endif %}"
+            data-bs-toggle="tooltip"
+            data-bs-title="{% if donatore.stampa_donatore %}Rimuovi da elenco stampa{% else %}Aggiungi a elenco stampa{% endif %}"
+            aria-label="{% if donatore.stampa_donatore %}Rimuovi da elenco stampa{% else %}Aggiungi a elenco stampa{% endif %}">
+            {% if donatore.stampa_donatore %}
             <i class="bi bi-x-circle-fill text-danger"></i>
-          </a>
-          {% else %}
-          <a href="" data-bs-toggle="tooltip" data-bs-title="Aggiungi a elenco stampa"
-            onclick="handleAddRemovePrint(event, 'add', '{% url 'donatore-add-stampa' pk=donatore.pk %}')">
+            {% else %}
             <i class="bi bi-printer text-muted"></i>
-          </a>
-          {% endif %}
+            {% endif %}
+          </button>
         </td>
       </tr>
       {% if show_n_donazioni > 0 %}
@@ -489,19 +579,43 @@
     </tbody>
   </table>
 </div>
+{% else %}
+<div class="empty-state text-center py-5">
+  <i class="bi bi-people fs-1 text-muted" aria-hidden="true"></i>
+  {% if only_stampa %}
+  <p class="mt-3 mb-1">Nessun donatore in elenco stampa.</p>
+  <p class="text-muted small mb-0">
+    Aprili dall'elenco Donatori e usa la stampante sulla riga per aggiungerli.
+  </p>
+  {% else %}
+  <p class="mt-3 mb-1">Nessun donatore corrisponde ai filtri.</p>
+  <p class="text-muted small mb-3">
+    Prova a togliere qualche filtro, oppure cerca anche tra gli stati non attivi.
+  </p>
+  <a class="btn btn-outline-secondary btn-sm"
+    href="{% url 'donatori' %}{% if reset_filters_query %}?{{ reset_filters_query }}{% endif %}">
+    Azzera filtri
+  </a>
+  {% endif %}
+</div>
+{% endif %}
 
 <!-- Pagination -->
+{% if page_obj.paginator.count %}
 <nav aria-label="Navigazione pagine" class="d-print-none">
   <ul class="pagination pagination-sm justify-content-center mb-0">
     {% if page_obj.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ querystring }}">
-        <i class="bi bi-chevron-left"></i>
+      <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ querystring }}"
+        aria-label="Pagina precedente">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
       </a>
     </li>
     {% else %}
     <li class="page-item disabled">
-      <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+      <span class="page-link" aria-label="Pagina precedente">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </span>
     </li>
     {% endif %}
 
@@ -523,16 +637,20 @@
 
     {% if page_obj.has_next %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ querystring }}">
-        <i class="bi bi-chevron-right"></i>
+      <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ querystring }}"
+        aria-label="Pagina successiva">
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
       </a>
     </li>
     {% else %}
     <li class="page-item disabled">
-      <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+      <span class="page-link" aria-label="Pagina successiva">
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </span>
     </li>
     {% endif %}
   </ul>
 </nav>
+{% endif %}
 
 {% endblock %}

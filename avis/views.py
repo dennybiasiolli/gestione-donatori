@@ -2,13 +2,16 @@ import datetime
 import http
 from tempfile import NamedTemporaryFile
 from typing import Any
+from urllib.parse import urlencode
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from django.core.paginator import Paginator
 from django.db.models import Count, F, Max, OuterRef, Prefetch, Q, Subquery
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_GET, require_http_methods
@@ -16,9 +19,26 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView
 from openpyxl import Workbook
 
+from .calls import (
+    ALLOWED_ORDER_BY,
+    FOCUS_TYPES,
+    ORDER_ASC,
+    ORDER_DESC,
+    ORDER_DONATORE,
+    ORDER_PROSSIMA,
+    ORDER_ULTIMA,
+    ULTIMO_MAI,
+    eligible_today,
+    exclude_called_recently,
+    parse_focus_type,
+    parse_hide_days,
+    parse_order_by,
+    parse_order_direction,
+    parse_ultimo,
+)
 from .forms import DonazioneForm
 from .functions import get_dati_statistici, get_elenco_soci_xls
-from .models import Donatore, Donazione, Sesso, Sezione, StatoDonatore
+from .models import CallLog, Donatore, Donazione, Sesso, Sezione, StatoDonatore
 
 
 def avis_user_check(user):
@@ -81,8 +101,143 @@ class DonatoreListView(ListView):
                 "MAX_PAGINATE_BY": settings.MAX_PAGINATE_BY,
             }
         )
+        context["filter_chips"] = self._filter_chips(context)
+        context["reset_filters_query"] = (
+            "only_stampa=1" if context.get("only_stampa") == "1" else ""
+        )
+        context["sort_urls"] = self._sort_urls(
+            context.get("order_by") or "cognome,nome",
+            context.get("order_by_direction") or "",
+        )
 
         return context
+
+    def _sort_urls(self, order_by, order_direction):
+        params = self.request.GET.copy()
+        params.pop("page", None)
+        columns = {
+            "donatore": "cognome,nome",
+            "donazioni": "tot_donazioni,num_donazioni",
+            "sesso": "sesso",
+            "gruppo": "gruppo_sanguigno,rh",
+            "indirizzo": "comune",
+            "ultima": "ultima_donazione",
+        }
+        urls = {}
+        for name, key in columns.items():
+            query = params.copy()
+            query["order_by"] = key
+            if order_by == key:
+                query["order_by_direction"] = "" if order_direction == "-" else "-"
+            else:
+                query["order_by_direction"] = ""
+            urls[name] = query.urlencode()
+        return urls
+
+    def _filter_chips(self, context):
+        params = self.request.GET.copy()
+        params.pop("page", None)
+
+        def query(**updates):
+            q = params.copy()
+            for key, value in updates.items():
+                if value is None:
+                    q.pop(key, None)
+                elif isinstance(value, list):
+                    q.setlist(key, [str(item) for item in value])
+                    if not value:
+                        q.pop(key, None)
+                else:
+                    q[key] = str(value)
+            return q.urlencode()
+
+        chips = []
+        ricerca = context.get("ricerca")
+        if ricerca:
+            chips.append({"label": f"Ricerca: {ricerca}", "query": query(ricerca=None)})
+
+        stato_ids = list(context.get("stato_donatore_ids") or [])
+        stati = {stato.id: stato.descrizione for stato in context["stati_donatore"]}
+        for stato_id in stato_ids:
+            remaining = [item for item in stato_ids if item != stato_id]
+            chips.append(
+                {
+                    "label": f"Stato: {stati.get(stato_id, stato_id)}",
+                    "query": query(
+                        stato_donatore_ids=remaining,
+                        stato_filter="1",
+                    ),
+                }
+            )
+
+        sezione_id = context.get("sezione_id")
+        if sezione_id:
+            sezione = next(
+                (item for item in context["sezioni"] if item.id == sezione_id),
+                None,
+            )
+            chips.append(
+                {
+                    "label": f"Sezione: {sezione.descrizione if sezione else sezione_id}",
+                    "query": query(sezione_id=None),
+                }
+            )
+
+        sesso_id = context.get("sesso_id")
+        if sesso_id:
+            sesso = next(
+                (item for item in context["sessi"] if item.id == sesso_id),
+                None,
+            )
+            chips.append(
+                {
+                    "label": f"Sesso: {sesso.descrizione if sesso else sesso_id}",
+                    "query": query(sesso_id=None),
+                }
+            )
+
+        filter_labels = {
+            "email": "Con email",
+            "no_email": "Senza email",
+            "cell": "Con cellulare",
+            "no_cell": "Senza cellulare",
+        }
+        filter_donatori = context.get("filter_donatori")
+        if filter_donatori:
+            chips.append(
+                {
+                    "label": filter_labels.get(filter_donatori, filter_donatori),
+                    "query": query(filter_donatori=None),
+                }
+            )
+
+        advanced = [
+            ("data_iscrizione_dal", "Iscrizione dal"),
+            ("data_iscrizione_al", "Iscrizione al"),
+            ("data_nascita_dal", "Nascita dal"),
+            ("data_nascita_al", "Nascita al"),
+            ("gruppo_sanguigno", "Gruppo"),
+            ("rh", "Rh"),
+            ("fenotipo", "Fenotipo"),
+            ("kell", "Kell"),
+            ("data_donazione_dal", "Donazioni dal"),
+            ("data_donazione_al", "Donazioni al"),
+            ("show_donazioni_anno", "Donazioni anno"),
+            ("benemerenze_da", "Benemerenze da"),
+            ("benemerenze_a", "Benemerenze a"),
+            ("comune", "Comune"),
+            ("provincia", "Prov."),
+            ("cap", "CAP"),
+            ("cap_diverso", "Non CAP"),
+        ]
+        for key, label in advanced:
+            value = context.get(key)
+            if value not in (None, ""):
+                chips.append(
+                    {"label": f"{label}: {value}", "query": query(**{key: None})}
+                )
+
+        return chips
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -93,15 +248,19 @@ class DonatoreListView(ListView):
         sezione_id = self.request.GET.get("sezione_id", None)
         if sezione_id:
             sezione_id = int(sezione_id)
-        stato_donatore_ids = self.request.GET.getlist("stato_donatore_ids", None)
-        if stato_donatore_ids:
-            stato_donatore_ids = [
-                int(stato_donatore_id) for stato_donatore_id in stato_donatore_ids
-            ]
-        if "stato_donatore_ids" not in self.request.GET:
-            stato_donatore_ids = [
-                StatoDonatore.objects.filter(codice="Attivo").first().pk
-            ]
+        only_stampa = self.request.GET.get("only_stampa", "0") == "1"
+        stato_filter_submitted = "stato_filter" in self.request.GET
+        stato_donatore_ids = [
+            int(stato_donatore_id)
+            for stato_donatore_id in self.request.GET.getlist("stato_donatore_ids")
+            if stato_donatore_id.isdigit()
+        ]
+        # Default Attivo only on the main list. Elenco stampa and an explicit
+        # form submit with no checkboxes mean "all statuses".
+        if not stato_filter_submitted and not stato_donatore_ids and not only_stampa:
+            stato_attivo = StatoDonatore.objects.filter(codice="Attivo").first()
+            if stato_attivo:
+                stato_donatore_ids = [stato_attivo.pk]
         sesso_id = self.request.GET.get("sesso_id", None)
         if sesso_id:
             sesso_id = int(sesso_id)
@@ -151,7 +310,6 @@ class DonatoreListView(ListView):
         order_by_direction = self.request.GET.get("order_by_direction", "")
         if order_by_direction not in settings.ALLOWED_ORDER_DIRECTIONS:
             order_by_direction = ""
-        only_stampa = self.request.GET.get("only_stampa", "0") == "1"
         order_by = [order_by_direction + o for o in order_by_str.split(",")]
         if "cognome" not in order_by:
             order_by.append("cognome")
@@ -417,7 +575,171 @@ class DonazioneCreateView(CreateView):
                 "data_donazione", "Esiste già una donazione per questa data."
             )
             return self.form_invalid(form)
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, "Donazione aggiunta.")
+        return response
+
+
+CALL_LIST_PAGE_SIZE = 10
+
+
+def _chiama_oggi_query(request_data):
+    params = {}
+    tipo = request_data.get("tipo")
+    if tipo:
+        params["tipo"] = tipo
+    gruppo = (request_data.get("gruppo") or "").strip()
+    if gruppo:
+        params["gruppo"] = gruppo
+    rh = (request_data.get("rh") or "").strip()
+    if rh:
+        params["rh"] = rh
+    ultimo = parse_ultimo(request_data.get("ultimo"))
+    if ultimo:
+        params["ultimo"] = ultimo
+    order_by = parse_order_by(request_data.get("order_by"))
+    if order_by != ORDER_PROSSIMA:
+        params["order_by"] = order_by
+    order_direction = parse_order_direction(request_data.get("order_by_direction"))
+    if order_direction == ORDER_DESC:
+        params["order_by_direction"] = ORDER_DESC
+    hide_days = parse_hide_days(request_data.get("nascondi_giorni"))
+    if hide_days != 1:
+        params["nascondi_giorni"] = str(hide_days)
+    paginate_by = request_data.get("paginate_by", "")
+    if paginate_by.isdigit() and int(paginate_by) != CALL_LIST_PAGE_SIZE:
+        params["paginate_by"] = str(min(int(paginate_by), settings.MAX_PAGINATE_BY))
+    return params
+
+
+def _query_with_order(query, order_by, direction=ORDER_ASC):
+    params = {
+        key: value
+        for key, value in query.items()
+        if key not in ("order_by", "order_by_direction")
+    }
+    if order_by != ORDER_PROSSIMA:
+        params["order_by"] = order_by
+    if direction == ORDER_DESC:
+        params["order_by_direction"] = ORDER_DESC
+    return urlencode(params)
+
+
+@require_http_methods(["GET"])
+@user_passes_test(avis_user_check)
+def chiama_oggi(request):
+    focus_type = parse_focus_type(request.GET.get("tipo"))
+    gruppo = request.GET.get("gruppo", "").strip()
+    rh = request.GET.get("rh", "").strip()
+    ultimo = parse_ultimo(request.GET.get("ultimo"))
+    order_by = parse_order_by(request.GET.get("order_by"))
+    order_direction = parse_order_direction(request.GET.get("order_by_direction"))
+    hide_days = parse_hide_days(request.GET.get("nascondi_giorni"))
+    print_mode = request.GET.get("stampa") == "1"
+    rows = eligible_today(
+        request.user,
+        focus_type,
+        gruppo=gruppo,
+        rh=rh,
+        ultimo=ultimo,
+        order_by=order_by,
+        order_direction=order_direction,
+    )
+    hidden_chiamati_count = 0
+    if hide_days and ultimo != CallLog.Result.CALLED:
+        rows, hidden_chiamati_count = exclude_called_recently(rows, hide_days)
+    query = _chiama_oggi_query(request.GET)
+    page_obj = None
+    page_range = None
+    if print_mode:
+        page_rows = rows
+    else:
+        paginate_by = request.GET.get("paginate_by", "")
+        if paginate_by.isdigit():
+            page_size = min(max(int(paginate_by), 1), settings.MAX_PAGINATE_BY)
+        else:
+            page_size = CALL_LIST_PAGE_SIZE
+        paginator = Paginator(rows, page_size)
+        page_obj = paginator.get_page(request.GET.get("page", 1))
+        page_range = paginator.get_elided_page_range(number=page_obj.number)
+        page_rows = page_obj.object_list
+    return render(
+        request,
+        "avis/call_list.html",
+        {
+            "rows": page_rows,
+            "row_count": len(rows),
+            "page_obj": page_obj,
+            "page_range": page_range,
+            "focus_type": focus_type,
+            "gruppo": gruppo,
+            "rh": rh,
+            "ultimo": ultimo,
+            "nascondi_giorni": hide_days,
+            "hidden_chiamati_count": hidden_chiamati_count,
+            "paginate_by": page_obj.paginator.per_page
+            if page_obj
+            else CALL_LIST_PAGE_SIZE,
+            "MAX_PAGINATE_BY": settings.MAX_PAGINATE_BY,
+            "order_by": order_by,
+            "order_by_direction": order_direction,
+            "order_choices": (
+                (ORDER_PROSSIMA, "Può donare dal"),
+                (ORDER_DONATORE, "Donatore"),
+                (ORDER_ULTIMA, "Ultima donazione"),
+            ),
+            "ultimo_choices": (
+                ("", "Tutti"),
+                (ULTIMO_MAI, "Mai chiamato"),
+                (CallLog.Result.CALLED, "Chiamato"),
+                (CallLog.Result.NO_ANSWER, "Non risponde"),
+                (CallLog.Result.CALL_BACK, "Richiamare"),
+            ),
+            "type_choices": [
+                (value, label)
+                for value, label in Donazione.TipoDonazione.choices
+                if value in FOCUS_TYPES
+            ],
+            "print_mode": print_mode,
+            "querystring": urlencode(query),
+            "sort_urls": {
+                key: _query_with_order(
+                    query,
+                    key,
+                    ORDER_ASC
+                    if order_by != key
+                    else (ORDER_ASC if order_direction == ORDER_DESC else ORDER_DESC),
+                )
+                for key in ALLOWED_ORDER_BY
+            },
+        },
+    )
+
+
+@require_http_methods(["POST"])
+@user_passes_test(avis_user_check)
+def call_log_create(request, pk):
+    donatore = get_object_or_404(Donatore, pk=pk, sezione__utente=request.user)
+    result = request.POST.get("result")
+    if result not in CallLog.Result.values:
+        messages.error(request, "Esito chiamata non valido.")
+        return redirect("chiama-oggi")
+    focus_type = parse_focus_type(request.POST.get("tipo"))
+    CallLog.objects.create(
+        donatore=donatore,
+        result=result,
+        note=(request.POST.get("note") or "").strip(),
+        focus_type=focus_type,
+        created_by=request.user,
+    )
+    messages.success(
+        request, f"Chiamata annotata per {donatore.cognome} {donatore.nome}."
+    )
+    query = _chiama_oggi_query(request.POST)
+    url = reverse("chiama-oggi")
+    if query:
+        return redirect(f"{url}?{urlencode(query)}")
+    return redirect(url)
 
 
 @require_http_methods(["GET"])

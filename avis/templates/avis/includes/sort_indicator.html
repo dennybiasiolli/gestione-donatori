@@ -1,0 +1,11 @@
+{% if order_by == sort_key %}
+{% if order_by_direction == '-' %}
+<i class="bi bi-caret-down-fill" aria-hidden="true"></i>
+<span class="visually-hidden">ordinato decrescente</span>
+{% else %}
+<i class="bi bi-caret-up-fill" aria-hidden="true"></i>
+<span class="visually-hidden">ordinato crescente</span>
+{% endif %}
+{% else %}
+<i class="bi bi-chevron-expand text-muted opacity-50" aria-hidden="true"></i>
+{% endif %}

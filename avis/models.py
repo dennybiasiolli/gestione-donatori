@@ -230,3 +230,33 @@ class Donazione(models.Model):
 
     def __str__(self):
         return f"{self.data_donazione} - {self.donatore.cognome} {self.donatore.nome}"
+
+
+class CallLog(models.Model):
+    class Result(models.TextChoices):
+        CALLED = "chiamato", "Chiamato"
+        NO_ANSWER = "non_risponde", "Non risponde"
+        CALL_BACK = "richiamare", "Richiamare"
+
+    donatore = models.ForeignKey(
+        Donatore, related_name="call_logs", on_delete=models.CASCADE
+    )
+    result = models.CharField(max_length=20, choices=Result.choices)
+    note = models.CharField("nota", max_length=200, blank=True)
+    focus_type = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=Donazione.TipoDonazione.choices,
+    )
+    created_by = models.ForeignKey(
+        User, on_delete=models.PROTECT, related_name="call_logs"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+        verbose_name = "Esito chiamata"
+        verbose_name_plural = "Esiti chiamate"
+
+    def __str__(self):
+        return f"{self.donatore} — {self.get_result_display()}"

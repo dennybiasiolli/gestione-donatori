@@ -1,17 +1,16 @@
 {% extends 'avis/base.html' %}
-{% load static %}
 
 {% block title %}Dati statistici — AVIS{% endblock %}
 
 {% block content %}
 
-<script src="{% static 'js/dati-statistici.js' %}"></script>
-
-<!-- Year selector -->
-<div class="d-flex align-items-center gap-3 mb-3 d-print-none">
-  <form method="get" action="{% url 'dati-statistici' %}" id="formDatiStatistici" class="d-flex align-items-center gap-2">
-    <label class="small fw-semibold text-muted" style="white-space:nowrap;">Anno statistico</label>
-    <select class="form-select form-select-sm w-auto" name="anno" onchange="handleAnnoChange()">
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+  <h1 class="h4 mb-0">Dati statistici</h1>
+  <form method="get" action="{% url 'dati-statistici' %}" id="formDatiStatistici"
+    class="d-flex align-items-center gap-2 d-print-none">
+    <label class="small fw-semibold text-muted" style="white-space:nowrap;" for="id_anno">Anno statistico</label>
+    <select class="form-select form-select-sm w-auto" name="anno" id="id_anno"
+      onchange="this.form.submit()">
       {% for anno in anni %}
       <option value="{{ anno }}"{% if anno == anno_filtro %} selected{% endif %}>{{ anno }}</option>
       {% endfor %}
@@ -24,7 +23,8 @@
   <div class="card-header">Donazioni per fasce d'età{% if donazioni_no_data_nascita %} ***{% endif %}</div>
   <div class="card-body p-0">
     <div class="table-responsive">
-      <table class="table table-sm mb-0" aria-describedby="Statistiche donazioni per fasce di età">
+      <table class="table table-sm mb-0">
+        <caption class="visually-hidden">Statistiche donazioni per fasce di età</caption>
         <thead class="table-light">
           <tr>
             <th rowspan="3" class="align-middle"></th>
@@ -134,7 +134,8 @@
       <div class="card-header">Donazioni per gruppo ematico **</div>
       <div class="card-body p-0">
         <div class="table-responsive">
-          <table class="table table-sm mb-0" aria-describedby="Statistiche per gruppo ematico">
+          <table class="table table-sm mb-0">
+            <caption class="visually-hidden">Statistiche per gruppo ematico</caption>
             <thead class="table-light">
               <tr>
                 <th></th>
@@ -174,7 +175,8 @@
     <div class="card h-100">
       <div class="card-header">Donazioni per tipo e genere</div>
       <div class="card-body p-0">
-        <table class="table table-sm mb-0" aria-describedby="Statistiche per tipo donazione">
+        <table class="table table-sm mb-0">
+          <caption class="visually-hidden">Statistiche per tipo donazione</caption>
           <thead class="table-light">
             <tr>
               <th>Tipo</th>
@@ -227,20 +229,19 @@
 <!-- Footnotes -->
 <div class="text-muted small">
   <p class="mb-1">
-    * Per <u>Soci Nuovi Iscritti</u> si intendono i donatori con <u>Data Rilascio Tessera</u>
-    uguale o successiva all'anno selezionato ({{ anno_filtro }}).
-    Se non impostata, il donatore è considerato tra i <u>Soci Donatori</u>.
+    * <strong>Soci nuovi iscritti</strong>: donatori con data rilascio tessera
+    nell'anno {{ anno_filtro }} o successivo.
+    Se la data manca, il donatore è contato tra i soci donatori.
     {% if donazioni_no_data_rilascio_tessera %}
     <p class="mb-0 text-danger fw-medium">
       Attenzione: {{ donazioni_no_data_rilascio_tessera }} donazioni {{ anno_filtro }} abbinate a un donatore
-      senza Data Rilascio Tessera o impostata su 01/01/1900.
+      senza data rilascio tessera o impostata su 01/01/1900.
     </p>
     {% endif %}
   </p>
   <p class="mb-1">
-    ** Per <u>Soci Donatori</u> nelle statistiche <u>Per Gruppo Ematico</u>
-    si intendono tutti gli iscritti alla Sezione, senza fare riferimento a
-    <u>Donatori</u>, <u>Non Donatori</u> o <u>Nuovi Iscritti</u> delle statistiche <u>Per fasce d'età</u>
+    ** Nella tabella per gruppo ematico, <strong>soci donatori</strong> sono tutti
+    gli iscritti della sezione, non le stesse categorie della tabella per età.
   </p>
   {% if donazioni_no_data_nascita %}
   <p class="mb-0 text-danger fw-medium">

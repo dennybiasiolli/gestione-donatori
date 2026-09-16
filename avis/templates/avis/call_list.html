@@ -1,0 +1,272 @@
+{% extends 'avis/base.html' %}
+{% load static %}
+
+{% block title %}Chiama oggi — AVIS{% endblock %}
+
+{% block nav %}
+{% if print_mode %}
+{% else %}
+{{ block.super }}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="list-page-header d-print-none">
+  <h1 class="h4 mb-1">Chiama oggi</h1>
+  <p class="text-muted small mb-0">
+    Donatori attivi che possono donare oggi, in base all'intervallo del sesso
+    e all'ultima donazione. Chi è già stato chiamato di recente esce dalla lista.
+    Non sostituisce il giudizio del SIMT.
+  </p>
+</div>
+
+<form method="get" action="{% url 'chiama-oggi' %}" class="d-print-none search-panel">
+  <div class="row g-2 align-items-end">
+    <div class="col-md-2">
+      <label class="form-label small mb-1" for="id_tipo">Tipo di donazione</label>
+      <select class="form-select form-select-sm" id="id_tipo" name="tipo">
+        {% for value, label in type_choices %}
+        <option value="{{ value }}"{% if value == focus_type %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label small mb-1" for="id_gruppo">Gruppo</label>
+      <input class="form-control form-control-sm" id="id_gruppo" name="gruppo"
+        value="{{ gruppo }}" placeholder="es. A">
+    </div>
+    <div class="col-md-1">
+      <label class="form-label small mb-1" for="id_rh">Rh</label>
+      <input class="form-control form-control-sm" id="id_rh" name="rh"
+        value="{{ rh }}" placeholder="+ / −">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label small mb-1" for="id_ultimo">Ultimo chiamato</label>
+      <select class="form-select form-select-sm" id="id_ultimo" name="ultimo">
+        {% for value, label in ultimo_choices %}
+        <option value="{{ value }}"{% if value == ultimo %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label small mb-1" for="id_order_by">Ordina per</label>
+      <select class="form-select form-select-sm" id="id_order_by" name="order_by">
+        {% for value, label in order_choices %}
+        <option value="{{ value }}"{% if value == order_by %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <span class="form-label small mb-1 d-block">Direzione</span>
+      <div class="d-flex gap-3">
+        <div class="form-check mb-0">
+          <input class="form-check-input" type="radio" name="order_by_direction" value=""
+            id="order_asc" {% if order_by_direction == '' %}checked{% endif %}>
+          <label class="form-check-label small" for="order_asc">
+            <i class="bi bi-sort-up" aria-hidden="true"></i> Crescente
+          </label>
+        </div>
+        <div class="form-check mb-0">
+          <input class="form-check-input" type="radio" name="order_by_direction" value="-"
+            id="order_desc" {% if order_by_direction == '-' %}checked{% endif %}>
+          <label class="form-check-label small" for="order_desc">
+            <i class="bi bi-sort-down" aria-hidden="true"></i> Decrescente
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label small mb-1" for="id_nascondi_giorni">Nascondi se chiamato da</label>
+      <div class="input-group input-group-sm">
+        <input type="number" class="form-control" id="id_nascondi_giorni"
+          name="nascondi_giorni" value="{{ nascondi_giorni }}" min="0" max="365"
+          title="0 = non nascondere nessuno">
+        <span class="input-group-text">giorni</span>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label small mb-1" for="id_paginate_by">Per pagina</label>
+      <input type="number" class="form-control form-control-sm" id="id_paginate_by"
+        name="paginate_by" value="{{ paginate_by }}" min="1" max="{{ MAX_PAGINATE_BY }}">
+    </div>
+    <div class="col-md-1">
+      <button type="submit" class="btn btn-primary btn-sm">
+        <i class="bi bi-search me-1"></i>Filtra
+      </button>
+    </div>
+  </div>
+</form>
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 d-print-none">
+  <span class="text-muted small">
+    <strong>{{ row_count }}</strong> donatori da chiamare
+    {% if page_obj and page_obj.paginator.num_pages > 1 %}
+    · pagina {{ page_obj.number }} di {{ page_obj.paginator.num_pages }}
+    {% endif %}
+    {% if hidden_chiamati_count %}
+    · {{ hidden_chiamati_count }} nascosti (chiamati da {{ nascondi_giorni }} gg)
+    {% endif %}
+  </span>
+  <a class="btn btn-outline-secondary btn-sm" target="_blank" rel="noopener"
+    href="{% url 'chiama-oggi' %}?stampa=1{% if querystring %}&amp;{{ querystring }}{% endif %}">
+    <i class="bi bi-printer me-1"></i>Stampa lista
+  </a>
+</div>
+
+{% if rows %}
+<div class="table-responsive">
+  <table class="table table-hover table-sm align-middle mb-0">
+    <thead class="table-light">
+      <tr>
+        <th{% if order_by == 'donatore' %} aria-sort="{% if order_by_direction == '-' %}descending{% else %}ascending{% endif %}"{% endif %}>
+          <a class="text-decoration-none d-inline-flex align-items-center gap-1" href="?{{ sort_urls.donatore }}">
+            Donatore
+            {% include "avis/includes/sort_indicator.html" with sort_key="donatore" %}
+          </a>
+        </th>
+        <th>Telefono</th>
+        <th{% if order_by == 'ultima' %} aria-sort="{% if order_by_direction == '-' %}descending{% else %}ascending{% endif %}"{% endif %}>
+          <a class="text-decoration-none d-inline-flex align-items-center gap-1" href="?{{ sort_urls.ultima }}">
+            Ultima donazione
+            {% include "avis/includes/sort_indicator.html" with sort_key="ultima" %}
+          </a>
+        </th>
+        <th{% if order_by == 'prossima' %} aria-sort="{% if order_by_direction == '-' %}descending{% else %}ascending{% endif %}"{% endif %}>
+          <a class="text-decoration-none d-inline-flex align-items-center gap-1" href="?{{ sort_urls.prossima }}">
+            Può donare dal
+            {% include "avis/includes/sort_indicator.html" with sort_key="prossima" %}
+          </a>
+        </th>
+        <th class="d-print-none">Esito chiamata</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        <td>
+          <a href="{% url 'donatore' pk=row.donatore.pk %}" class="fw-medium">
+            {{ row.donatore.cognome }} {{ row.donatore.nome }}
+          </a>
+          <div class="text-muted small">AVIS: {{ row.donatore.num_tessera_avis }}</div>
+        </td>
+        <td>
+          {% if row.phone %}
+          <a href="tel:{{ row.phone }}">{{ row.phone }}</a>
+          {% else %}
+          <span class="text-muted">—</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if row.ultima_data %}
+          <span class="small">{{ row.ultima_data|date:'d/m/Y' }}</span>
+          <div class="text-muted small">{{ row.ultima_tipo_display }}</div>
+          {% else %}
+          <span class="text-muted small">Mai</span>
+          {% endif %}
+        </td>
+        <td>
+          <span class="small">{{ row.next_date|date:'d/m/Y' }}</span>
+        </td>
+        <td class="d-print-none">
+          {% if row.last_call %}
+          <div class="small text-muted mb-1">
+            Ultimo: {{ row.last_call.get_result_display }}
+            {{ row.last_call.created_at|date:'d/m/Y H:i' }}
+            {% if row.last_call.note %} — {{ row.last_call.note }}{% endif %}
+          </div>
+          {% endif %}
+          <form method="post" action="{% url 'call-log-create' row.donatore.pk %}"
+            class="d-flex flex-wrap gap-1 align-items-center">
+            {% csrf_token %}
+            <input type="hidden" name="tipo" value="{{ focus_type }}">
+            <input type="hidden" name="gruppo" value="{{ gruppo }}">
+            <input type="hidden" name="rh" value="{{ rh }}">
+            <input type="hidden" name="ultimo" value="{{ ultimo }}">
+            <input type="hidden" name="order_by" value="{{ order_by }}">
+            <input type="hidden" name="order_by_direction" value="{{ order_by_direction }}">
+            <input type="hidden" name="nascondi_giorni" value="{{ nascondi_giorni }}">
+            <input type="hidden" name="paginate_by" value="{{ paginate_by }}">
+            <label class="visually-hidden" for="note-{{ row.donatore.pk }}">Nota</label>
+            <input class="form-control form-control-sm" style="max-width:10rem"
+              id="note-{{ row.donatore.pk }}" name="note" placeholder="Nota">
+            <button class="btn btn-primary btn-sm" name="result" value="chiamato" type="submit">
+              Chiamato
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" name="result" value="non_risponde" type="submit">
+              Non risponde
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" name="result" value="richiamare" type="submit">
+              Richiamare
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state text-center py-5">
+  <i class="bi bi-telephone-x fs-1 text-muted" aria-hidden="true"></i>
+  <p class="mt-3 mb-0">Nessun donatore da chiamare con questi filtri.</p>
+</div>
+{% endif %}
+
+{% if page_obj and page_obj.paginator.num_pages > 1 %}
+<nav aria-label="Navigazione pagine" class="d-print-none mt-3">
+  <ul class="pagination pagination-sm justify-content-center mb-0">
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ querystring }}"
+        aria-label="Pagina precedente">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <span class="page-link" aria-label="Pagina precedente">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </span>
+    </li>
+    {% endif %}
+
+    {% for i in page_range %}
+    {% if page_obj.number == i %}
+    <li class="page-item active">
+      <span class="page-link">{{ i }}</span>
+    </li>
+    {% elif i == page_obj.paginator.ELLIPSIS %}
+    <li class="page-item disabled">
+      <span class="page-link">{{ i }}</span>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ i }}&{{ querystring }}">{{ i }}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ querystring }}"
+        aria-label="Pagina successiva">
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+      <span class="page-link" aria-label="Pagina successiva">
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </span>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+
+{% if print_mode %}
+<script src="{% static 'js/print-on-load.js' %}"></script>
+{% endif %}
+
+{% endblock %}

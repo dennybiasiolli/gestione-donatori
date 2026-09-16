@@ -49,6 +49,12 @@ urlpatterns = [
         views.DonazioneCreateView.as_view(),
         name="donazione-create",
     ),
+    path("chiama-oggi/", views.chiama_oggi, name="chiama-oggi"),
+    path(
+        "chiama-oggi/<int:pk>/",
+        views.call_log_create,
+        name="call-log-create",
+    ),
     path(
         "dati-statistici/",
         views.dati_statistici,

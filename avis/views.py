@@ -2,14 +2,16 @@ import datetime
 import http
 from tempfile import NamedTemporaryFile
 from typing import Any
+from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from django.core.paginator import Paginator
 from django.db.models import Count, F, Max, OuterRef, Prefetch, Q, Subquery
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_GET, require_http_methods
@@ -17,9 +19,26 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView
 from openpyxl import Workbook
 
+from .calls import (
+    ALLOWED_ORDER_BY,
+    FOCUS_TYPES,
+    ORDER_ASC,
+    ORDER_DESC,
+    ORDER_DONATORE,
+    ORDER_PROSSIMA,
+    ORDER_ULTIMA,
+    ULTIMO_MAI,
+    eligible_today,
+    exclude_called_recently,
+    parse_focus_type,
+    parse_hide_days,
+    parse_order_by,
+    parse_order_direction,
+    parse_ultimo,
+)
 from .forms import DonazioneForm
 from .functions import get_dati_statistici, get_elenco_soci_xls
-from .models import Donatore, Donazione, Sesso, Sezione, StatoDonatore
+from .models import CallLog, Donatore, Donazione, Sesso, Sezione, StatoDonatore
 
 
 def avis_user_check(user):
@@ -559,6 +578,168 @@ class DonazioneCreateView(CreateView):
         response = super().form_valid(form)
         messages.success(self.request, "Donazione aggiunta.")
         return response
+
+
+CALL_LIST_PAGE_SIZE = 10
+
+
+def _chiama_oggi_query(request_data):
+    params = {}
+    tipo = request_data.get("tipo")
+    if tipo:
+        params["tipo"] = tipo
+    gruppo = (request_data.get("gruppo") or "").strip()
+    if gruppo:
+        params["gruppo"] = gruppo
+    rh = (request_data.get("rh") or "").strip()
+    if rh:
+        params["rh"] = rh
+    ultimo = parse_ultimo(request_data.get("ultimo"))
+    if ultimo:
+        params["ultimo"] = ultimo
+    order_by = parse_order_by(request_data.get("order_by"))
+    if order_by != ORDER_PROSSIMA:
+        params["order_by"] = order_by
+    order_direction = parse_order_direction(request_data.get("order_by_direction"))
+    if order_direction == ORDER_DESC:
+        params["order_by_direction"] = ORDER_DESC
+    hide_days = parse_hide_days(request_data.get("nascondi_giorni"))
+    if hide_days != 1:
+        params["nascondi_giorni"] = str(hide_days)
+    paginate_by = request_data.get("paginate_by", "")
+    if paginate_by.isdigit() and int(paginate_by) != CALL_LIST_PAGE_SIZE:
+        params["paginate_by"] = str(min(int(paginate_by), settings.MAX_PAGINATE_BY))
+    return params
+
+
+def _query_with_order(query, order_by, direction=ORDER_ASC):
+    params = {
+        key: value
+        for key, value in query.items()
+        if key not in ("order_by", "order_by_direction")
+    }
+    if order_by != ORDER_PROSSIMA:
+        params["order_by"] = order_by
+    if direction == ORDER_DESC:
+        params["order_by_direction"] = ORDER_DESC
+    return urlencode(params)
+
+
+@require_http_methods(["GET"])
+@user_passes_test(avis_user_check)
+def chiama_oggi(request):
+    focus_type = parse_focus_type(request.GET.get("tipo"))
+    gruppo = request.GET.get("gruppo", "").strip()
+    rh = request.GET.get("rh", "").strip()
+    ultimo = parse_ultimo(request.GET.get("ultimo"))
+    order_by = parse_order_by(request.GET.get("order_by"))
+    order_direction = parse_order_direction(request.GET.get("order_by_direction"))
+    hide_days = parse_hide_days(request.GET.get("nascondi_giorni"))
+    print_mode = request.GET.get("stampa") == "1"
+    rows = eligible_today(
+        request.user,
+        focus_type,
+        gruppo=gruppo,
+        rh=rh,
+        ultimo=ultimo,
+        order_by=order_by,
+        order_direction=order_direction,
+    )
+    hidden_chiamati_count = 0
+    if hide_days and ultimo != CallLog.Result.CALLED:
+        rows, hidden_chiamati_count = exclude_called_recently(rows, hide_days)
+    query = _chiama_oggi_query(request.GET)
+    page_obj = None
+    page_range = None
+    if print_mode:
+        page_rows = rows
+    else:
+        paginate_by = request.GET.get("paginate_by", "")
+        if paginate_by.isdigit():
+            page_size = min(max(int(paginate_by), 1), settings.MAX_PAGINATE_BY)
+        else:
+            page_size = CALL_LIST_PAGE_SIZE
+        paginator = Paginator(rows, page_size)
+        page_obj = paginator.get_page(request.GET.get("page", 1))
+        page_range = paginator.get_elided_page_range(number=page_obj.number)
+        page_rows = page_obj.object_list
+    return render(
+        request,
+        "avis/call_list.html",
+        {
+            "rows": page_rows,
+            "row_count": len(rows),
+            "page_obj": page_obj,
+            "page_range": page_range,
+            "focus_type": focus_type,
+            "gruppo": gruppo,
+            "rh": rh,
+            "ultimo": ultimo,
+            "nascondi_giorni": hide_days,
+            "hidden_chiamati_count": hidden_chiamati_count,
+            "paginate_by": page_obj.paginator.per_page
+            if page_obj
+            else CALL_LIST_PAGE_SIZE,
+            "MAX_PAGINATE_BY": settings.MAX_PAGINATE_BY,
+            "order_by": order_by,
+            "order_by_direction": order_direction,
+            "order_choices": (
+                (ORDER_PROSSIMA, "Può donare dal"),
+                (ORDER_DONATORE, "Donatore"),
+                (ORDER_ULTIMA, "Ultima donazione"),
+            ),
+            "ultimo_choices": (
+                ("", "Tutti"),
+                (ULTIMO_MAI, "Mai chiamato"),
+                (CallLog.Result.CALLED, "Chiamato"),
+                (CallLog.Result.NO_ANSWER, "Non risponde"),
+                (CallLog.Result.CALL_BACK, "Richiamare"),
+            ),
+            "type_choices": [
+                (value, label)
+                for value, label in Donazione.TipoDonazione.choices
+                if value in FOCUS_TYPES
+            ],
+            "print_mode": print_mode,
+            "querystring": urlencode(query),
+            "sort_urls": {
+                key: _query_with_order(
+                    query,
+                    key,
+                    ORDER_ASC
+                    if order_by != key
+                    else (ORDER_ASC if order_direction == ORDER_DESC else ORDER_DESC),
+                )
+                for key in ALLOWED_ORDER_BY
+            },
+        },
+    )
+
+
+@require_http_methods(["POST"])
+@user_passes_test(avis_user_check)
+def call_log_create(request, pk):
+    donatore = get_object_or_404(Donatore, pk=pk, sezione__utente=request.user)
+    result = request.POST.get("result")
+    if result not in CallLog.Result.values:
+        messages.error(request, "Esito chiamata non valido.")
+        return redirect("chiama-oggi")
+    focus_type = parse_focus_type(request.POST.get("tipo"))
+    CallLog.objects.create(
+        donatore=donatore,
+        result=result,
+        note=(request.POST.get("note") or "").strip(),
+        focus_type=focus_type,
+        created_by=request.user,
+    )
+    messages.success(
+        request, f"Chiamata annotata per {donatore.cognome} {donatore.nome}."
+    )
+    query = _chiama_oggi_query(request.POST)
+    url = reverse("chiama-oggi")
+    if query:
+        return redirect(f"{url}?{urlencode(query)}")
+    return redirect(url)
 
 
 @require_http_methods(["GET"])

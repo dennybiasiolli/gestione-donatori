@@ -23,10 +23,13 @@
             </div>
         </div>
         <div class="col-auto d-flex gap-2">
-            <a class="btn btn-outline-light btn-sm" href="#"
-                onclick="handleAddRemovePrint(event, 'add', '{% url 'donatore-add-stampa' pk=donatore.pk %}')">
-                <i class="bi bi-printer me-1"></i>Aggiungi a stampa
-            </a>
+            <button type="button" class="btn btn-outline-light btn-sm print-toggle"
+                data-add-url="{% url 'donatore-add-stampa' pk=donatore.pk %}"
+                data-remove-url="{% url 'donatore-remove-stampa' pk=donatore.pk %}"
+                data-in-list="{% if donatore.stampa_donatore %}1{% else %}0{% endif %}">
+                <i class="bi {% if donatore.stampa_donatore %}bi-x-circle-fill{% else %}bi-printer{% endif %} me-1"></i>
+                <span class="print-toggle-label">{% if donatore.stampa_donatore %}Rimuovi da elenco{% else %}Aggiungi all'elenco{% endif %}</span>
+            </button>
             <a class="btn btn-outline-light btn-sm" href="{% url 'donatori' %}?stampa=benemerenze&donatore_id={{ donatore.id }}" target="_blank">
                 <i class="bi bi-award me-1"></i>Benemerenza
             </a>

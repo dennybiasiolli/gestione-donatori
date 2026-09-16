@@ -47,8 +47,9 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annulla</button>
-        <button type="button" class="btn btn-danger btn-sm"
-          onclick="handleAddRemovePrint(event, 'remove-all', '{% url 'donatore-remove-stampa' %}', '{% url 'donatori' %}')">
+        <button type="button" class="btn btn-danger btn-sm print-clear"
+          data-url="{% url 'donatore-remove-stampa' %}"
+          data-redirect="{% url 'donatori' %}">
           <i class="bi bi-trash me-1"></i>Pulisci
         </button>
       </div>
@@ -404,19 +405,19 @@
           {% endif %}
           {% if show_privacy_check %}
           <div class="small mt-1">
-            {% if donatore.check_privacy %}
-            <a href="" class="text-success text-decoration-none"
-              data-bs-toggle="tooltip" data-bs-title="Annulla consegna del modulo"
-              onclick="handleCheckUncheckPrivacy(event, '{% url 'donatore-uncheck-privacy' pk=donatore.pk %}')">
+            <button type="button"
+              class="btn btn-link btn-sm p-0 privacy-toggle {% if donatore.check_privacy %}text-success{% else %}text-muted{% endif %}"
+              data-check-url="{% url 'donatore-check-privacy' pk=donatore.pk %}"
+              data-uncheck-url="{% url 'donatore-uncheck-privacy' pk=donatore.pk %}"
+              data-checked="{% if donatore.check_privacy %}1{% else %}0{% endif %}"
+              data-bs-toggle="tooltip"
+              data-bs-title="{% if donatore.check_privacy %}Annulla consegna del modulo{% else %}Imposta consegnato{% endif %}">
+              {% if donatore.check_privacy %}
               <i class="bi bi-check-square-fill"></i> Privacy ok
-            </a>
-            {% else %}
-            <a href="" class="text-muted text-decoration-none"
-              data-bs-toggle="tooltip" data-bs-title="Imposta consegnato"
-              onclick="handleCheckUncheckPrivacy(event, '{% url 'donatore-check-privacy' pk=donatore.pk %}')">
+              {% else %}
               <i class="bi bi-square"></i> Privacy mancante
-            </a>
-            {% endif %}
+              {% endif %}
+            </button>
           </div>
           {% endif %}
         </td>
@@ -460,17 +461,19 @@
           {% endif %}
         </td>
         <td class="d-print-none text-end">
-          {% if donatore.stampa_donatore %}
-          <a href="" data-bs-toggle="tooltip" data-bs-title="Rimuovi da elenco stampa"
-            onclick="handleAddRemovePrint(event, 'remove', '{% url 'donatore-remove-stampa' pk=donatore.pk %}')">
+          <button type="button" class="btn btn-link btn-sm p-0 print-toggle"
+            data-add-url="{% url 'donatore-add-stampa' pk=donatore.pk %}"
+            data-remove-url="{% url 'donatore-remove-stampa' pk=donatore.pk %}"
+            data-in-list="{% if donatore.stampa_donatore %}1{% else %}0{% endif %}"
+            data-bs-toggle="tooltip"
+            data-bs-title="{% if donatore.stampa_donatore %}Rimuovi da elenco stampa{% else %}Aggiungi a elenco stampa{% endif %}"
+            aria-label="{% if donatore.stampa_donatore %}Rimuovi da elenco stampa{% else %}Aggiungi a elenco stampa{% endif %}">
+            {% if donatore.stampa_donatore %}
             <i class="bi bi-x-circle-fill text-danger"></i>
-          </a>
-          {% else %}
-          <a href="" data-bs-toggle="tooltip" data-bs-title="Aggiungi a elenco stampa"
-            onclick="handleAddRemovePrint(event, 'add', '{% url 'donatore-add-stampa' pk=donatore.pk %}')">
+            {% else %}
             <i class="bi bi-printer text-muted"></i>
-          </a>
-          {% endif %}
+            {% endif %}
+          </button>
         </td>
       </tr>
       {% if show_n_donazioni > 0 %}

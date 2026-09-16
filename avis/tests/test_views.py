@@ -82,6 +82,30 @@ def test_donatori_list_stato_filter_empty_means_all_statuses(
     assert inattivo in object_list
 
 
+def test_add_and_remove_stampa_keep_donor_in_list(client, staff_user, donatore):
+    client.force_login(staff_user)
+    add_url = reverse("donatore-add-stampa", kwargs={"pk": donatore.pk})
+    remove_url = reverse("donatore-remove-stampa", kwargs={"pk": donatore.pk})
+    assert client.post(add_url).status_code == 204
+    donatore.refresh_from_db()
+    assert donatore.stampa_donatore is True
+    assert client.post(remove_url).status_code == 204
+    donatore.refresh_from_db()
+    assert donatore.stampa_donatore is False
+
+
+def test_privacy_toggle_does_not_require_get(client, staff_user, donatore):
+    client.force_login(staff_user)
+    check_url = reverse("donatore-check-privacy", kwargs={"pk": donatore.pk})
+    uncheck_url = reverse("donatore-uncheck-privacy", kwargs={"pk": donatore.pk})
+    assert client.post(check_url).status_code == 204
+    donatore.refresh_from_db()
+    assert donatore.check_privacy is True
+    assert client.post(uncheck_url).status_code == 204
+    donatore.refresh_from_db()
+    assert donatore.check_privacy is False
+
+
 def test_elenco_stampa_includes_inactive_donors(
     client, staff_user, donatore, sezione, sesso_m, stato_inattivo
 ):

@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import HttpRequest
 from reversion.admin import VersionAdmin
 
-from .models import Donatore, Donazione, Sesso, Sezione, StatoDonatore
+from .models import CallLog, Donatore, Donazione, Sesso, Sezione, StatoDonatore
 
 
 @admin.register(Sesso)
@@ -134,3 +134,29 @@ class DonatoreAdmin(VersionAdmin):
                 0
             ]
         return form
+
+
+@admin.register(CallLog)
+class CallLogAdmin(admin.ModelAdmin):
+    list_display = (
+        "donatore",
+        "result",
+        "focus_type",
+        "created_by",
+        "created_at",
+    )
+    list_filter = ("result",)
+    list_select_related = ("donatore", "created_by")
+    search_fields = (
+        "donatore__cognome",
+        "donatore__nome",
+        "donatore__num_tessera_avis",
+        "note",
+    )
+    readonly_fields = ("created_at",)
+
+    def get_queryset(self, request: HttpRequest):
+        qs = super().get_queryset(request)
+        if not request.user.is_superuser:
+            qs = qs.filter(donatore__sezione__utente=request.user)
+        return qs

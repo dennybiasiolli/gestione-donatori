@@ -115,6 +115,26 @@ nav img.logo {
   padding: .5rem 0;
 }
 
+.list-page-header {
+  margin-bottom: 1rem;
+}
+
+.filter-chip {
+  font-weight: 500;
+  color: #495057;
+}
+
+.filter-chip:hover {
+  color: var(--avis-red);
+  border-color: var(--avis-red) !important;
+}
+
+.empty-state {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, .08);
+}
+
 /* ===== TABLE ===== */
 
 .table thead th {

@@ -24,6 +24,7 @@ def test_donatori_list_empty(client, staff_user, stato_attivo):
     response = client.get(reverse("donatori"))
     assert response.status_code == 200
     assert list(response.context["object_list"]) == []
+    assert "Nessun donatore corrisponde ai filtri" in response.content.decode()
 
 
 def test_donatori_list_shows_donor(client, staff_user, donatore):
@@ -31,6 +32,27 @@ def test_donatori_list_shows_donor(client, staff_user, donatore):
     response = client.get(reverse("donatori"))
     assert response.status_code == 200
     assert donatore in response.context["object_list"]
+    content = response.content.decode()
+    assert "Stato: Attivo" in content
+    assert "Stampa risultati" in content
+    assert any(
+        chip["label"] == "Stato: Attivo" for chip in response.context["filter_chips"]
+    )
+    assert "bi-caret-up-fill" in content
+    assert "ordinato crescente" in content
+    assert "sort_urls" in response.context
+
+
+def test_donatori_list_sort_header_toggles_direction(client, staff_user, donatore):
+    client.force_login(staff_user)
+    response = client.get(
+        reverse("donatori"),
+        {"order_by": "ultima_donazione", "order_by_direction": "-"},
+    )
+    assert response.status_code == 200
+    html = response.content.decode()
+    assert "bi-caret-down-fill" in html
+    assert "ordinato decrescente" in html
 
 
 def test_donatore_detail(client, staff_user, donatore):
@@ -123,3 +145,4 @@ def test_elenco_stampa_includes_inactive_donors(
     object_list = list(response.context["object_list"])
     assert inattivo in object_list
     assert donatore not in object_list
+    assert "Elenco stampa" in response.content.decode()

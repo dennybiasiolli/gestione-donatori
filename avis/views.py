@@ -81,8 +81,143 @@ class DonatoreListView(ListView):
                 "MAX_PAGINATE_BY": settings.MAX_PAGINATE_BY,
             }
         )
+        context["filter_chips"] = self._filter_chips(context)
+        context["reset_filters_query"] = (
+            "only_stampa=1" if context.get("only_stampa") == "1" else ""
+        )
+        context["sort_urls"] = self._sort_urls(
+            context.get("order_by") or "cognome,nome",
+            context.get("order_by_direction") or "",
+        )
 
         return context
+
+    def _sort_urls(self, order_by, order_direction):
+        params = self.request.GET.copy()
+        params.pop("page", None)
+        columns = {
+            "donatore": "cognome,nome",
+            "donazioni": "tot_donazioni,num_donazioni",
+            "sesso": "sesso",
+            "gruppo": "gruppo_sanguigno,rh",
+            "indirizzo": "comune",
+            "ultima": "ultima_donazione",
+        }
+        urls = {}
+        for name, key in columns.items():
+            query = params.copy()
+            query["order_by"] = key
+            if order_by == key:
+                query["order_by_direction"] = "" if order_direction == "-" else "-"
+            else:
+                query["order_by_direction"] = ""
+            urls[name] = query.urlencode()
+        return urls
+
+    def _filter_chips(self, context):
+        params = self.request.GET.copy()
+        params.pop("page", None)
+
+        def query(**updates):
+            q = params.copy()
+            for key, value in updates.items():
+                if value is None:
+                    q.pop(key, None)
+                elif isinstance(value, list):
+                    q.setlist(key, [str(item) for item in value])
+                    if not value:
+                        q.pop(key, None)
+                else:
+                    q[key] = str(value)
+            return q.urlencode()
+
+        chips = []
+        ricerca = context.get("ricerca")
+        if ricerca:
+            chips.append({"label": f"Ricerca: {ricerca}", "query": query(ricerca=None)})
+
+        stato_ids = list(context.get("stato_donatore_ids") or [])
+        stati = {stato.id: stato.descrizione for stato in context["stati_donatore"]}
+        for stato_id in stato_ids:
+            remaining = [item for item in stato_ids if item != stato_id]
+            chips.append(
+                {
+                    "label": f"Stato: {stati.get(stato_id, stato_id)}",
+                    "query": query(
+                        stato_donatore_ids=remaining,
+                        stato_filter="1",
+                    ),
+                }
+            )
+
+        sezione_id = context.get("sezione_id")
+        if sezione_id:
+            sezione = next(
+                (item for item in context["sezioni"] if item.id == sezione_id),
+                None,
+            )
+            chips.append(
+                {
+                    "label": f"Sezione: {sezione.descrizione if sezione else sezione_id}",
+                    "query": query(sezione_id=None),
+                }
+            )
+
+        sesso_id = context.get("sesso_id")
+        if sesso_id:
+            sesso = next(
+                (item for item in context["sessi"] if item.id == sesso_id),
+                None,
+            )
+            chips.append(
+                {
+                    "label": f"Sesso: {sesso.descrizione if sesso else sesso_id}",
+                    "query": query(sesso_id=None),
+                }
+            )
+
+        filter_labels = {
+            "email": "Con email",
+            "no_email": "Senza email",
+            "cell": "Con cellulare",
+            "no_cell": "Senza cellulare",
+        }
+        filter_donatori = context.get("filter_donatori")
+        if filter_donatori:
+            chips.append(
+                {
+                    "label": filter_labels.get(filter_donatori, filter_donatori),
+                    "query": query(filter_donatori=None),
+                }
+            )
+
+        advanced = [
+            ("data_iscrizione_dal", "Iscrizione dal"),
+            ("data_iscrizione_al", "Iscrizione al"),
+            ("data_nascita_dal", "Nascita dal"),
+            ("data_nascita_al", "Nascita al"),
+            ("gruppo_sanguigno", "Gruppo"),
+            ("rh", "Rh"),
+            ("fenotipo", "Fenotipo"),
+            ("kell", "Kell"),
+            ("data_donazione_dal", "Donazioni dal"),
+            ("data_donazione_al", "Donazioni al"),
+            ("show_donazioni_anno", "Donazioni anno"),
+            ("benemerenze_da", "Benemerenze da"),
+            ("benemerenze_a", "Benemerenze a"),
+            ("comune", "Comune"),
+            ("provincia", "Prov."),
+            ("cap", "CAP"),
+            ("cap_diverso", "Non CAP"),
+        ]
+        for key, label in advanced:
+            value = context.get(key)
+            if value not in (None, ""):
+                chips.append(
+                    {"label": f"{label}: {value}", "query": query(**{key: None})}
+                )
+
+        return chips
 
     def get_queryset(self):
         qs = super().get_queryset()

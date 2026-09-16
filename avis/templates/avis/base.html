@@ -14,6 +14,7 @@
 </head>
 
 <body>
+  <a class="visually-hidden-focusable skip-link" href="#main-content">Vai al contenuto</a>
   <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div id="appToast" class="toast align-items-center text-bg-dark border-0" role="status"
       aria-live="polite" aria-atomic="true">
@@ -49,6 +50,9 @@
             <a class="nav-link {% if request.resolver_match.url_name == 'donatori' and only_stampa == '1' %}active{% endif %}"
               href="{% url 'donatori' %}?only_stampa=1">
               <i class="bi bi-printer-fill me-1"></i>Elenco stampa
+              {% if elenco_stampa_count %}
+              <span class="badge rounded-pill text-bg-light text-dark ms-1">{{ elenco_stampa_count }}</span>
+              {% endif %}
             </a>
           </li>
           <li class="nav-item">
@@ -58,7 +62,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'export-elenco-soci' %}">
+            <a class="nav-link" href="{% url 'export-elenco-soci' %}"
+              title="Scarica l'elenco soci in Excel">
               <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i>Excel
             </a>
           </li>
@@ -96,7 +101,7 @@
   </nav>
   {% endblock %}
 
-  <main class="main-content container-fluid">
+  <main id="main-content" class="main-content container-fluid">
     {% if messages %}
     <div class="d-print-none">
       {% for message in messages %}

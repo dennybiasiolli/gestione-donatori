@@ -83,6 +83,30 @@ def test_dati_statistici(client, staff_user):
     client.force_login(staff_user)
     response = client.get(reverse("dati-statistici"))
     assert response.status_code == 200
+    html = response.content.decode()
+    assert "Dati statistici" in html
+    assert "this.form.submit()" in html
+    assert "dati-statistici.js" not in html
+    assert "handleAnnoChange" not in html
+
+
+def test_dati_statistici_uses_anno_query_param(client, staff_user):
+    from django.utils import timezone
+
+    client.force_login(staff_user)
+    anno = timezone.now().year
+    response = client.get(reverse("dati-statistici"), {"anno": anno})
+    assert response.status_code == 200
+    assert response.context["anno_filtro"] == anno
+    assert f'value="{anno}" selected' in response.content.decode()
+
+
+def test_elenco_stampa_nav_count(client, staff_user, donatore):
+    donatore.stampa_donatore = True
+    donatore.save()
+    client.force_login(staff_user)
+    response = client.get(reverse("donatori"))
+    assert response.context["elenco_stampa_count"] == 1
 
 
 def test_donatori_list_defaults_to_attivo(

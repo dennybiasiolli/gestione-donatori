@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 
-from avis.models import Donatore
+from avis.models import Donatore, Donazione
 
 pytestmark = pytest.mark.django_db
 
@@ -60,6 +60,23 @@ def test_donatore_detail(client, staff_user, donatore):
     response = client.get(reverse("donatore", kwargs={"pk": donatore.pk}))
     assert response.status_code == 200
     assert response.context["object"] == donatore
+    assert "detail-back" in response.content.decode()
+
+
+def test_add_donation_shows_success_message(client, staff_user, donatore):
+    client.force_login(staff_user)
+    response = client.post(
+        reverse("donazione-create", kwargs={"pk": donatore.pk}),
+        {
+            "data_donazione": "2024-03-15",
+            "tipo_donazione": Donazione.TipoDonazione.SANGUE_INTERO,
+        },
+        follow=True,
+    )
+    assert response.status_code == 200
+    assert Donazione.objects.filter(donatore=donatore).exists()
+    messages = [str(message) for message in response.context["messages"]]
+    assert "Donazione aggiunta." in messages
 
 
 def test_dati_statistici(client, staff_user):

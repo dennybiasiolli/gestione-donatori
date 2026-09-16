@@ -235,6 +235,18 @@ nav img.logo {
   color: rgba(255, 255, 255, .9);
 }
 
+.detail-back {
+  display: inline-block;
+  color: rgba(255, 255, 255, .7);
+  text-decoration: none;
+  font-size: .8rem;
+  margin-bottom: .65rem;
+}
+
+.detail-back:hover {
+  color: #fff;
+}
+
 .info-section {
   margin-bottom: 1.5rem;
 }

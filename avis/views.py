@@ -4,6 +4,7 @@ from tempfile import NamedTemporaryFile
 from typing import Any
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count, F, Max, OuterRef, Prefetch, Q, Subquery
 from django.http import HttpResponse
@@ -555,7 +556,9 @@ class DonazioneCreateView(CreateView):
                 "data_donazione", "Esiste già una donazione per questa data."
             )
             return self.form_invalid(form)
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, "Donazione aggiunta.")
+        return response
 
 
 @require_http_methods(["GET"])

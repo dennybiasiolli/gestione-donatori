@@ -93,15 +93,19 @@ class DonatoreListView(ListView):
         sezione_id = self.request.GET.get("sezione_id", None)
         if sezione_id:
             sezione_id = int(sezione_id)
-        stato_donatore_ids = self.request.GET.getlist("stato_donatore_ids", None)
-        if stato_donatore_ids:
-            stato_donatore_ids = [
-                int(stato_donatore_id) for stato_donatore_id in stato_donatore_ids
-            ]
-        if "stato_donatore_ids" not in self.request.GET:
-            stato_donatore_ids = [
-                StatoDonatore.objects.filter(codice="Attivo").first().pk
-            ]
+        only_stampa = self.request.GET.get("only_stampa", "0") == "1"
+        stato_filter_submitted = "stato_filter" in self.request.GET
+        stato_donatore_ids = [
+            int(stato_donatore_id)
+            for stato_donatore_id in self.request.GET.getlist("stato_donatore_ids")
+            if stato_donatore_id.isdigit()
+        ]
+        # Default Attivo only on the main list. Elenco stampa and an explicit
+        # form submit with no checkboxes mean "all statuses".
+        if not stato_filter_submitted and not stato_donatore_ids and not only_stampa:
+            stato_attivo = StatoDonatore.objects.filter(codice="Attivo").first()
+            if stato_attivo:
+                stato_donatore_ids = [stato_attivo.pk]
         sesso_id = self.request.GET.get("sesso_id", None)
         if sesso_id:
             sesso_id = int(sesso_id)
@@ -151,7 +155,6 @@ class DonatoreListView(ListView):
         order_by_direction = self.request.GET.get("order_by_direction", "")
         if order_by_direction not in settings.ALLOWED_ORDER_DIRECTIONS:
             order_by_direction = ""
-        only_stampa = self.request.GET.get("only_stampa", "0") == "1"
         order_by = [order_by_direction + o for o in order_by_str.split(",")]
         if "cognome" not in order_by:
             order_by.append("cognome")

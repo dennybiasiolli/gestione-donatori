@@ -15,7 +15,7 @@ dependencies = [
 
 [dependency-groups]
 deploy = [
-    "gunicorn>=26.0.0,<27",
+    "gunicorn>=26.0.0,<28",
 ]
 dev = [
     "pytest-django>=4.14.0,<5",
